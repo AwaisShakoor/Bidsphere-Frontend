@@ -1,10 +1,10 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-import { loginUser, logoutUser, registerUser } from "@/services/Api/AuthApiServices";
+import { getMe, loginUser, logoutUser, registerUser } from "@/services/Api/AuthApiServices";
 import type {
   LoginRequest,
   RegisterRequest,
@@ -14,7 +14,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: (body: LoginRequest) => loginUser(body),
     onSuccess: (data) => {
-      toast.success("User login successfully" || data.message);
+      toast.success(data.message || "User login successfully");
     },
     onError: (error) => {
       toast.error(getAuthErrorMessage(error, "Invalid email or password"));
@@ -54,4 +54,11 @@ function getAuthErrorMessage(error: unknown, frontendMessage?: string) {
   }
 
   return "Something went wrong. Try again.";
+}
+
+export function useMe() {
+  return useQuery({
+    queryKey: ["/api/me"],
+    queryFn: getMe,
+  });
 }

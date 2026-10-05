@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { BidSphereCard } from "@/components/auth/auth-card";
@@ -15,6 +16,7 @@ import {
 import { useLogin } from "@/services/hooks/AuthServicesHook";
 
 export function LoginForm() {
+  const router = useRouter();
   const { mutate, isPending } = useLogin();
   const {
     register,
@@ -26,7 +28,9 @@ export function LoginForm() {
   });
 
   function onSubmit(values: LoginFormValues) {
-    mutate(values);
+    mutate(values, {
+      onSuccess: () => router.push("/dashboard"),
+    });
   }
 
   return (

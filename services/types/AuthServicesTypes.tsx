@@ -32,3 +32,8 @@ export type RegisterResponse = {
 export type LogoutResponse = {
   message: string;
 };
+
+export type meResponse = {
+  message: string;
+  user: User;
+}

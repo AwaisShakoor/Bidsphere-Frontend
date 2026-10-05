@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { BidSphereCard } from "@/components/auth/auth-card";
@@ -14,6 +15,7 @@ import {
 import { useRegister } from "@/services/hooks/AuthServicesHook";
 
 export function RegisterPage() {
+  const router = useRouter();
   const { mutate, isPending } = useRegister();
   const {
     register,
@@ -25,12 +27,17 @@ export function RegisterPage() {
   });
 
   function onSubmit(values: SignUpFormValues) {
-    mutate({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      password: values.password,
-    });
+    mutate(
+      {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => router.push("/dashboard"),
+      },
+    );
   }
 
   return (
