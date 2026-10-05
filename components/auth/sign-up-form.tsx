@@ -41,24 +41,26 @@ export function RegisterPage() {
       footerLinkText="Log in"
       footerHref="/login"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-5">
-          <Field
-            label="First name"
-            type="text"
-            autoComplete="given-name"
-            placeholder="Test"
-            error={errors.firstName}
-            {...register("firstName")}
-          />
-          <Field
-            label="Last name"
-            type="text"
-            autoComplete="family-name"
-            placeholder="User"
-            error={errors.lastName}
-            {...register("lastName")}
-          />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field
+              label="First name"
+              type="text"
+              autoComplete="given-name"
+              placeholder="Alex"
+              error={errors.firstName}
+              {...register("firstName")}
+            />
+            <Field
+              label="Last name"
+              type="text"
+              autoComplete="family-name"
+              placeholder="Johnson"
+              error={errors.lastName}
+              {...register("lastName")}
+            />
+          </div>
           <Field
             label="Email"
             type="email"

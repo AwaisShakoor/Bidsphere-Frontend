@@ -31,7 +31,7 @@ export function LoginForm() {
 
   return (
     <BidSphereCard
-      title="BidSphere"
+      title="Log in"
       description="Log in to bid on live auctions and manage your account."
       footerText="Don't have an account?"
       footerLinkText="Register"

@@ -33,11 +33,14 @@ export function BidSphereCard({
   return (
     <Card
       className={cn(
-        "w-full max-w-[440px] gap-0 border-0 py-0 shadow-lg ring-1 ring-border/70",
+        "w-full max-w-110 gap-0 border-0 py-0 shadow-lg ring-1 ring-border/70",
         className
       )}
     >
       <CardHeader className="gap-2 px-8 pt-8 pb-0 text-center">
+        <p className="text-sm font-medium tracking-tight text-muted-foreground">
+          BidSphere
+        </p>
         <CardTitle className="text-2xl font-semibold tracking-tight">
           {title}
         </CardTitle>
