@@ -11,18 +11,27 @@ import {
   signUpSchema,
   type SignUpFormValues,
 } from "@/lib/validations/auth";
+import { useRegister } from "@/services/hooks/AuthServicesHook";
 
 export function RegisterPage() {
+  const { mutate, isPending } = useRegister();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: signUpDefaultValues,
   });
 
-  async function onSubmit(values: SignUpFormValues) {}
+  function onSubmit(values: SignUpFormValues) {
+    mutate({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+    });
+  }
 
   return (
     <BidSphereCard
@@ -35,12 +44,20 @@ export function RegisterPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-5">
           <Field
-            label="Full name"
+            label="First name"
             type="text"
-            autoComplete="name"
-            placeholder="Alex Johnson"
-            error={errors.fullName}
-            {...register("fullName")}
+            autoComplete="given-name"
+            placeholder="Test"
+            error={errors.firstName}
+            {...register("firstName")}
+          />
+          <Field
+            label="Last name"
+            type="text"
+            autoComplete="family-name"
+            placeholder="User"
+            error={errors.lastName}
+            {...register("lastName")}
           />
           <Field
             label="Email"
@@ -72,9 +89,9 @@ export function RegisterPage() {
           type="submit"
           size="lg"
           className="h-11 w-full text-sm font-medium"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Creating account..." : "Create account"}
+          {isPending ? "Creating account..." : "Create account"}
         </Button>
       </form>
     </BidSphereCard>

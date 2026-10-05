@@ -17,10 +17,8 @@ export const loginSchema = z.object({
 
 export const signUpSchema = z
   .object({
-    fullName: z
-      .string()
-      .min(1, "Full name is required")
-      .min(2, "Name must be at least 2 characters"),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
     email: emailField,
     password: passwordField,
     confirmPassword: z.string().min(1, "Please confirm your password"),
@@ -48,7 +46,8 @@ export const forgotPasswordDefaultValues: ForgotPasswordFormValues = {
 };
 
 export const signUpDefaultValues: SignUpFormValues = {
-  fullName: "",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   confirmPassword: "",

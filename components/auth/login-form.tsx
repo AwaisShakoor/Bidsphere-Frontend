@@ -12,18 +12,22 @@ import {
   loginSchema,
   type LoginFormValues,
 } from "@/lib/validations/auth";
+import { useLogin } from "@/services/hooks/AuthServicesHook";
 
 export function LoginForm() {
+  const { mutate, isPending } = useLogin();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: loginDefaultValues,
   });
 
-  async function onSubmit(values: LoginFormValues) {}
+  function onSubmit(values: LoginFormValues) {
+    mutate(values);
+  }
 
   return (
     <BidSphereCard
@@ -66,9 +70,9 @@ export function LoginForm() {
           type="submit"
           size="lg"
           className="h-11 w-full text-sm font-medium"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Logging in..." : "Log in"}
+          {isPending ? "Logging in..." : "Log in"}
         </Button>
       </form>
     </BidSphereCard>
