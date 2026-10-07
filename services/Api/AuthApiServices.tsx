@@ -6,6 +6,12 @@ import type {
   meResponse,
   RegisterRequest,
   RegisterResponse,
+  VerifyEmailRequest,
+  VerifyEmailResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from "@/services/types/AuthServicesTypes";
 
 export async function loginUser(body: LoginRequest) {
@@ -17,6 +23,23 @@ export async function registerUser(body: RegisterRequest) {
   const { data } = await api.post<RegisterResponse>("/api/register", body);
   return data;
 }
+
+export async function verifyEmail(body: VerifyEmailRequest) {
+  const { data } = await api.post<VerifyEmailResponse>("/api/verify-email", body);
+  return data;
+}
+
+export async function forgotPassword(body: ForgotPasswordRequest) {
+  const { data } = await api.post<ForgotPasswordResponse>("/api/forgot-password", body);
+  return data;
+}
+
+export async function resetPassword(body: ResetPasswordRequest) {
+  const { data } = await api.post<ResetPasswordResponse>("/api/reset-password", body);
+  return data;
+}
+
+
 
 export async function logoutUser() {
   const { data } = await api.delete<LogoutResponse>("/api/logout");

@@ -35,7 +35,7 @@ export function RegisterPage() {
         password: values.password,
       },
       {
-        onSuccess: () => router.push("/dashboard"),
+        onSuccess: () => router.push(`/verify-email?email=${encodeURIComponent(values.email)}`),
       },
     );
   }

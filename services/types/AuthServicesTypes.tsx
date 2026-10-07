@@ -36,4 +36,33 @@ export type LogoutResponse = {
 export type meResponse = {
   message: string;
   user: User;
-}
+};
+
+export type VerifyEmailRequest = {
+  email: string;
+  otp: string;
+};
+
+export type VerifyEmailResponse = {
+  message: string;
+  user?: User;
+};
+
+export type ForgotPasswordRequest = {
+  email: string;
+};
+
+export type ForgotPasswordResponse = {
+  message: string;
+};
+
+export type ResetPasswordRequest = {
+  email: string;
+  otp: string;
+  newPassword: string;
+};
+
+export type ResetPasswordResponse = {
+  message: string;
+};
+

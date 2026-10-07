@@ -4,10 +4,21 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-import { getMe, loginUser, logoutUser, registerUser } from "@/services/Api/AuthApiServices";
+import {
+  forgotPassword,
+  getMe,
+  loginUser,
+  logoutUser,
+  registerUser,
+  resetPassword,
+  verifyEmail,
+} from "@/services/Api/AuthApiServices";
 import type {
+  ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
+  ResetPasswordRequest,
+  VerifyEmailRequest,
 } from "@/services/types/AuthServicesTypes";
 
 export function useLogin() {
@@ -33,6 +44,44 @@ export function useRegister() {
     },
   });
 }
+
+export function useVerifyEmail() {
+  return useMutation({
+    mutationFn: (body: VerifyEmailRequest) => verifyEmail(body),
+    onSuccess: (data) => {
+      toast.success(data.message || "Email verified successfully!");
+    },
+    onError: (error) => {
+      toast.error(getAuthErrorMessage(error));
+    },
+  });
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (body: ForgotPasswordRequest) => forgotPassword(body),
+    onSuccess: (data) => {
+      toast.success(data.message || "Password reset OTP sent to your email");
+    },
+    onError: (error) => {
+      toast.error(getAuthErrorMessage(error));
+    },
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (body: ResetPasswordRequest) => resetPassword(body),
+    onSuccess: (data) => {
+      toast.success(data.message || "Password reset successfully!");
+    },
+    onError: (error) => {
+      toast.error(getAuthErrorMessage(error));
+    },
+  });
+}
+
+
 
 export function useLogout() {
   return useMutation({
