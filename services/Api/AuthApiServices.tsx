@@ -50,3 +50,8 @@ export async function getMe() {
   const { data } = await api.get<meResponse>("/api/me");
   return data;
 }
+
+export async function refreshToken() {
+  const { data } = await api.post("/api/refresh")
+  return data;
+}

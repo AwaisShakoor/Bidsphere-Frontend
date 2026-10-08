@@ -109,5 +109,6 @@ export function useMe() {
   return useQuery({
     queryKey: ["/api/me"],
     queryFn: getMe,
+    retry: false,
   });
 }

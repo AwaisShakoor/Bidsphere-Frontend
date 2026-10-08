@@ -21,7 +21,7 @@ export function DashboardHome() {
           variant="outline"
           onClick={() =>
             logout.mutate(undefined, {
-              onSuccess: () => router.push("/login"),
+              onSuccess: () => router.replace("/login"),
             })
           }
           disabled={logout.isPending}

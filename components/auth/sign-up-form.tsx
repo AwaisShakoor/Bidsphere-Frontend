@@ -55,7 +55,7 @@ export function RegisterPage() {
               label="First name"
               type="text"
               autoComplete="given-name"
-              placeholder="Alex"
+              placeholder="First Name"
               error={errors.firstName}
               {...register("firstName")}
             />
@@ -63,7 +63,7 @@ export function RegisterPage() {
               label="Last name"
               type="text"
               autoComplete="family-name"
-              placeholder="Johnson"
+              placeholder="Last Name"
               error={errors.lastName}
               {...register("lastName")}
             />
@@ -72,7 +72,7 @@ export function RegisterPage() {
             label="Email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             error={errors.email}
             {...register("email")}
           />

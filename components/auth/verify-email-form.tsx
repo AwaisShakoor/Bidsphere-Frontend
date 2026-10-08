@@ -58,7 +58,7 @@ export function VerifyEmailForm() {
             label="Email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             disabled={Boolean(defaultEmail)}
             error={errors.email}
             {...register("email")}
@@ -81,7 +81,7 @@ export function VerifyEmailForm() {
           className="h-11 w-full text-sm font-medium"
           disabled={isPending}
         >
-          {isPending ? "Verifying..." : "Verify & Continue to Dashboard"}
+          {isPending ? "Verifying..." : "Verify OTP"}
         </Button>
       </form>
     </BidSphereCard>

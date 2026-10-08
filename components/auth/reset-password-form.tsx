@@ -65,7 +65,7 @@ export function ResetPasswordForm() {
             label="Email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             disabled={Boolean(defaultEmail)}
             error={errors.email}
             {...register("email")}

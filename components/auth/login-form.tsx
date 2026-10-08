@@ -47,7 +47,7 @@ export function LoginForm() {
             label="Email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             error={errors.email}
             {...register("email")}
           />
