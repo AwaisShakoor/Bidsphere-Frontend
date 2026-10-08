@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -84,10 +84,13 @@ export function useResetPassword() {
 
 
 export function useLogout() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: (data) => {
       toast.success(data.message);
+      queryClient.removeQueries({ queryKey: ["/api/me"] });
     },
     onError: (error) => {
       toast.error(getAuthErrorMessage(error));

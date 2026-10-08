@@ -1,11 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
 
 export function DashboardHome() {
-  const router = useRouter();
   const { data: meData } = useMe();
   const logout = useLogout();
   const user = meData?.user;
@@ -21,7 +19,9 @@ export function DashboardHome() {
           variant="outline"
           onClick={() =>
             logout.mutate(undefined, {
-              onSuccess: () => router.replace("/login"),
+              onSuccess: () => {
+                window.location.href = "/login";
+              },
             })
           }
           disabled={logout.isPending}
