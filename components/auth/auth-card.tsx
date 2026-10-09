@@ -33,11 +33,14 @@ export function BidSphereCard({
   return (
     <Card
       className={cn(
-        "w-full max-w-[440px] gap-0 border-0 py-0 shadow-lg ring-1 ring-border/70",
+        "relative mx-auto w-full max-w-110 gap-0 rounded-2xl border-0 bg-card py-0 shadow-xl shadow-primary/10 ring-1 ring-border",
         className
       )}
     >
       <CardHeader className="gap-2 px-8 pt-8 pb-0 text-center">
+        <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+          BidSphere
+        </p>
         <CardTitle className="text-2xl font-semibold tracking-tight">
           {title}
         </CardTitle>
@@ -53,7 +56,7 @@ export function BidSphereCard({
           {footerText}{" "}
           <Link
             href={footerHref}
-            className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+            className="font-medium text-primary underline-offset-4 transition-colors hover:underline"
           >
             {footerLinkText}
           </Link>

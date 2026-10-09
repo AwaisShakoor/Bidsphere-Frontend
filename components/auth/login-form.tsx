@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { BidSphereCard } from "@/components/auth/auth-card";
@@ -12,22 +13,29 @@ import {
   loginSchema,
   type LoginFormValues,
 } from "@/lib/validations/auth";
+import { useLogin } from "@/services/hooks/AuthServicesHook";
 
 export function LoginForm() {
+  const router = useRouter();
+  const { mutate, isPending } = useLogin();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: loginDefaultValues,
   });
 
-  async function onSubmit(values: LoginFormValues) {}
+  function onSubmit(values: LoginFormValues) {
+    mutate(values, {
+      onSuccess: () => router.push("/dashboard"),
+    });
+  }
 
   return (
     <BidSphereCard
-      title="BidSphere"
+      title="Log in"
       description="Log in to bid on live auctions and manage your account."
       footerText="Don't have an account?"
       footerLinkText="Register"
@@ -39,7 +47,7 @@ export function LoginForm() {
             label="Email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             error={errors.email}
             {...register("email")}
           />
@@ -56,7 +64,7 @@ export function LoginForm() {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+            className="text-sm font-medium text-primary underline-offset-4 transition-colors hover:underline"
           >
             Forgot password?
           </Link>
@@ -66,9 +74,9 @@ export function LoginForm() {
           type="submit"
           size="lg"
           className="h-11 w-full text-sm font-medium"
-          disabled={isSubmitting}
+          disabled={isPending}
         >
-          {isSubmitting ? "Logging in..." : "Log in"}
+          {isPending ? "Logging in..." : "Log in"}
         </Button>
       </form>
     </BidSphereCard>
