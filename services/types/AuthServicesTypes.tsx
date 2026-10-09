@@ -1,9 +1,11 @@
+import { UserRole } from "@/enums/userRole";
+
 export type User = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role: UserRole;
   createdAt: string;
 };
 
@@ -22,6 +24,7 @@ export type RegisterRequest = {
   lastName: string;
   email: string;
   password: string;
+  role: Exclude<UserRole, UserRole.ADMIN>;
 };
 
 export type RegisterResponse = {
@@ -65,4 +68,4 @@ export type ResetPasswordRequest = {
 export type ResetPasswordResponse = {
   message: string;
 };
-
+

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserRole } from "@/enums/userRole";
 
 const emailField = z
   .string()
@@ -15,6 +16,10 @@ export const loginSchema = z.object({
   password: passwordField,
 });
 
+export const userRoleSchema = z.enum([UserRole.BUYER, UserRole.SELLER], {
+  message: "Please select buyer or seller",
+});
+
 export const signUpSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
@@ -22,6 +27,7 @@ export const signUpSchema = z
     email: emailField,
     password: passwordField,
     confirmPassword: z.string().min(1, "Please confirm your password"),
+    role: userRoleSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -83,5 +89,6 @@ export const signUpDefaultValues: SignUpFormValues = {
   email: "",
   password: "",
   confirmPassword: "",
+  role: UserRole.BUYER,
 };
 
