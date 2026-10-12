@@ -28,7 +28,7 @@ export function useLogin() {
       toast.success(data.message);
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error));
+      toast.error(getAuthErrorMessage(error, "Invalid email or password"));
     },
   });
 }
