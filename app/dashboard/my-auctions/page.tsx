@@ -1,10 +1,10 @@
 import { SellerRoute } from "@/components/auth/seller-route";
-import { MyAuctionsPage } from "@/components/auction/my-auctions-page";
+import { AuctionPage } from "@/components/auction/auctionPage";
 
 export default function MyAuctionsRoutePage() {
   return (
     <SellerRoute>
-      <MyAuctionsPage />
+      <AuctionPage />
     </SellerRoute>
   );
 }

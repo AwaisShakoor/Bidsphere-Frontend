@@ -2,11 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { getCategories } from "@/services/Api/categoryServicesApi";
+import { CacheKeys } from "@/enums/cacheKeys";
+import { getCategories } from "@/services/Api/CategoryServicesApi";
 
 export function useCategories() {
   return useQuery({
-    queryKey: ["/api/categories"],
+    queryKey: [CacheKeys.CATEGORIES],
     queryFn: getCategories,
   });
 }

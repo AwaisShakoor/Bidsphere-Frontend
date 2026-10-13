@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { AuctionListSkeleton } from "@/components/auction/auctionListSkeleton";
 import { Button } from "@/components/ui/button";
-import { BidSphereLoader } from "@/components/ui/bidsphere-loader";
 import { DeleteConfirmationDialog } from "@/components/ui/confirm-dialog";
 import { useDeleteAuction } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
-type MyAuctionsListProps = {
+type AuctionListProps = {
   auctions: Auction[];
   isLoading?: boolean;
   isError?: boolean;
@@ -30,12 +30,12 @@ function formatDate(value: string) {
   return date.toLocaleString();
 }
 
-export function MyAuctionsList({
+export function AuctionList({
   auctions,
   isLoading = false,
   isError = false,
   onEdit,
-}: MyAuctionsListProps) {
+}: AuctionListProps) {
   const { mutate: deleteAuction, isPending: isDeletingAuction } =
     useDeleteAuction();
   const [auctionToDelete, setAuctionToDelete] = useState<Auction | null>(null);
@@ -51,7 +51,7 @@ export function MyAuctionsList({
   }
 
   if (isLoading) {
-    return <BidSphereLoader text="Loading your auctions..." />;
+    return <AuctionListSkeleton />;
   }
 
   if (isError) {

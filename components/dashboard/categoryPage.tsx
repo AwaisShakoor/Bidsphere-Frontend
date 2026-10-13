@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpDown, SlidersHorizontal } from "lucide-react";
 
-import { MyAuctionsCards } from "@/components/auction/my-auctions-cards";
+import { AuctionCards } from "@/components/auction/auctionCards";
 import { Button } from "@/components/ui/button";
 import { BidSphereLoader } from "@/components/ui/bidsphere-loader";
 import { getCategoryIcon } from "@/lib/constants/categories";
@@ -92,7 +92,7 @@ export function CategoryPage({ slug }: CategoryPageProps) {
           </div> */}
         </section>
 
-        <MyAuctionsCards
+        <AuctionCards
           auctions={auctions}
           isLoading={auctionsLoading}
           isError={auctionsError}

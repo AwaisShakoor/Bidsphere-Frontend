@@ -1,9 +1,9 @@
 "use client";
 
-import { BidSphereLoader } from "@/components/ui/bidsphere-loader";
+import { AuctionCardsSkeleton } from "@/components/auction/auctionCardsSkeleton";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
-type MyAuctionsCardsProps = {
+type AuctionCardsProps = {
   auctions: Auction[];
   isLoading?: boolean;
   isError?: boolean;
@@ -24,13 +24,13 @@ function formatDate(value: string) {
   return date.toLocaleString();
 }
 
-export function MyAuctionsCards({
+export function AuctionCards({
   auctions,
   isLoading = false,
   isError = false,
-}: MyAuctionsCardsProps) {
+}: AuctionCardsProps) {
   if (isLoading) {
-    return <BidSphereLoader text="Loading your auctions..." />;
+    return <AuctionCardsSkeleton />;
   }
 
   if (isError) {

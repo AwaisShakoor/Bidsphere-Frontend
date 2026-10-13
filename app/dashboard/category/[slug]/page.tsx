@@ -1,4 +1,4 @@
-import { CategoryPage } from "@/components/dashboard/category-page";
+import { CategoryPage } from "@/components/dashboard/categoryPage";
 
 type CategoryRouteProps = {
   params: Promise<{ slug: string }>;

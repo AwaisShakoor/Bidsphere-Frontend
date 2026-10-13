@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ImagePlus } from "lucide-react";
+import { ArrowLeft, ImagePlus, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,14 @@ import {
   useUpdateAuctionListing,
 } from "@/services/hooks/AuctionServicesHook";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
+import {
+  useDeleteItemImage,
+  useItemImages,
+} from "@/services/hooks/ItemImagesServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
+
+const MAX_IMAGES = 5;
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 type CreateAuctionFormProps = {
   onBack: () => void;
@@ -33,8 +41,14 @@ export function CreateAuctionForm({ onBack, auction }: CreateAuctionFormProps) {
   const isEditMode = Boolean(auction);
   const { data: categories = [], isLoading: categoriesLoading } =
     useCategories();
-  const createAuctionListing = useCreateAuctionListing();
-  const updateAuctionListing = useUpdateAuctionListing();
+  const {mutate: createAuctionListing, isPending: isCreatingAuctionListing} = useCreateAuctionListing();
+  const {mutate: updateAuctionListing, isPending: isUpdatingAuctionListing} = useUpdateAuctionListing();
+  const { data: existingImages = [] } = useItemImages(auction?.itemId, {
+    enabled: isEditMode,
+  });
+  const {mutate: deleteItemImage, isPending: isDeletingImage} = useDeleteItemImage();
+  const [images, setImages] = useState<File[]>([]);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const {
     register,
@@ -50,24 +64,50 @@ export function CreateAuctionForm({ onBack, auction }: CreateAuctionFormProps) {
 
   const shippingType = watch("shippingType");
   const isPending =
-    createAuctionListing.isPending || updateAuctionListing.isPending;
+    isCreatingAuctionListing ||
+    isUpdatingAuctionListing ||
+    isDeletingImage;
+
+  const remainingImageSlots = Math.max(
+    0,
+    MAX_IMAGES - existingImages.length - images.length,
+  );
+
+  const previews = useMemo(
+    () => images.map((file) => URL.createObjectURL(file)),
+    [images],
+  );
+
+  useEffect(() => {
+    return () => previews.forEach((url) => URL.revokeObjectURL(url));
+  }, [previews]);
 
   function onSubmit(values: CreateAuctionFormValues) {
-    if (isEditMode && auction) {
-      updateAuctionListing.mutate(
-        {
-          itemId: auction.itemId,
-          auctionId: auction.id,
-          values,
-        },
-        { onSuccess: onBack },
-      );
+    if (!isEditMode && images.length === 0) {
+      setImageError("At least one image is required");
+      return;
+    }
+    if (images.some((file) => file.size > MAX_IMAGE_BYTES)) {
+      setImageError("Each image must be under 2MB");
       return;
     }
 
-    createAuctionListing.mutate(values, {
-      onSuccess: onBack,
-    });
+    setImageError(null);
+
+    if (isEditMode && auction) {
+      updateAuctionListing({
+        itemId: auction.itemId,
+        auctionId: auction.id,
+        values,
+        images,
+      }, { onSuccess: onBack });
+      return;
+    }
+
+    createAuctionListing(
+      { ...values, images },
+      { onSuccess: onBack },
+    );
   }
 
   return (
@@ -174,18 +214,116 @@ export function CreateAuctionForm({ onBack, auction }: CreateAuctionFormProps) {
             </div>
 
             <div className="space-y-1.5 text-left">
-              <Label>Images</Label>
-              <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-4 py-8 text-center">
-                <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <ImagePlus className="size-5" aria-hidden />
-                </span>
-                <p className="text-sm font-medium text-foreground">
-                  Image upload coming soon
-                </p>
+              <Label htmlFor="images">
+                Images{isEditMode ? " (optional)" : ""}
+              </Label>
+              {remainingImageSlots > 0 ? (
+                <label
+                  htmlFor="images"
+                  className={cn(
+                    "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 px-4 py-8 text-center transition hover:bg-muted/60",
+                    imageError && "border-destructive",
+                  )}
+                >
+                  <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <ImagePlus className="size-5" aria-hidden />
+                  </span>
+                  <p className="text-sm font-medium text-foreground">
+                    {images.length > 0
+                      ? `${images.length} new image${images.length === 1 ? "" : "s"} selected`
+                      : "Click to upload images"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    jpeg, png, webp · up to {remainingImageSlots} more · 2MB each
+                  </p>
+                  <input
+                    id="images"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    className="sr-only"
+                    disabled={isPending}
+                    onChange={(event) => {
+                      const next = Array.from(event.target.files ?? []).slice(
+                        0,
+                        remainingImageSlots,
+                      );
+                      setImages((current) =>
+                        [...current, ...next].slice(
+                          0,
+                          MAX_IMAGES - existingImages.length,
+                        ),
+                      );
+                      setImageError(null);
+                      event.target.value = "";
+                    }}
+                  />
+                </label>
+              ) : (
                 <p className="text-xs text-muted-foreground">
-                  You’ll add photos when the upload API is ready.
+                  Maximum of {MAX_IMAGES} images reached. Remove one to add another.
                 </p>
-              </div>
+              )}
+
+              {existingImages.length > 0 ? (
+                <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+                  {existingImages.map((image) => (
+                    <li key={image.id} className="relative aspect-square">
+                      <img
+                        src={image.url}
+                        alt=""
+                        className="size-full rounded-lg object-cover ring-1 ring-border"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Delete image"
+                        className="absolute top-1 right-1 cursor-pointer flex size-6 items-center justify-center rounded-full bg-foreground/80 text-background transition hover:bg-foreground"
+                        disabled={isPending || !auction?.itemId}
+                        onClick={() => {
+                          if (!auction?.itemId) return;
+                          deleteItemImage({
+                            itemId: auction.itemId,
+                            imageId: image.id,
+                          });
+                        }}
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {previews.length > 0 ? (
+                <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+                  {previews.map((src, index) => (
+                    <li key={src} className="relative aspect-square">
+                      <img
+                        src={src}
+                        alt={`Preview ${index + 1}`}
+                        className="size-full rounded-lg object-cover ring-1 ring-border"
+                      />
+                      <button
+                        type="button"
+                        aria-label={`Remove image ${index + 1}`}
+                        className="absolute top-1 right-1 cursor-pointer flex size-6 items-center justify-center rounded-full bg-foreground/80 text-background transition hover:bg-foreground"
+                        disabled={isPending}
+                        onClick={() =>
+                          setImages((current) =>
+                            current.filter((_, i) => i !== index),
+                          )
+                        }
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {imageError ? (
+                <p className="text-sm text-destructive">{imageError}</p>
+              ) : null}
             </div>
           </section>
 

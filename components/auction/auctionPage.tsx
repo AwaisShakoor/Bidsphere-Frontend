@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 
-import { CreateAuctionForm } from "@/components/auction/create-auction-form";
-import { MyAuctionsList } from "@/components/auction/my-auctions-list";
+import { AuctionList } from "@/components/auction/auctionList";
+import { CreateAuctionForm } from "@/components/auction/createAuctionForm";
 import { Button } from "@/components/ui/button";
-import { BidSphereLoader } from "@/components/ui/bidsphere-loader";
 import { useMyAuctions } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
-export function MyAuctionsPage() {
+export function AuctionPage() {
   const {
     data: myAuctions = [],
     isLoading,
@@ -32,14 +31,6 @@ export function MyAuctionsPage() {
   function handleBackToList() {
     setSelectedAuction(null);
     setView("list");
-  }
-
-  if (isLoading) {
-    return (
-      <main className="flex flex-1">
-        <BidSphereLoader text="Loading your auctions..." />
-      </main>
-    );
   }
 
   if (view === "form") {
@@ -90,8 +81,9 @@ export function MyAuctionsPage() {
           </Button>
         </section>
 
-        <MyAuctionsList
+        <AuctionList
           auctions={myAuctions}
+          isLoading={isLoading}
           isError={isError}
           onEdit={handleEdit}
         />

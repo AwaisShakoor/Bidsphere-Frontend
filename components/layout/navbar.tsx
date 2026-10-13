@@ -8,14 +8,14 @@ import { UserRole } from "@/enums/userRole";
 import { cn } from "@/lib/utils";
 import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
 
-export function AppNavbar() {
+export function Navbar() {
   const pathname = usePathname();
   const { data: meData } = useMe();
   const logout = useLogout();
   const user = meData?.user;
   const isSeller =
     user?.role === UserRole.SELLER || user?.role === UserRole.ADMIN;
-  const isMyAuctionsActive = pathname.startsWith("/dashboard/my-auctions");
+  const isAuctionsActive = pathname.startsWith("/dashboard/my-auctions");
 
   function handleLogout() {
     logout.mutate(undefined, {
@@ -56,13 +56,13 @@ export function AppNavbar() {
               size="sm"
               className={cn(
                 "h-9 gap-2 rounded-full border-border/80 bg-background px-3.5 text-foreground shadow-sm transition-all hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
-                isMyAuctionsActive &&
+                isAuctionsActive &&
                   "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
               )}
             >
               <Link
                 href="/dashboard/my-auctions"
-                aria-current={isMyAuctionsActive ? "page" : undefined}
+                aria-current={isAuctionsActive ? "page" : undefined}
               >
                 <Gavel className="size-3.5" />
                 My auctions

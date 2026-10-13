@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { List } from "lucide-react";
-import { MyAuctionsCards } from "@/components/auction/my-auctions-cards";
+import { AuctionCards } from "@/components/auction/auctionCards";
+import { CategoriesSkeleton } from "@/components/dashboard/categoriesSkeleton";
 import { Button } from "@/components/ui/button";
-import { BidSphereLoader } from "@/components/ui/bidsphere-loader";
 import { UserRole } from "@/enums/userRole";
 import {
   ALL_CATEGORIES_ICON,
@@ -16,7 +16,7 @@ import { useMyAuctions } from "@/services/hooks/AuctionServicesHook";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
 
-export function DashboardHome() {
+export function Dashboard() {
   const router = useRouter();
   const { data: meData } = useMe();
   const { data: categories = [], isLoading, isError } = useCategories();
@@ -60,7 +60,7 @@ export function DashboardHome() {
           </div>
 
           {isLoading ? (
-            <BidSphereLoader text="Loading categories..." />
+            <CategoriesSkeleton />
           ) : isError ? (
             <p className="text-sm text-destructive">
               Could not load categories. Try again later.
@@ -125,7 +125,7 @@ export function DashboardHome() {
                 </Link>
               </Button>
             </div>
-            <MyAuctionsCards
+            <AuctionCards
               auctions={myAuctions}
               isLoading={myAuctionsLoading}
               isError={myAuctionsError}

@@ -1,10 +1,10 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
-
-import { createItem, getItems, updateItem } from "@/services/Api/itemServicesApi";
+import { CacheKeys } from "@/enums/cacheKeys";
+import { getApiErrorMessage } from "@/lib/getApiErrorMessage";
+import { createItem, getItems, updateItem } from "@/services/Api/ItemServicesApi";
 import type {
   CreateItemRequest,
   GetItemsParams,
@@ -13,7 +13,7 @@ import type {
 
 export function useItems(params?: GetItemsParams) {
   return useQuery({
-    queryKey: ["/api/items", params ?? {}],
+    queryKey: [CacheKeys.ITEMS, params ?? {}],
     queryFn: () => getItems(params),
   });
 }
@@ -24,7 +24,7 @@ export function useCreateItem() {
   return useMutation({
     mutationFn: (itemData: CreateItemRequest) => createItem(itemData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/items"] });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ITEMS] });
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, "Failed to create item"));
@@ -44,20 +44,12 @@ export function useUpdateItem() {
       itemData: UpdateItemRequest;
     }) => updateItem(itemId, itemData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/items"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/auctions/me"] });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ITEMS] });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.MY_AUCTIONS] });
       toast.success("Item updated successfully!");
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, "Failed to update item"));
     },
   });
-}
-
-function getApiErrorMessage(error: unknown, fallbackMessage: string) {
-  if (axios.isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message || fallbackMessage;
-  }
-
-  return fallbackMessage;
 }
