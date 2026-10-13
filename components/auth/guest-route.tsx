@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import { BidSphereLoader } from "@/components/ui/bidsphere-loader";
+import { getDashboardPath } from "@/lib/auth/dashboard-path";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
 export function GuestRoute({ children }: { children: React.ReactNode }) {
@@ -11,18 +13,12 @@ export function GuestRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isLoading && isSuccess && meData?.user) {
-      router.push("/dashboard");
+      router.push(getDashboardPath(meData.user.role));
     }
   }, [isLoading, isSuccess, meData, router]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-sm font-medium text-muted-foreground animate-pulse">
-          Loading...
-        </p>
-      </div>
-    );
+    return <BidSphereLoader fullScreen text="Loading..." />;
   }
 
   if (meData?.user) {

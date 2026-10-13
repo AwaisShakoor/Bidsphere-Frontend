@@ -39,8 +39,6 @@ export async function resetPassword(body: ResetPasswordRequest) {
   return data;
 }
 
-
-
 export async function logoutUser() {
   const { data } = await api.delete<LogoutResponse>("/api/logout");
   return data;
@@ -52,6 +50,6 @@ export async function getMe() {
 }
 
 export async function refreshToken() {
-  const { data } = await api.post("/api/refresh")
+  const { data } = await api.post("/api/refresh");
   return data;
 }

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { BidSphereCard } from "@/components/auth/auth-card";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/form-field";
+import { getDashboardPath } from "@/lib/auth/dashboard-path";
 import {
   verifyEmailDefaultValues,
   verifyEmailSchema,
@@ -34,8 +35,10 @@ export function VerifyEmailForm() {
 
   function onSubmit(values: VerifyEmailFormValues) {
     mutate(values, {
-      onSuccess: () => {
-        router.push("/dashboard");
+      onSuccess: (data) => {
+        router.push(
+          data.user ? getDashboardPath(data.user.role) : "/login",
+        );
       },
     });
   }
