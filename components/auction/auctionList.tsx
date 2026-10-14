@@ -85,8 +85,8 @@ export function AuctionList({
           <span>Item</span>
           <span>Status</span>
           <span>Price</span>
-          <span>Ends</span>
-          <span className="text-right">Actions</span>
+          <span className="ml-10">Ends</span>
+          <span className="text-center">Actions</span>
         </div>
 
         <ul className="divide-y divide-border">

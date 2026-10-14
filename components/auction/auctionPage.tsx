@@ -4,8 +4,24 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
 import { AuctionList } from "@/components/auction/auctionList";
+import { AuctionSearchInput } from "@/components/auction/auctionSearchInput";
+import { AuctionSortSelect } from "@/components/auction/auctionSortSelect";
+import { AuctionStatusSelect } from "@/components/auction/auctionStatusSelect";
 import { CreateAuctionForm } from "@/components/auction/createAuctionForm";
 import { Button } from "@/components/ui/button";
+import {
+  DEFAULT_AUCTION_SORT,
+  type AuctionSortValue,
+} from "@/enums/auctionSort";
+import {
+  DEFAULT_AUCTION_STATUS,
+  type AuctionStatusValue,
+} from "@/enums/auctionStatus";
+import {
+  filterAuctionsByStatus,
+  filterAuctionsByTitle,
+} from "@/lib/auctionFilter";
+import { sortAuctions } from "@/lib/auctionSort";
 import { useMyAuctions } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
@@ -17,6 +33,18 @@ export function AuctionPage() {
   } = useMyAuctions();
   const [view, setView] = useState<"list" | "form">("list");
   const [selectedAuction, setSelectedAuction] = useState<Auction | null>(null);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<AuctionStatusValue>(
+    DEFAULT_AUCTION_STATUS,
+  );
+  const [sort, setSort] = useState<AuctionSortValue>(DEFAULT_AUCTION_SORT);
+  const visibleAuctions = sortAuctions(
+    filterAuctionsByStatus(
+      filterAuctionsByTitle(myAuctions, search),
+      status,
+    ),
+    sort,
+  );
 
   function handleCreate() {
     setSelectedAuction(null);
@@ -89,12 +117,21 @@ export function AuctionPage() {
           </Button>
         </section>
 
-        <AuctionList
-          auctions={myAuctions}
-          isLoading={isLoading}
-          isError={isError}
-          onEdit={handleEdit}
-        />
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+              <AuctionSearchInput value={search} onChange={setSearch} />
+              <AuctionStatusSelect value={status} onChange={setStatus} />
+            </div>
+            <AuctionSortSelect value={sort} onChange={setSort} />
+          </div>
+          <AuctionList
+            auctions={visibleAuctions}
+            isLoading={isLoading}
+            isError={isError}
+            onEdit={handleEdit}
+          />
+        </div>
       </div>
     </main>
   );
