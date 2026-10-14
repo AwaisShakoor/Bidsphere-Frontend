@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
-
+import Link from "next/link";
+import { ArrowLeft, Plus } from "lucide-react";
 import { AuctionList } from "@/components/auction/auctionList";
 import { CreateAuctionForm } from "@/components/auction/createAuctionForm";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,14 @@ export function AuctionPage() {
       />
 
       <div className="app-container relative flex flex-col gap-6 py-8 sm:py-10">
+        <Link
+          href="/dashboard"
+          className="inline-flex w-fit cursor-pointer items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Back to dashboard
+        </Link>
+
         <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-medium tracking-wide text-primary uppercase">

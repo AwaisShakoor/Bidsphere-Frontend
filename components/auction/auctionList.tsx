@@ -15,6 +15,9 @@ type AuctionListProps = {
   onEdit: (auction: Auction) => void;
 };
 
+const AUCTION_LIST_GRID =
+  "sm:grid-cols-[minmax(0,1.6fr)_6.5rem_6.5rem_minmax(8rem,0.9fr)_9.5rem]";
+
 function formatMoney(value: string | null) {
   const amount = Number(value);
   if (Number.isNaN(amount)) return "—";
@@ -76,7 +79,9 @@ export function AuctionList({
   return (
     <>
       <div className="overflow-hidden rounded-2xl bg-card shadow-md shadow-primary/5 ring-1 ring-border">
-        <div className="hidden grid-cols-[minmax(0,1.4fr)_0.7fr_0.7fr_0.7fr_auto] gap-3 border-b border-border px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase sm:grid">
+        <div
+          className={`hidden gap-3 border-b border-border px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase sm:grid sm:items-center ${AUCTION_LIST_GRID}`}
+        >
           <span>Item</span>
           <span>Status</span>
           <span>Price</span>
@@ -91,7 +96,7 @@ export function AuctionList({
             return (
               <li
                 key={auction.id}
-                className="grid gap-3 px-4 py-4 sm:grid-cols-[minmax(0,1.4fr)_0.7fr_0.7fr_0.7fr_auto] sm:items-center"
+                className={`grid gap-3 px-4 py-4 sm:items-center ${AUCTION_LIST_GRID}`}
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">

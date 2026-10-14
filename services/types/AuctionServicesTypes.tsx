@@ -1,12 +1,18 @@
 import type { ItemCondition } from "@/enums/itemCondition";
 import type { ShippingType } from "@/enums/shippingType";
 
+export type AuctionItemImage = {
+  id: string;
+  url: string;
+};
+
 export type AuctionItem = {
   id: string;
   title: string;
   description: string;
   itemCondition: ItemCondition;
   categoryId: string;
+  images?: AuctionItemImage[];
 };
 
 export type Auction = {

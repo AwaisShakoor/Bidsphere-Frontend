@@ -1,5 +1,6 @@
 "use client";
 
+import { ImageIcon } from "lucide-react";
 import { AuctionCardsSkeleton } from "@/components/auction/auctionCardsSkeleton";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
@@ -56,37 +57,54 @@ export function AuctionCards({
     <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {auctions.map((auction) => {
         const price = auction.currentBid ?? auction.startingPrice;
+        const coverImage = auction.item.images?.[0];
 
         return (
           <li
             key={auction.id}
-            className="rounded-2xl bg-card p-4 shadow-md shadow-primary/5 ring-1 ring-border"
+            className="overflow-hidden rounded-2xl bg-card shadow-md shadow-primary/5 ring-1 ring-border"
           >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-sm font-semibold tracking-tight text-foreground">
-                {auction.item.title}
-              </p>
-              <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {auction.status}
-              </span>
+            <div className="relative aspect-video bg-muted">
+              {coverImage ? (
+                <img
+                  src={coverImage.url}
+                  alt={auction.item.title}
+                  className="size-full object-cover"
+                />
+              ) : (
+                <div className="flex size-full items-center justify-center text-muted-foreground">
+                  <ImageIcon className="size-8" aria-hidden />
+                </div>
+              )}
             </div>
-            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-              {auction.item.description}
-            </p>
-            <div className="mt-4 flex items-end justify-between gap-3">
-              <div>
-                <p className="text-xs text-muted-foreground">
-                  {auction.currentBid ? "Current bid" : "Starting at"}
+
+            <div className="p-4">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-sm font-semibold tracking-tight text-foreground">
+                  {auction.item.title}
                 </p>
-                <p className="text-base font-semibold text-foreground">
-                  {formatMoney(price)}
+                <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                  {auction.status}
+                </span>
+              </div>
+              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                {auction.item.description}
+              </p>
+              <div className="mt-4 flex items-end justify-between gap-3">
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    {auction.currentBid ? "Current bid" : "Starting at"}
+                  </p>
+                  <p className="text-base font-semibold text-foreground">
+                    {formatMoney(price)}
+                  </p>
+                </div>
+                <p className="text-right text-xs text-muted-foreground">
+                  Ends
+                  <br />
+                  {formatDate(auction.endTime)}
                 </p>
               </div>
-              <p className="text-right text-xs text-muted-foreground">
-                Ends
-                <br />
-                {formatDate(auction.endTime)}
-              </p>
             </div>
           </li>
         );

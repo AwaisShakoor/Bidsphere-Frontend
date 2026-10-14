@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { List } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AuctionCards } from "@/components/auction/auctionCards";
 import { CategoriesSkeleton } from "@/components/dashboard/categoriesSkeleton";
 import { Button } from "@/components/ui/button";
@@ -118,10 +118,14 @@ export function Dashboard() {
                   Your listed auctions as cards.
                 </p>
               </div>
-              <Button asChild variant="outline" size="sm" className="gap-1.5">
+              <Button
+                asChild
+                variant="outline"
+                className="h-9 gap-2 rounded-full border-primary/25 bg-primary/5 px-4 text-primary shadow-sm transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+              >
                 <Link href="/dashboard/my-auctions">
-                  <List className="size-3.5" />
                   Manage listings
+                  <ArrowRight className="size-3.5" />
                 </Link>
               </Button>
             </div>
