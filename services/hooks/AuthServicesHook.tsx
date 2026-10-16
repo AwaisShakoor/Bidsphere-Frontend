@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
-
 import {
   forgotPassword,
   getMe,
@@ -12,7 +11,7 @@ import {
   registerUser,
   resetPassword,
   verifyEmail,
-} from "@/services/Api/AuthApiServices";
+} from "@/services/Api/AuthServicesApi";
 import type {
   ForgotPasswordRequest,
   LoginRequest,
