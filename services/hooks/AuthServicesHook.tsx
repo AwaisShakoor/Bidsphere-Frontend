@@ -1,9 +1,9 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
+import { queryClient } from "@/components/providers/queryProvider/queryClient";
+import { CacheKeys } from "@/enums/cacheKeys";
 import {
   forgotPassword,
   getMe,
@@ -12,7 +12,7 @@ import {
   registerUser,
   resetPassword,
   verifyEmail,
-} from "@/services/Api/AuthApiServices";
+} from "@/services/api/AuthServicesApi";
 import type {
   ForgotPasswordRequest,
   LoginRequest,
@@ -26,9 +26,10 @@ export function useLogin() {
     mutationFn: (body: LoginRequest) => loginUser(body),
     onSuccess: (data) => {
       toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Invalid email or password"));
+      toast.error(error.message);
     },
   });
 }
@@ -40,7 +41,7 @@ export function useRegister() {
       toast.success(data.message || "OTP sent successfully!");
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Registration failed. Try again."));
+      toast.error(error.message);
     },
   });
 }
@@ -50,9 +51,10 @@ export function useVerifyEmail() {
     mutationFn: (body: VerifyEmailRequest) => verifyEmail(body),
     onSuccess: (data) => {
       toast.success(data.message || "Email verified successfully!");
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Invalid or expired OTP"));
+      toast.error(error.message);
     },
   });
 }
@@ -64,7 +66,7 @@ export function useForgotPassword() {
       toast.success(data.message || "OTP sent successfully!");
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Failed to send OTP. Try again."));
+      toast.error(error.message);
     },
   });
 }
@@ -74,39 +76,30 @@ export function useResetPassword() {
     mutationFn: (body: ResetPasswordRequest) => resetPassword(body),
     onSuccess: (data) => {
       toast.success(data.message || "Password reset successfully!");
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Failed to reset password"));
+      toast.error(error.message);
     },
   });
 }
 
 export function useLogout() {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: (data) => {
       toast.success(data.message || "Logged out successfully!");
-      queryClient.removeQueries({ queryKey: ["/api/me"] });
+      queryClient.removeQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Logout failed"));
+      toast.error(error.message);
     },
   });
 }
 
-function getAuthErrorMessage(error: unknown, fallbackMessage?: string) {
-  if (axios.isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message || fallbackMessage || "Something went wrong. Try again.";
-  }
-
-  return fallbackMessage || "Something went wrong. Try again.";
-}
-
 export function useMe() {
   return useQuery({
-    queryKey: ["/api/me"],
+    queryKey: [CacheKeys.ME],
     queryFn: getMe,
     retry: false,
   });
