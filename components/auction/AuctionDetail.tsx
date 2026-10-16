@@ -4,11 +4,12 @@ import { ArrowLeft, Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useAuction } from "@/services/hooks/AuctionServicesHook";
+import type { Auction } from "@/services/types/AuctionServicesTypes";
 
 type AuctionDetailProps = {
   auctionId: string;
   onBack: () => void;
-  onEditAuction: () => void;
+  onEditAuction: (auction: Auction) => void;
 };
 
 function formatDate(value: string) {
@@ -87,7 +88,7 @@ export function AuctionDetail({
               type="button"
               variant="outline"
               className="h-10 shrink-0 gap-1.5"
-              onClick={onEditAuction}
+              onClick={() => onEditAuction(auction)}
             >
               <Pencil className="size-4" />
               Edit auction

@@ -2,58 +2,57 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { AuctionDetail } from "@/components/auction/AuctionDetail";
 import { AuctionForm } from "@/components/auction/AuctionForm";
 import { AuctionList } from "@/components/auction/AuctionList";
 import { Button } from "@/components/ui/button";
-import {
-  useAuction,
-  useAuctions,
-} from "@/services/hooks/AuctionServicesHook";
+import { useAuctions } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
-type AuctionView = "list" | "detail" | "form";
-
 export function AuctionPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const auctionId = searchParams.get("id");
+
+  const [editingAuction, setEditingAuction] = useState<Auction | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+
   const { data: auctions = [], isLoading } = useAuctions();
-  const [view, setView] = useState<AuctionView>("list");
-  const [selectedAuctionId, setSelectedAuctionId] = useState<string | null>(
-    null,
-  );
-  const { data: selectedAuction } = useAuction(
-    view === "form" ? selectedAuctionId : null,
-  );
+
+  const showForm = isCreating || editingAuction !== null;
+
+  function goToList() {
+    setIsCreating(false);
+    setEditingAuction(null);
+    router.push("/my-auctions");
+  }
 
   function handleCreateAuction() {
-    setSelectedAuctionId(null);
-    setView("form");
+    setEditingAuction(null);
+    setIsCreating(true);
   }
 
   function handleOpenAuction(auction: Auction) {
-    setSelectedAuctionId(auction.id);
-    setView("detail");
+    setIsCreating(false);
+    setEditingAuction(null);
+    router.push(`/my-auctions?id=${auction.id}`);
   }
 
-  function handleEditAuction(auction?: Auction) {
-    if (auction) setSelectedAuctionId(auction.id);
-    setView("form");
-  }
-
-  function handleBackToList() {
-    setSelectedAuctionId(null);
-    setView("list");
+  function handleEditAuction(auction: Auction) {
+    setIsCreating(false);
+    setEditingAuction(auction);
   }
 
   function handleBackFromForm() {
-    if (selectedAuctionId) {
-      setView("detail");
-      return;
-    }
-    handleBackToList();
+    setIsCreating(false);
+    setEditingAuction(null);
   }
 
-  if (view === "form") {
+  if (showForm) {
+    const isEdit = editingAuction !== null;
+
     return (
       <main className="relative flex-1 overflow-hidden">
         <div
@@ -68,41 +67,37 @@ export function AuctionPage() {
             className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-4" />
-            {selectedAuctionId ? "Back to auction" : "My auctions"}
+            {auctionId ? "Back to auction" : "My auctions"}
           </button>
 
           <div className="space-y-2">
             <h1 className="text-2xl font-semibold tracking-tight">
-              {selectedAuctionId ? "Edit auction" : "Add auction"}
+              {isEdit ? "Edit auction" : "Add auction"}
             </h1>
             <p className="text-sm text-muted-foreground">
-              {selectedAuctionId
+              {isEdit
                 ? "Update the title, description, and schedule."
                 : "Set the title, description, and schedule. Items can be added later."}
             </p>
           </div>
 
           <div className="rounded-2xl bg-card px-6 py-8 shadow-xl shadow-primary/10 ring-1 ring-border sm:px-8">
-            {selectedAuctionId && !selectedAuction ? (
-              <p className="text-sm text-muted-foreground">Loading auction...</p>
-            ) : (
-              <AuctionForm
-                auction={selectedAuction}
-                onBack={handleBackFromForm}
-              />
-            )}
+            <AuctionForm
+              auction={editingAuction ?? undefined}
+              onBack={handleBackFromForm}
+            />
           </div>
         </div>
       </main>
     );
   }
 
-  if (view === "detail" && selectedAuctionId) {
+  if (auctionId) {
     return (
       <AuctionDetail
-        auctionId={selectedAuctionId}
-        onBack={handleBackToList}
-        onEditAuction={() => handleEditAuction()}
+        auctionId={auctionId}
+        onBack={goToList}
+        onEditAuction={handleEditAuction}
       />
     );
   }
