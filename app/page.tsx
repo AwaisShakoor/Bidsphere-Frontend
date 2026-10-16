@@ -1,5 +1,5 @@
-import { GuestRoute } from "@/components/auth/guest-route";
-import { LoginForm } from "@/components/auth/login-form";
+import { GuestRoute } from "@/components/auth/GuestRoute";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 export default function Home() {
   return (
