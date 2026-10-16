@@ -1,9 +1,9 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
-
+import { CacheKeys } from "@/enums/cacheKeys";
+import { getApiErrorMessage } from "@/lib/getApiErrorMessage";
 import {
   forgotPassword,
   getMe,
@@ -12,7 +12,7 @@ import {
   registerUser,
   resetPassword,
   verifyEmail,
-} from "@/services/Api/AuthApiServices";
+} from "@/services/Api/AuthServicesApi";
 import type {
   ForgotPasswordRequest,
   LoginRequest,
@@ -28,7 +28,7 @@ export function useLogin() {
       toast.success(data.message);
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Invalid email or password"));
+      toast.error(getApiErrorMessage(error, "Invalid email or password"));
     },
   });
 }
@@ -40,7 +40,7 @@ export function useRegister() {
       toast.success(data.message || "OTP sent successfully!");
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Registration failed. Try again."));
+      toast.error(getApiErrorMessage(error, "Registration failed. Try again."));
     },
   });
 }
@@ -52,7 +52,7 @@ export function useVerifyEmail() {
       toast.success(data.message || "Email verified successfully!");
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Invalid or expired OTP"));
+      toast.error(getApiErrorMessage(error, "Invalid or expired OTP"));
     },
   });
 }
@@ -64,7 +64,7 @@ export function useForgotPassword() {
       toast.success(data.message || "OTP sent successfully!");
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Failed to send OTP. Try again."));
+      toast.error(getApiErrorMessage(error, "Failed to send OTP. Try again."));
     },
   });
 }
@@ -76,7 +76,7 @@ export function useResetPassword() {
       toast.success(data.message || "Password reset successfully!");
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Failed to reset password"));
+      toast.error(getApiErrorMessage(error, "Failed to reset password"));
     },
   });
 }
@@ -88,25 +88,17 @@ export function useLogout() {
     mutationFn: logoutUser,
     onSuccess: (data) => {
       toast.success(data.message || "Logged out successfully!");
-      queryClient.removeQueries({ queryKey: ["/api/me"] });
+      queryClient.removeQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
-      toast.error(getAuthErrorMessage(error, "Logout failed"));
+      toast.error(getApiErrorMessage(error, "Logout failed"));
     },
   });
 }
 
-function getAuthErrorMessage(error: unknown, fallbackMessage?: string) {
-  if (axios.isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message || fallbackMessage || "Something went wrong. Try again.";
-  }
-
-  return fallbackMessage || "Something went wrong. Try again.";
-}
-
 export function useMe() {
   return useQuery({
-    queryKey: ["/api/me"],
+    queryKey: [CacheKeys.ME],
     queryFn: getMe,
     retry: false,
   });

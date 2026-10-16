@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { BidSphereCard } from "@/components/auth/auth-card";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/form-field";
+import { getDashboardPath } from "@/lib/auth/dashboard-path";
 import {
   loginDefaultValues,
   loginSchema,
@@ -29,7 +30,7 @@ export function LoginForm() {
 
   function onSubmit(values: LoginFormValues) {
     mutate(values, {
-      onSuccess: () => router.push("/dashboard"),
+      onSuccess: (data) => router.push(getDashboardPath(data.user.role)),
     });
   }
 
