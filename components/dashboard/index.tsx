@@ -1,10 +1,10 @@
 "use client";
 
-import { CategoryList } from "@/components/category/CategoryList";
+import { CategoryList } from "@/components/category";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
 export function Dashboard() {
-  const { data: meData } = useMe();
+  const { data: meData, isPending } = useMe();
   const user = meData?.user;
 
   return (
@@ -19,12 +19,21 @@ export function Dashboard() {
           <p className="text-sm font-medium tracking-wide text-primary uppercase">
             Welcome back
           </p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-            Hello, {user?.firstName}
-          </h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Browse categories and find auctions to bid on.
-          </p>
+          {isPending ? (
+            <div className="mt-1 space-y-2">
+              <div className="h-9 w-48 max-w-full animate-pulse rounded bg-muted" />
+              <div className="h-4 w-72 max-w-full animate-pulse rounded bg-muted" />
+            </div>
+          ) : (
+            <>
+              <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+                Hello, {user?.firstName}
+              </h1>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Browse categories and find auctions to bid on.
+              </p>
+            </>
+          )}
         </section>
 
         <section>

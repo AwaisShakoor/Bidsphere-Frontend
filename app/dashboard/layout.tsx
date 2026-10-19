@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Navbar } from "@/components/layout/Navbar";
+import { Navbar } from "@/components/layout";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (

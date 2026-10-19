@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CategoriesSkeleton } from "@/components/category/CategoriesSkeleton";
+import { CategoriesSkeleton } from "./CategoriesSkeleton";
 import {
   ALL_CATEGORIES_ICON,
   getCategoryIcon,
@@ -10,10 +10,10 @@ import { useCategories } from "@/services/hooks/CategoryServicesHook";
 
 export function CategoryList() {
   const router = useRouter();
-  const { data, isLoading } = useCategories();
+  const { data, isPending } = useCategories();
   const categories = data?.data ?? [];
 
-  if (isLoading) {
+  if (isPending) {
     return <CategoriesSkeleton />;
   }
 

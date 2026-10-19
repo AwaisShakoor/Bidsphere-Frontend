@@ -1,13 +1,6 @@
 import { z } from "zod";
+import { toDatetimeLocal } from "@/lib/format";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
-
-function toDatetimeLocal(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
 
 export const auctionSchema = z
   .object({
@@ -23,10 +16,10 @@ export const auctionSchema = z
     startTime: z.string().min(1, "Start time is required"),
     endTime: z.string().min(1, "End time is required"),
   })
-  .refine(
-    (data) => new Date(data.endTime) > new Date(data.startTime),
-    { message: "End time must be after start time", path: ["endTime"] },
-  );
+  .refine((data) => new Date(data.endTime) > new Date(data.startTime), {
+    message: "End time must be after start time",
+    path: ["endTime"],
+  });
 
 export type AuctionFormValues = z.infer<typeof auctionSchema>;
 

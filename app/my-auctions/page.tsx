@@ -1,12 +1,13 @@
 import { Suspense } from "react";
-import { AuctionPage } from "@/components/auction/AuctionPage";
+import { AuctionPage } from "@/components/auction";
+import { Loader } from "@/components/ui/Loader";
 
 export default function MyAuctionsPage() {
   return (
     <Suspense
       fallback={
         <main className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-muted-foreground">Loading...</p>
+          <Loader label="Loading auctions..." />
         </main>
       }
     >

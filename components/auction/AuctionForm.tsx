@@ -88,6 +88,7 @@ export function AuctionForm({ auction, onBack }: AuctionFormProps) {
           label="Title"
           placeholder="e.g. Spring estate auction"
           autoComplete="off"
+          disabled={isPending}
           error={errors.title}
           {...register("title")}
         />
@@ -98,6 +99,7 @@ export function AuctionForm({ auction, onBack }: AuctionFormProps) {
             id="description"
             rows={5}
             placeholder="Describe what this auction covers"
+            disabled={isPending}
             aria-invalid={!!errors.description}
             className={cn(
               "w-full min-w-0 rounded-lg border border-input bg-transparent px-3.5 py-2.5 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30",
@@ -113,19 +115,21 @@ export function AuctionForm({ auction, onBack }: AuctionFormProps) {
           <Field
             label="Start time"
             type="datetime-local"
+            disabled={isPending}
             error={errors.startTime}
             {...register("startTime")}
           />
           <Field
             label="End time"
             type="datetime-local"
+            disabled={isPending}
             error={errors.endTime}
             {...register("endTime")}
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap justify-end items-center gap-3">
         <Button type="submit" disabled={isPending}>
           {isPending
             ? isEdit
