@@ -12,7 +12,7 @@ import type {
 
 export async function getAuctions() {
   try {
-    const { data } = await api.get<AuctionsResponse>("/api/auctions/me");
+    const { data } = await api.get<AuctionsResponse>("/api/auctions");
     return data.auctions;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to load auctions");
