@@ -1,9 +1,11 @@
 import api from "@/services/api";
 import { getErrorMessage } from "@/services/Api/getErrorMessage";
 import type {
+  CategoryItemsResponse,
   CreateItemRequest,
   CreateItemResponse,
   DeleteItemResponse,
+  Item,
   ItemResponse,
   ItemsResponse,
   UpdateItemRequest,
@@ -16,6 +18,19 @@ export async function getItems(auctionId: string) {
     return data.items;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to load items");
+  }
+}
+
+export async function getCategoryItems(slug: string): Promise<Item[]> {
+  try {
+    const { data } = await api.get<CategoryItemsResponse>(
+      `/api/category/${slug}/items`,
+    );
+    return data.data ?? data.items ?? [];
+  } catch (error) {
+    throw new Error(
+      getErrorMessage(error) || "Failed to load category items",
+    );
   }
 }
 

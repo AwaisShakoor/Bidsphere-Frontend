@@ -7,6 +7,7 @@ import { CacheKeys } from "@/enums/cacheKeys";
 import {
   createItem,
   deleteItem,
+  getCategoryItems,
   getItem,
   getItems,
   updateItem,
@@ -21,6 +22,14 @@ export function useItems(auctionId: string | null) {
     queryKey: [CacheKeys.ITEMS, auctionId],
     queryFn: () => getItems(auctionId!),
     enabled: Boolean(auctionId),
+  });
+}
+
+export function useCategoryItems(slug: string | null) {
+  return useQuery({
+    queryKey: [CacheKeys.CATEGORY_ITEMS, slug],
+    queryFn: () => getCategoryItems(slug!),
+    enabled: Boolean(slug),
   });
 }
 
@@ -42,6 +51,9 @@ export function useCreateItem() {
       toast.success(data.message || "Item created successfully!");
       queryClient.invalidateQueries({
         queryKey: [CacheKeys.ITEMS, data.item.auctionId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.CATEGORY_ITEMS],
       });
     },
     onError: (error) => {
@@ -66,6 +78,9 @@ export function useUpdateItem() {
       queryClient.invalidateQueries({
         queryKey: [CacheKeys.ITEM, data.item.auctionId, data.item.id],
       });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.CATEGORY_ITEMS],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -89,6 +104,9 @@ export function useDeleteItem() {
       });
       queryClient.removeQueries({
         queryKey: [CacheKeys.ITEM, variables.auctionId, variables.itemId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.CATEGORY_ITEMS],
       });
     },
     onError: (error) => {

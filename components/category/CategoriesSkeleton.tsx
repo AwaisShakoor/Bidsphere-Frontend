@@ -1,6 +1,6 @@
 import { CATEGORY_ICONS } from "@/lib/constants/categories";
 
-const SKELETON_COUNT = Object.keys(CATEGORY_ICONS).length + 1;
+const SKELETON_COUNT = Object.keys(CATEGORY_ICONS).length;
 
 export function CategoriesSkeleton() {
   return (

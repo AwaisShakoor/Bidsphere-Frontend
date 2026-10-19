@@ -78,6 +78,12 @@ export type ItemsResponse = {
   items: Item[];
 };
 
+export type CategoryItemsResponse = {
+  message: string;
+  data?: Item[];
+  items?: Item[];
+};
+
 export type ItemResponse = {
   message: string;
   item: Item;

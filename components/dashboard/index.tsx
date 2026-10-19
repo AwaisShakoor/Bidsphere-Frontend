@@ -42,20 +42,10 @@ export function Dashboard() {
               Shop by category
             </h2>
             <p className="text-sm text-muted-foreground">
-              Open a category to see its auctions.
+              Open a category to browse its items.
             </p>
           </div>
           <CategoryList />
-        </section>
-
-        <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-14 text-center">
-          <p className="text-sm font-medium text-foreground">
-            Pick a category to browse listings
-          </p>
-          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Public auction lists will load on each category page once that API
-            is connected.
-          </p>
         </section>
       </div>
     </main>
