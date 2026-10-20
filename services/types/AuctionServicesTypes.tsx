@@ -41,6 +41,11 @@ export type DeleteAuctionResponse = {
   message: string;
 };
 
+export type SubmitAuctionResponse = {
+  message: string;
+  auction: Auction;
+};
+
 export type AuctionsResponse = {
   message: string;
   auctions: Auction[];

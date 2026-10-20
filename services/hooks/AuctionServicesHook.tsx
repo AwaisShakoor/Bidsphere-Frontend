@@ -9,6 +9,7 @@ import {
   deleteAuction,
   getAuction,
   getAuctions,
+  submitAuction,
   updateAuction,
 } from "@/services/Api/AuctionServicesApi";
 import type {
@@ -67,6 +68,22 @@ export function useDeleteAuction() {
       toast.success(data.message || "Auction deleted successfully!");
       queryClient.invalidateQueries({ queryKey: [CacheKeys.AUCTIONS] });
       queryClient.removeQueries({ queryKey: [CacheKeys.AUCTION, id] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useSubmitAuction() {
+  return useMutation({
+    mutationFn: (id: string) => submitAuction(id),
+    onSuccess: (data) => {
+      toast.success(data.message || "Auction submitted for approval!");
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.AUCTIONS] });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.AUCTION, data.auction.id],
+      });
     },
     onError: (error) => {
       toast.error(error.message);

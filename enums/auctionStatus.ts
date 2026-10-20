@@ -1,0 +1,8 @@
+export enum AuctionStatus {
+  DRAFT = "DRAFT",
+  PENDING_APPROVAL = "PENDING_APPROVAL",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  LIVE = "LIVE",
+  ENDED = "ENDED",
+}

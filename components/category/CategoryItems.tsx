@@ -7,11 +7,19 @@ import { useCategoryItems } from "@/services/hooks/ItemServicesHook";
 import type { Item } from "@/services/types/ItemsServicesTypes";
 
 function getThumbnail(item: Item) {
-  return [...(item.images ?? [])].sort((a, b) => a.sortOrder - b.sortOrder)[0] ?? null;
+  return (
+    [...(item.images ?? [])].sort((a, b) => a.sortOrder - b.sortOrder)[0] ??
+    null
+  );
 }
 
 export function CategoryItems({ slug }: { slug: string }) {
-  const { data: items = [], isPending, isError, error } = useCategoryItems(slug);
+  const {
+    data: items = [],
+    isPending,
+    isError,
+    error,
+  } = useCategoryItems(slug);
 
   if (isPending) {
     return <ItemListSkeleton />;

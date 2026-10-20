@@ -6,6 +6,7 @@ import type {
   CreateAuctionRequest,
   CreateAuctionResponse,
   DeleteAuctionResponse,
+  SubmitAuctionResponse,
   UpdateAuctionRequest,
   UpdateAuctionResponse,
 } from "@/services/types/AuctionServicesTypes";
@@ -57,5 +58,18 @@ export async function deleteAuction(id: string) {
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to delete auction");
+  }
+}
+
+export async function submitAuction(id: string) {
+  try {
+    const { data } = await api.post<SubmitAuctionResponse>(
+      `/api/auctions/${id}/submit`,
+    );
+    return data;
+  } catch (error) {
+    throw new Error(
+      getErrorMessage(error) || "Failed to submit auction for approval",
+    );
   }
 }
