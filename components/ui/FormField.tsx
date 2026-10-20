@@ -2,7 +2,7 @@
 
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -38,18 +38,16 @@ function Field({
           {...props}
         />
         {isPassword ? (
-          <button
+          <Button
             type="button"
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            variant="ghost"
+            size="icon-xs"
+            className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             onClick={() => setVisible((current) => !current)}
             aria-label={visible ? "Hide password" : "Show password"}
           >
-            {visible ? (
-              <EyeOff className="size-4" />
-            ) : (
-              <Eye className="size-4" />
-            )}
-          </button>
+            {visible ? <EyeOff /> : <Eye />}
+          </Button>
         ) : null}
       </div>
       {error?.message ? (

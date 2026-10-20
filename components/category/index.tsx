@@ -1,19 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CategoriesSkeleton } from "@/components/category/CategoriesSkeleton";
-import {
-  ALL_CATEGORIES_ICON,
-  getCategoryIcon,
-} from "@/lib/constants/categories";
+import { CategoriesSkeleton } from "./CategoriesSkeleton";
+import { getCategoryIcon } from "@/lib/constants/categories";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
 
 export function CategoryList() {
   const router = useRouter();
-  const { data, isLoading } = useCategories();
+  const { data, isPending } = useCategories();
   const categories = data?.data ?? [];
 
-  if (isLoading) {
+  if (isPending) {
     return <CategoriesSkeleton />;
   }
 
@@ -23,19 +20,6 @@ export function CategoryList() {
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-      <button
-        type="button"
-        onClick={() => router.push("/dashboard")}
-        className="cursor-pointer rounded-2xl bg-card p-4 text-left shadow-md shadow-primary/5 ring-1 ring-primary/40 transition"
-      >
-        <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-          <ALL_CATEGORIES_ICON className="size-5" aria-hidden />
-        </span>
-        <span className="mt-3 block text-sm font-medium text-foreground">
-          All categories
-        </span>
-      </button>
-
       {categories.map((category) => {
         const Icon = getCategoryIcon(category.slug);
 
@@ -44,7 +28,7 @@ export function CategoryList() {
             key={category.id}
             type="button"
             onClick={() =>
-              router.push(`/dashboard?category=${category.slug}`)
+              router.push(`/dashboard/category/${category.slug}`)
             }
             className="cursor-pointer rounded-2xl bg-card p-4 text-left shadow-md shadow-primary/5 ring-1 ring-border transition hover:ring-primary/30"
           >
@@ -60,3 +44,6 @@ export function CategoryList() {
     </div>
   );
 }
+
+export { CategoryItems } from "./CategoryItems";
+export { CategoryPage } from "./CategoryPage";

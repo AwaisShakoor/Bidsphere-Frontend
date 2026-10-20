@@ -2,25 +2,23 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import { Loader } from "@/components/ui/Loader";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
 export function GuestRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: meData, isLoading, isSuccess } = useMe();
+  const { data: meData, isPending, isSuccess } = useMe();
 
   useEffect(() => {
-    if (!isLoading && isSuccess && meData?.user) {
+    if (!isPending && isSuccess && meData?.user) {
       router.push("/dashboard");
     }
-  }, [isLoading, isSuccess, meData, router]);
+  }, [isPending, isSuccess, meData, router]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-sm font-medium text-muted-foreground animate-pulse">
-          Loading...
-        </p>
+        <Loader variant="orbit" />
       </div>
     );
   }

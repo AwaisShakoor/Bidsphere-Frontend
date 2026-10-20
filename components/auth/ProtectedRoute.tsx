@@ -2,24 +2,23 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Loader } from "@/components/ui/Loader";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: meData, isLoading, isError } = useMe();
+  const { data: meData, isPending, isError } = useMe();
 
   useEffect(() => {
-    if (!isLoading && (isError || !meData?.user)) {
+    if (!isPending && (isError || !meData?.user)) {
       router.push("/login");
     }
-  }, [isLoading, isError, meData, router]);
+  }, [isPending, isError, meData, router]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-sm font-medium text-muted-foreground animate-pulse">
-          Authenticating...
-        </p>
+        <Loader label="Authenticating..." variant="orbit" />
       </div>
     );
   }

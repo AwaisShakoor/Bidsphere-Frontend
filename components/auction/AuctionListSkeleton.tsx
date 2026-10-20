@@ -1,5 +1,5 @@
 const AUCTION_LIST_GRID =
-  "sm:grid-cols-[minmax(0,1.8fr)_7rem_minmax(8rem,1fr)_minmax(8rem,1fr)_9.5rem]";
+  "sm:grid-cols-[minmax(0,1.8fr)_7rem_minmax(8rem,1fr)_minmax(8rem,1fr)_5.5rem]";
 
 export function AuctionListSkeleton() {
   return (
@@ -27,8 +27,9 @@ export function AuctionListSkeleton() {
             <div className="h-5 w-16 animate-pulse rounded-md bg-muted" />
             <div className="h-4 w-28 animate-pulse rounded bg-muted" />
             <div className="h-4 w-28 animate-pulse rounded bg-muted" />
-            <div className="flex justify-end">
-              <div className="h-8 w-16 animate-pulse rounded-lg bg-muted" />
+            <div className="flex justify-end gap-1">
+              <div className="size-8 animate-pulse rounded-lg bg-muted" />
+              <div className="size-8 animate-pulse rounded-lg bg-muted" />
             </div>
           </li>
         ))}

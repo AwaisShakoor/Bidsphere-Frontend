@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Navbar } from "@/components/layout/Navbar";
+import { Navbar } from "@/components/layout";
 
 export default function MyAuctionsLayout({ children }: { children: ReactNode }) {
   return (

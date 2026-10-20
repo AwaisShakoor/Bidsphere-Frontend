@@ -1,7 +1,11 @@
+import { CATEGORY_ICONS } from "@/lib/constants/categories";
+
+const SKELETON_COUNT = Object.keys(CATEGORY_ICONS).length;
+
 export function CategoriesSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-      {Array.from({ length: 6 }).map((_, index) => (
+      {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
         <div
           key={index}
           className="rounded-2xl bg-card p-4 shadow-md shadow-primary/5 ring-1 ring-border"

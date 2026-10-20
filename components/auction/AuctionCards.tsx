@@ -3,26 +3,21 @@
 import { Pencil } from "lucide-react";
 import { AuctionCardsSkeleton } from "@/components/auction/AuctionCardsSkeleton";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
 type AuctionCardsProps = {
   auctions: Auction[];
-  isLoading?: boolean;
+  isPending?: boolean;
   onEditAuction: (auction: Auction) => void;
 };
 
-function formatDate(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
-}
-
 export function AuctionCards({
   auctions,
-  isLoading = false,
+  isPending = false,
   onEditAuction,
 }: AuctionCardsProps) {
-  if (isLoading) {
+  if (isPending) {
     return <AuctionCardsSkeleton />;
   }
 

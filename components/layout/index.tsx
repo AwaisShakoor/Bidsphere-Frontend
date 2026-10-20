@@ -10,7 +10,7 @@ import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { data: meData } = useMe();
+  const { data: meData, isPending: isMePending } = useMe();
   const logout = useLogout();
   const user = meData?.user;
   const isSeller =
@@ -70,7 +70,9 @@ export function Navbar() {
             </Button>
           ) : null}
 
-          {user ? (
+          {isMePending ? (
+            <div className="hidden h-10 w-28 animate-pulse rounded-full bg-muted/60 sm:block" />
+          ) : user ? (
             <div className="hidden items-center gap-2.5 rounded-full bg-muted/60 py-1 pr-3 pl-1 sm:flex">
               <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                 {user.firstName.charAt(0).toUpperCase()}
