@@ -1,9 +1,10 @@
 import { Suspense } from "react";
-import { VerifyEmailForm } from "@/components/auth/verify-email-form";
+import { VerifyEmailForm } from "@/components/auth/VerifyEmailForm";
+import { Loader } from "@/components/ui/Loader";
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className="text-center text-sm text-muted-foreground">Loading...</div>}>
+    <Suspense fallback={<Loader variant="orbit" />}>
       <VerifyEmailForm />
     </Suspense>
   );

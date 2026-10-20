@@ -5,15 +5,15 @@ import { Check, Gavel, Store } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
-import { BidSphereCard } from "@/components/auth/auth-card";
+import { BidSphereCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/form-field";
+import { Field } from "@/components/ui/FormField";
 import { cn } from "@/lib/utils";
 import {
   signUpDefaultValues,
   signUpSchema,
   type SignUpFormValues,
-} from "@/lib/validations/auth";
+} from "@/lib/validationSchema/authSchema";
 import { useRegister } from "@/services/hooks/AuthServicesHook";
 import { UserRole } from "@/enums/userRole";
 

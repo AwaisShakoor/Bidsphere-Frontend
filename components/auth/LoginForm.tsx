@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
-import { BidSphereCard } from "@/components/auth/auth-card";
+import { BidSphereCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/form-field";
+import { Field } from "@/components/ui/FormField";
 import {
   loginDefaultValues,
   loginSchema,
   type LoginFormValues,
-} from "@/lib/validations/auth";
+} from "@/lib/validationSchema/authSchema";
 import { useLogin } from "@/services/hooks/AuthServicesHook";
 
 export function LoginForm() {

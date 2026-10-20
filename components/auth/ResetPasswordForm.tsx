@@ -4,14 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 
-import { BidSphereCard } from "@/components/auth/auth-card";
+import { BidSphereCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/form-field";
+import { Field } from "@/components/ui/FormField";
 import {
   resetPasswordDefaultValues,
   resetPasswordSchema,
   type ResetPasswordFormValues,
-} from "@/lib/validations/auth";
+} from "@/lib/validationSchema/authSchema";
 import { useResetPassword } from "@/services/hooks/AuthServicesHook";
 
 export function ResetPasswordForm() {
