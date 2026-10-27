@@ -248,6 +248,7 @@ export function AuctionPage() {
           isPending={isPending}
           onOpenAuction={handleOpenAuction}
           onEditAuction={handleEditAuction}
+          onCreateAuction={handleCreateAuction}
         />
       </div>
     </main>

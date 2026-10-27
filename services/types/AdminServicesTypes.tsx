@@ -1,4 +1,6 @@
 import { AuctionStatus } from "@/enums/auctionStatus";
+import type { ItemCondition } from "@/enums/itemCondition";
+import type { ShippingType } from "@/enums/shippingType";
 import { UserRole } from "@/enums/userRole";
 
 export type AdminUser = {
@@ -28,10 +30,22 @@ export type AdminAuctionItemImage = {
   url: string;
 };
 
+export type AdminAuctionItemCategory = {
+  id: string;
+  name: string;
+};
+
 export type AdminAuctionItem = {
   id: string;
   title: string;
+  description: string;
+  itemCondition: ItemCondition;
   startingPrice: string;
+  reservePrice: string | null;
+  shippingType: ShippingType;
+  shippingCost: string | null;
+  shippingEstimatedDays: number | null;
+  category: AdminAuctionItemCategory;
   images: AdminAuctionItemImage[];
 };
 
@@ -52,4 +66,23 @@ export type AdminAuctionsResponse = {
   success: boolean;
   message: string;
   data: AdminAuction[];
+};
+
+export type AdminAuctionResponse = {
+  success: boolean;
+  message: string;
+  data: AdminAuction;
+};
+
+export type AdminAuctionDecision = {
+  id: string;
+  status: AuctionStatus;
+  title: string;
+  rejectionReason?: string | null;
+};
+
+export type AdminAuctionDecisionResponse = {
+  success: boolean;
+  message: string;
+  data: AdminAuctionDecision;
 };

@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Shield } from "lucide-react";
 import { AdminSidebar } from "@/components/admin";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/layout";
@@ -16,23 +15,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <AdminSidebar />
           </aside>
 
-          <main className="min-w-0 flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
-            <header className="mb-8">
-              <div className="mt-2 flex items-center gap-3">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
-                  <Shield className="size-5" aria-hidden />
-                </span>
-                <div>
-                  <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                    Admin dashboard
-                  </h1>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Review auctions, manage users, and keep the platform
-                    running.
-                  </p>
-                </div>
-              </div>
-            </header>
+          <main className="min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
             {children}
           </main>
         </div>

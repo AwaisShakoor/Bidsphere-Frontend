@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function DeleteConfirmationDialog({
   open,
@@ -10,12 +11,24 @@ export function DeleteConfirmationDialog({
   isLoading = false,
   onConfirm,
   onClose,
+  title,
+  description = "This will permanently remove it. This action cannot be undone.",
+  confirmLabel = "Delete",
+  loadingLabel = "Deleting...",
+  icon = <Trash2 className="size-4" />,
+  variant = "destructive",
 }: {
   open: boolean;
   name: string;
   isLoading?: boolean;
   onConfirm: () => void;
   onClose: () => void;
+  title?: string;
+  description?: string;
+  confirmLabel?: string;
+  loadingLabel?: string;
+  icon?: ReactNode;
+  variant?: "destructive" | "default";
 }) {
   useEffect(() => {
     if (!open) return;
@@ -36,13 +49,15 @@ export function DeleteConfirmationDialog({
   if (!open) return null;
 
   const displayName = name.trim() || "Untitled";
+  const heading = title ?? `Delete “${displayName}”?`;
+  const isDestructive = variant === "destructive";
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby="delete-dialog-title"
-      aria-describedby="delete-dialog-description"
+      aria-labelledby="confirm-dialog-title"
+      aria-describedby="confirm-dialog-description"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-[2px]"
       onClick={() => {
         if (!isLoading) onClose();
@@ -53,22 +68,29 @@ export function DeleteConfirmationDialog({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <Trash2 className="size-4" />
+          <span
+            className={cn(
+              "flex size-9 shrink-0 items-center justify-center rounded-full",
+              isDestructive
+                ? "bg-destructive/10 text-destructive"
+                : "bg-primary/10 text-primary",
+            )}
+          >
+            {icon}
           </span>
 
           <div className="min-w-0 space-y-1">
             <h2
-              id="delete-dialog-title"
+              id="confirm-dialog-title"
               className="text-sm font-semibold text-foreground"
             >
-              Delete &ldquo;{displayName}&rdquo;?
+              {heading}
             </h2>
             <p
-              id="delete-dialog-description"
+              id="confirm-dialog-description"
               className="text-sm text-muted-foreground"
             >
-              This will permanently remove it. This action cannot be undone.
+              {description}
             </p>
           </div>
         </div>
@@ -86,9 +108,13 @@ export function DeleteConfirmationDialog({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="bg-destructive text-white hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30"
+            className={
+              isDestructive
+                ? "bg-destructive text-white hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30"
+                : undefined
+            }
           >
-            {isLoading ? "Deleting..." : "Delete"}
+            {isLoading ? loadingLabel : confirmLabel}
           </Button>
         </div>
       </div>

@@ -11,28 +11,11 @@ export const adminAuctionsTableColumns: DataTableColumn<AdminAuction>[] = [
   {
     accessorKey: "title",
     header: "Auction",
-    cell: (auction) => {
-      const thumb = auction.items[0]?.images[0]?.url;
-
-      return (
-        <div className="flex min-w-0 items-center gap-3">
-          {thumb ? (
-            <img
-              src={thumb}
-              alt=""
-              className="size-10 shrink-0 rounded-lg object-cover ring-1 ring-border"
-            />
-          ) : (
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-medium text-muted-foreground">
-              —
-            </span>
-          )}
-          <p className="truncate text-sm font-semibold text-foreground">
-            {auction.title}
-          </p>
-        </div>
-      );
-    },
+    cell: (auction) => (
+      <p className="truncate text-sm font-semibold text-foreground">
+        {auction.title || "Untitled"}
+      </p>
+    ),
   },
   {
     accessorKey: "seller",

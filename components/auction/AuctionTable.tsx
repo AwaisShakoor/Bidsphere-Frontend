@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import {
   AUCTION_TABLE_GRID,
   getAuctionTableColumns,
 } from "./auctionTableColumns";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/DataTable";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
 import { useDeleteAuction } from "@/services/hooks/AuctionServicesHook";
@@ -15,6 +17,7 @@ type AuctionTableProps = {
   isPending?: boolean;
   onOpenAuction: (auction: Auction) => void;
   onEditAuction: (auction: Auction) => void;
+  onCreateAuction?: () => void;
 };
 
 export function AuctionTable({
@@ -22,6 +25,7 @@ export function AuctionTable({
   isPending = false,
   onOpenAuction,
   onEditAuction,
+  onCreateAuction,
 }: AuctionTableProps) {
   const { mutate: deleteAuction, isPending: isDeleting } = useDeleteAuction();
   const [auctionToDelete, setAuctionToDelete] = useState<Auction | null>(null);
@@ -48,6 +52,19 @@ export function AuctionTable({
         gridClassName={AUCTION_TABLE_GRID}
         isPending={isPending}
         emptyTitle="No auctions yet"
+        emptyDescription="Create your first auction to list items, set a schedule, and submit it for approval."
+        emptyAction={
+          onCreateAuction ? (
+            <Button
+              type="button"
+              className="h-10 gap-1.5"
+              onClick={onCreateAuction}
+            >
+              <Plus data-icon="inline-start" />
+              Create auction
+            </Button>
+          ) : null
+        }
         filterPlaceholder="Search auctions..."
         onRowClick={onOpenAuction}
       />

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
 export const AUCTION_TABLE_GRID =
-  "grid-cols-[minmax(0,1.8fr)_7rem_minmax(8rem,1fr)_minmax(8rem,1fr)_5.5rem]";
+  "grid-cols-[minmax(0,1.6fr)_7rem_minmax(8rem,1.2fr)_minmax(7rem,1fr)_minmax(7rem,1fr)_5.5rem]";
 
 type AuctionTableColumnOptions = {
   isDeleting: boolean;
@@ -48,6 +48,18 @@ export function getAuctionTableColumns({
           {formatSnakeCase(auction.status)}
         </span>
       ),
+    },
+    {
+      accessorKey: "rejectionReason",
+      header: "Rejection reason",
+      cell: (auction) =>
+        auction.rejectionReason ? (
+          <p className="line-clamp-2 text-sm text-destructive">
+            {auction.rejectionReason}
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">—</p>
+        ),
     },
     {
       accessorKey: "startTime",

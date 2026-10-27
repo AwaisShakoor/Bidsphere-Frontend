@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Inbox, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type DataTableColumn<T> = {
@@ -23,6 +23,8 @@ type DataTableProps<T> = {
   isError?: boolean;
   error?: Error | null;
   emptyTitle?: string;
+  emptyDescription?: string;
+  emptyAction?: ReactNode;
   onRowClick?: (row: T) => void;
   enableFilter?: boolean;
   enableSort?: boolean;
@@ -70,6 +72,8 @@ export function DataTable<T>({
   isError = false,
   error = null,
   emptyTitle = "No results",
+  emptyDescription,
+  emptyAction,
   onRowClick,
   enableFilter = true,
   enableSort = true,
@@ -145,7 +149,24 @@ export function DataTable<T>({
   }
 
   if (data.length === 0) {
-    return <p className="text-sm text-muted-foreground">{emptyTitle}</p>;
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center shadow-sm shadow-primary/5">
+        <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <Inbox className="size-5" aria-hidden />
+        </span>
+        <div className="space-y-1.5">
+          <p className="text-base font-semibold tracking-tight text-foreground">
+            {emptyTitle}
+          </p>
+          {emptyDescription ? (
+            <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
+              {emptyDescription}
+            </p>
+          ) : null}
+        </div>
+        {emptyAction ? <div className="pt-1">{emptyAction}</div> : null}
+      </div>
+    );
   }
 
   return (
