@@ -13,6 +13,7 @@ import {
   loginSchema,
   type LoginFormValues,
 } from "@/lib/validationSchema/authSchema";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useLogin } from "@/services/hooks/AuthServicesHook";
 
 export function LoginForm() {
@@ -29,7 +30,7 @@ export function LoginForm() {
 
   function onSubmit(values: LoginFormValues) {
     mutate(values, {
-      onSuccess: () => router.push("/dashboard"),
+      onSuccess: (data) => router.push(getAuthRedirectPath(data.user.role)),
     });
   }
 

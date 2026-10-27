@@ -12,6 +12,7 @@ import {
   verifyEmailSchema,
   type VerifyEmailFormValues,
 } from "@/lib/validationSchema/authSchema";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useVerifyEmail } from "@/services/hooks/AuthServicesHook";
 
 export function VerifyEmailForm() {
@@ -34,8 +35,8 @@ export function VerifyEmailForm() {
 
   function onSubmit(values: VerifyEmailFormValues) {
     mutate(values, {
-      onSuccess: () => {
-        router.push("/dashboard");
+      onSuccess: (data) => {
+        router.push(getAuthRedirectPath(data.user?.role));
       },
     });
   }

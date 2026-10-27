@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/ui/Loader";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
 export function GuestRoute({ children }: { children: React.ReactNode }) {
@@ -11,7 +12,7 @@ export function GuestRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isPending && isSuccess && meData?.user) {
-      router.push("/dashboard");
+      router.push(getAuthRedirectPath(meData.user.role));
     }
   }, [isPending, isSuccess, meData, router]);
 

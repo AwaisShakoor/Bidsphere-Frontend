@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { BidSphereCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/FormField";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import {
   resetPasswordDefaultValues,
   resetPasswordSchema,
@@ -41,7 +42,7 @@ export function ResetPasswordForm() {
       },
       {
         onSuccess: () => {
-          router.push("/dashboard");
+          router.push(getAuthRedirectPath());
         },
       }
     );
