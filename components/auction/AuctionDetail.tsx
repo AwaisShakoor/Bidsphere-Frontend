@@ -2,10 +2,12 @@
 
 import { ArrowLeft, Plus, Send } from "lucide-react";
 import { AuctionDetailSkeleton } from "@/components/auction/AuctionDetailSkeleton";
-import { ItemList } from "@/components/item";
+import { ItemTable } from "@/components/item";
 import { Button } from "@/components/ui/button";
 import { AuctionStatus } from "@/enums/auctionStatus";
-import { formatDate } from "@/lib/format";
+import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
+import { formatDate, formatSnakeCase } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import {
   useAuction,
   useSubmitAuction,
@@ -41,8 +43,10 @@ export function AuctionDetail({
     error: itemsError,
   } = useItems(auctionId);
   const { mutate: submitAuction, isPending: isSubmitting } = useSubmitAuction();
-  const isDraft =
-    auction?.status?.toUpperCase() === AuctionStatus.DRAFT;
+  const status = (auction?.status?.toUpperCase() ?? "") as AuctionStatus | "";
+  const isDraft = status === AuctionStatus.DRAFT;
+  const isPendingApproval = status === AuctionStatus.PENDING_APPROVAL;
+  const canManageItems = isDraft;
 
   return (
     <main className="relative flex-1 overflow-hidden">
@@ -75,14 +79,9 @@ export function AuctionDetail({
             <section className="rounded-2xl bg-card p-5 shadow-md shadow-primary/5 ring-1 ring-border sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-medium tracking-wide text-primary uppercase">
-                      Auction
-                    </p>
-                    <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                      {auction.status.replaceAll("_", " ")}
-                    </span>
-                  </div>
+                  <p className="text-xs font-medium tracking-wide text-primary uppercase">
+                    Auction
+                  </p>
 
                   <h1 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                     {auction.title || "Untitled"}
@@ -104,15 +103,22 @@ export function AuctionDetail({
                     type="button"
                     className="h-10 shrink-0 gap-1.5"
                     disabled={
-                      isSubmitting ||
-                      isItemsPending ||
-                      items.length === 0
+                      isSubmitting || isItemsPending || items.length === 0
                     }
                     onClick={() => submitAuction(auctionId)}
                   >
                     <Send data-icon="inline-start" />
                     {isSubmitting ? "Submitting..." : "Submit for approval"}
                   </Button>
+                ) : status ? (
+                  <span
+                    className={cn(
+                      "inline-flex h-10 shrink-0 items-center rounded-xl px-3.5 text-sm font-medium",
+                      getAuctionStatusClass(status),
+                    )}
+                  >
+                    {formatSnakeCase(status)}
+                  </span>
                 ) : null}
               </div>
 
@@ -160,6 +166,12 @@ export function AuctionDetail({
                 <Button
                   type="button"
                   className="h-10 gap-1.5"
+                  disabled={!canManageItems}
+                  title={
+                    isPendingApproval
+                      ? "Items cannot be changed while pending approval"
+                      : undefined
+                  }
                   onClick={onAddItem}
                 >
                   <Plus data-icon="inline-start" />
@@ -167,14 +179,13 @@ export function AuctionDetail({
                 </Button>
               </div>
 
-              <ItemList
+              <ItemTable
                 auctionId={auctionId}
                 items={items}
                 isPending={isItemsPending}
                 isError={isItemsError}
-                errorMessage={
-                  itemsError instanceof Error ? itemsError.message : undefined
-                }
+                error={itemsError}
+                actionsDisabled={!canManageItems}
                 onOpenItem={(item) => onOpenItem(item.id)}
                 onEditItem={onEditItem}
               />

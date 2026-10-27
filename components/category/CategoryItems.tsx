@@ -2,7 +2,7 @@
 
 import { ImageIcon } from "lucide-react";
 import { ItemListSkeleton } from "@/components/item/ItemListSkeleton";
-import { formatMoney } from "@/lib/format";
+import { formatSnakeCase, formatMoney } from "@/lib/format";
 import { useCategoryItems } from "@/services/hooks/ItemServicesHook";
 import type { Item } from "@/services/types/ItemsServicesTypes";
 
@@ -77,7 +77,7 @@ export function CategoryItems({ slug }: { slug: string }) {
             </div>
             <div className="space-y-2 p-4">
               <span className="inline-flex rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {item.itemCondition.replaceAll("_", " ")}
+                {formatSnakeCase(item.itemCondition)}
               </span>
               <h3 className="truncate text-sm font-semibold text-foreground">
                 {item.title || "Untitled"}

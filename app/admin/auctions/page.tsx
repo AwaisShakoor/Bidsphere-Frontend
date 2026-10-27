@@ -1,4 +1,4 @@
-import { AdminAuctionsPage } from "@/components/admin/AdminAuctionsPage";
+import { AdminAuctionsPage } from "@/components/admin";
 
 export default function AdminAuctionsRoutePage() {
   return <AdminAuctionsPage />;

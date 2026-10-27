@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Shield } from "lucide-react";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminSidebar } from "@/components/admin";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/layout";
 import { UserRole } from "@/enums/userRole";

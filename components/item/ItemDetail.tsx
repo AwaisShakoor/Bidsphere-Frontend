@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { ImageLightbox } from "@/components/item/ImageLightbox";
 import { ItemDetailSkeleton } from "@/components/item/ItemDetailSkeleton";
 import { Button } from "@/components/ui/button";
-import { formatMoney } from "@/lib/format";
+import { formatSnakeCase, formatMoney } from "@/lib/format";
 import { useItem } from "@/services/hooks/ItemServicesHook";
 
 export function ItemDetail({
@@ -54,7 +54,7 @@ export function ItemDetail({
                   Item
                 </p>
                 <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  {item.itemCondition.replaceAll("_", " ")}
+                  {formatSnakeCase(item.itemCondition)}
                 </span>
               </div>
               <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -87,7 +87,7 @@ export function ItemDetail({
                   Shipping
                 </p>
                 <p className="mt-1 text-sm font-medium text-foreground">
-                  {item.shippingType.replaceAll("_", " ")}
+                  {formatSnakeCase(item.shippingType)}
                   {item.shippingCost
                     ? ` · ${formatMoney(item.shippingCost)}`
                     : ""}

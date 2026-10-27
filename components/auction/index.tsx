@@ -6,12 +6,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { AuctionDetail } from "./AuctionDetail";
 import { AuctionForm } from "./AuctionForm";
-import { AuctionList } from "./AuctionList";
+import { AuctionTable } from "./AuctionTable";
 import { ItemDetail, ItemForm } from "@/components/item";
 import { Button } from "@/components/ui/button";
 import { useAuctions } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 import type { Item } from "@/services/types/ItemsServicesTypes";
+
+export { AuctionTable } from "./AuctionTable";
 
 export function AuctionPage() {
   const router = useRouter();
@@ -241,7 +243,7 @@ export function AuctionPage() {
           </Button>
         </section>
 
-        <AuctionList
+        <AuctionTable
           auctions={auctions}
           isPending={isPending}
           onOpenAuction={handleOpenAuction}

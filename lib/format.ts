@@ -5,6 +5,18 @@ export function formatMoney(value: string | null) {
   return `$${amount.toFixed(2)}`;
 }
 
+export function formatSnakeCase(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((word, index) =>
+      index === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word,
+    )
+    .join(" ");
+}
+
 export function formatDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
