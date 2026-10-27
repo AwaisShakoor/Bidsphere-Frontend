@@ -4,8 +4,20 @@ import type {
   AdminAuctionDecisionResponse,
   AdminAuctionResponse,
   AdminAuctionsResponse,
+  AdminOverviewResponse,
   AdminUsersResponse,
 } from "@/services/types/AdminServicesTypes";
+
+export async function getAdminOverview() {
+  try {
+    const { data } = await api.get<AdminOverviewResponse>(
+      "/api/admin/overview",
+    );
+    return data.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to load overview");
+  }
+}
 
 export async function getAdminUsers() {
   try {

@@ -86,3 +86,26 @@ export type AdminAuctionDecisionResponse = {
   message: string;
   data: AdminAuctionDecision;
 };
+
+export type AdminOverviewAuctions = {
+  pendingApproval: number;
+  activeAuctions: number;
+  rejectedAuctions: number;
+  completedAuctions: number;
+};
+
+export type AdminOverviewUsers = {
+  sellers: number;
+  buyers: number;
+};
+
+export type AdminOverview = {
+  auctions: AdminOverviewAuctions;
+  users: AdminOverviewUsers;
+};
+
+export type AdminOverviewResponse = {
+  success: boolean;
+  message: string;
+  data: AdminOverview;
+};

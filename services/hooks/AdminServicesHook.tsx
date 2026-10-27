@@ -8,9 +8,17 @@ import {
   approveAdminAuction,
   getAdminAuction,
   getAdminAuctions,
+  getAdminOverview,
   getAdminUsers,
   rejectAdminAuction,
 } from "@/services/Api/AdminServicesApi";
+
+export function useAdminOverview() {
+  return useQuery({
+    queryKey: [CacheKeys.ADMIN_OVERVIEW],
+    queryFn: getAdminOverview,
+  });
+}
 
 export function useAdminUsers() {
   return useQuery({
@@ -41,6 +49,7 @@ export function useApproveAdminAuction() {
       toast.success(data.message || "Auction approved successfully!");
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTIONS] });
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTION, id] });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_OVERVIEW] });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -61,6 +70,7 @@ export function useRejectAdminAuction() {
       toast.success(data.message || "Auction rejected successfully!");
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTIONS] });
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTION, id] });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_OVERVIEW] });
     },
     onError: (error) => {
       toast.error(error.message);
