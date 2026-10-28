@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Inbox, Search } from "lucide-react";
+import { Loader } from "./Loader";
 import { cn } from "@/lib/utils";
 
 export type DataTableColumn<T> = {
@@ -137,7 +138,7 @@ export function DataTable<T>({
   }
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading...</p>;
+    return <Loader label="Loading..." />;
   }
 
   if (isError) {

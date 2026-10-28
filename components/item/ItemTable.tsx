@@ -7,6 +7,7 @@ import {
 } from "./itemTableColumns";
 import { DataTable } from "@/components/ui/DataTable";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
+import { Loader } from "@/components/ui/Loader";
 import { useDeleteItem } from "@/services/hooks/ItemServicesHook";
 import type { Item } from "@/services/types/ItemsServicesTypes";
 
@@ -48,6 +49,10 @@ export function ItemTable({
     onEditItem,
     onDeleteItem: setItemToDelete,
   });
+
+  if (isPending) {
+    return <Loader label="Loading items..." />;
+  }
 
   return (
     <>

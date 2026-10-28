@@ -95,12 +95,12 @@ export function getItemTableColumns({
           disabled={disabled}
           editTooltip={
             actionsDisabled
-              ? "Items cannot be changed while pending approval"
+              ? "Items can only be changed for draft or rejected auctions"
               : "Edit item"
           }
           deleteTooltip={
             actionsDisabled
-              ? "Items cannot be changed while pending approval"
+              ? "Items can only be changed for draft or rejected auctions"
               : "Delete item"
           }
           onEdit={() => onEditItem(item)}

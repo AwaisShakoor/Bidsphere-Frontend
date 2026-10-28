@@ -1,7 +1,9 @@
 import type { DataTableColumn } from "@/components/ui/DataTable";
 import { ActionsCell } from "@/components/ui/ActionsCell";
-import { AuctionStatus } from "@/enums/auctionStatus";
-import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
+import {
+  canSellerEditAuction,
+  getAuctionStatusClass,
+} from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
@@ -85,21 +87,20 @@ export function getAuctionTableColumns({
       sortable: false,
       filterable: false,
       cell: (auction) => {
-        const isDraft =
-          auction.status?.toUpperCase() === AuctionStatus.DRAFT;
-        const disabled = isDeleting || !isDraft;
+        const canEdit = canSellerEditAuction(auction.status);
+        const disabled = isDeleting || !canEdit;
 
         return (
           <ActionsCell
             disabled={disabled}
             editTooltip={
               disabled && !isDeleting
-                ? "Only draft auctions can be edited"
+                ? "Only draft or rejected auctions can be edited"
                 : "Edit auction"
             }
             deleteTooltip={
               disabled && !isDeleting
-                ? "Only draft auctions can be deleted"
+                ? "Only draft or rejected auctions can be deleted"
                 : "Delete auction"
             }
             onEdit={() => onEditAuction(auction)}

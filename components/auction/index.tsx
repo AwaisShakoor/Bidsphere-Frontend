@@ -26,7 +26,12 @@ export function AuctionPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingItem, setIsCreatingItem] = useState(false);
 
-  const { data: auctions = [], isPending } = useAuctions();
+  const {
+    data: auctions = [],
+    isPending,
+    isError,
+    error,
+  } = useAuctions();
 
   const showAuctionForm = isCreating || editingAuction !== null;
   const showItemForm = isCreatingItem || editingItem !== null;
@@ -246,6 +251,8 @@ export function AuctionPage() {
         <AuctionTable
           auctions={auctions}
           isPending={isPending}
+          isError={isError}
+          error={error}
           onOpenAuction={handleOpenAuction}
           onEditAuction={handleEditAuction}
           onCreateAuction={handleCreateAuction}

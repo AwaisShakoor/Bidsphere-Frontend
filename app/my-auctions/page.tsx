@@ -4,7 +4,7 @@ import { Loader } from "@/components/ui/Loader";
 
 export default function MyAuctionsPage() {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Loader label="Loading my auctions..." />}>
       <AuctionPage />
     </Suspense>
   );

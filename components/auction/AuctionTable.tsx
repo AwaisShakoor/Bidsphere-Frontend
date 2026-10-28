@@ -9,12 +9,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/DataTable";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
+import { Loader } from "@/components/ui/Loader";
 import { useDeleteAuction } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
 type AuctionTableProps = {
   auctions: Auction[];
   isPending?: boolean;
+  isError?: boolean;
+  error?: Error | null;
   onOpenAuction: (auction: Auction) => void;
   onEditAuction: (auction: Auction) => void;
   onCreateAuction?: () => void;
@@ -23,6 +26,8 @@ type AuctionTableProps = {
 export function AuctionTable({
   auctions,
   isPending = false,
+  isError = false,
+  error = null,
   onOpenAuction,
   onEditAuction,
   onCreateAuction,
@@ -43,6 +48,10 @@ export function AuctionTable({
     onDeleteAuction: setAuctionToDelete,
   });
 
+  if (isPending) {
+    return <Loader label="Loading my auctions..." />;
+  }
+
   return (
     <>
       <DataTable
@@ -50,7 +59,8 @@ export function AuctionTable({
         data={auctions}
         getRowKey={(auction) => auction.id}
         gridClassName={AUCTION_TABLE_GRID}
-        isPending={isPending}
+        isError={isError}
+        error={error}
         emptyTitle="No auctions yet"
         emptyDescription="Create your first auction to list items, set a schedule, and submit it for approval."
         emptyAction={

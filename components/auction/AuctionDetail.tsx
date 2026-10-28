@@ -5,7 +5,10 @@ import { AuctionDetailSkeleton } from "@/components/auction/AuctionDetailSkeleto
 import { ItemTable } from "@/components/item";
 import { Button } from "@/components/ui/button";
 import { AuctionStatus } from "@/enums/auctionStatus";
-import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
+import {
+  canSellerEditAuction,
+  getAuctionStatusClass,
+} from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
@@ -45,8 +48,9 @@ export function AuctionDetail({
   const { mutate: submitAuction, isPending: isSubmitting } = useSubmitAuction();
   const status = (auction?.status?.toUpperCase() ?? "") as AuctionStatus | "";
   const isDraft = status === AuctionStatus.DRAFT;
-  const isPendingApproval = status === AuctionStatus.PENDING_APPROVAL;
-  const canManageItems = isDraft;
+  const isRejected = status === AuctionStatus.REJECTED;
+  const canManageItems = canSellerEditAuction(status);
+  const canSubmit = canManageItems;
 
   return (
     <main className="relative flex-1 overflow-hidden">
@@ -83,22 +87,39 @@ export function AuctionDetail({
                     Auction
                   </p>
 
-                  <h1 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                    {auction.title || "Untitled"}
-                  </h1>
+                  <div className="mt-3 flex flex-wrap items-center gap-2.5">
+                    <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                      {auction.title || "Untitled"}
+                    </h1>
+                    {status && !isDraft ? (
+                      <span
+                        className={cn(
+                          "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold",
+                          getAuctionStatusClass(status),
+                        )}
+                      >
+                        {formatSnakeCase(status)}
+                      </span>
+                    ) : null}
+                  </div>
 
                   <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {auction.description || "No description"}
                   </p>
 
                   {auction.rejectionReason ? (
-                    <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                      {auction.rejectionReason}
-                    </p>
+                    <div className="mt-3 max-w-2xl rounded-xl border border-destructive/20 bg-destructive/5 px-3.5 py-3">
+                      <p className="text-xs font-semibold tracking-wide text-destructive uppercase">
+                        Rejection reason
+                      </p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-destructive">
+                        {auction.rejectionReason}
+                      </p>
+                    </div>
                   ) : null}
                 </div>
 
-                {isDraft ? (
+                {canSubmit ? (
                   <Button
                     type="button"
                     className="h-10 shrink-0 gap-1.5"
@@ -108,23 +129,21 @@ export function AuctionDetail({
                     onClick={() => submitAuction(auctionId)}
                   >
                     <Send data-icon="inline-start" />
-                    {isSubmitting ? "Submitting..." : "Submit for approval"}
+                    {isSubmitting
+                      ? isRejected
+                        ? "Resubmitting..."
+                        : "Submitting..."
+                      : isRejected
+                        ? "Resubmit for approval"
+                        : "Submit for approval"}
                   </Button>
-                ) : status ? (
-                  <span
-                    className={cn(
-                      "inline-flex h-10 shrink-0 items-center rounded-xl px-3.5 text-sm font-medium",
-                      getAuctionStatusClass(status),
-                    )}
-                  >
-                    {formatSnakeCase(status)}
-                  </span>
                 ) : null}
               </div>
 
-              {isDraft && !isItemsPending && items.length === 0 ? (
+              {canSubmit && !isItemsPending && items.length === 0 ? (
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Add at least one item before submitting for approval.
+                  Add at least one item before{" "}
+                  {isRejected ? "resubmitting" : "submitting"} for approval.
                 </p>
               ) : null}
 
@@ -168,8 +187,8 @@ export function AuctionDetail({
                   className="h-10 gap-1.5"
                   disabled={!canManageItems}
                   title={
-                    isPendingApproval
-                      ? "Items cannot be changed while pending approval"
+                    !canManageItems
+                      ? "Items can only be changed for draft or rejected auctions"
                       : undefined
                   }
                   onClick={onAddItem}

@@ -15,3 +15,11 @@ export function getAuctionStatusClass(status: string) {
   const key = status.toUpperCase() as AuctionStatus;
   return AUCTION_STATUS_CLASS[key] ?? "bg-muted text-muted-foreground";
 }
+
+/** Seller can edit/delete auction and items, and submit/resubmit. */
+export function canSellerEditAuction(status: string | null | undefined) {
+  const key = status?.toUpperCase();
+  return (
+    key === AuctionStatus.DRAFT || key === AuctionStatus.REJECTED
+  );
+}
