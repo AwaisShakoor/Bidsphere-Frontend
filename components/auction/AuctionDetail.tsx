@@ -4,6 +4,11 @@ import { ArrowLeft, Plus, Send } from "lucide-react";
 import { AuctionDetailSkeleton } from "@/components/auction/AuctionDetailSkeleton";
 import { ItemTable } from "@/components/item";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import {
   canSellerEditAuction,
@@ -182,20 +187,30 @@ export function AuctionDetail({
                     Lots listed under this auction.
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  className="h-10 gap-1.5"
-                  disabled={!canManageItems}
-                  title={
-                    !canManageItems
-                      ? "Items can only be changed for draft or rejected auctions"
-                      : undefined
-                  }
-                  onClick={onAddItem}
-                >
-                  <Plus data-icon="inline-start" />
-                  Add item
-                </Button>
+                {canManageItems ? (
+                  <Button
+                    type="button"
+                    className="h-10 gap-1.5"
+                    onClick={onAddItem}
+                  >
+                    <Plus data-icon="inline-start" />
+                    Add item
+                  </Button>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex">
+                        <Button type="button" className="h-10 gap-1.5" disabled>
+                          <Plus data-icon="inline-start" />
+                          Add item
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Items can only be created for draft or rejected auctions
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
 
               <ItemTable
