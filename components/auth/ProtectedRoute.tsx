@@ -3,17 +3,33 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/ui/Loader";
+import { UserRole } from "@/enums/userRole";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+type ProtectedRouteProps = {
+  children: React.ReactNode;
+  roles?: UserRole[];
+};
+
+export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
   const router = useRouter();
   const { data: meData, isPending, isError } = useMe();
+  const user = meData?.user;
+  const isAllowed = !roles || (user ? roles.includes(user.role) : false);
 
   useEffect(() => {
-    if (!isPending && (isError || !meData?.user)) {
+    if (isPending) return;
+
+    if (isError || !user) {
       router.push("/login");
+      return;
     }
-  }, [isPending, isError, meData, router]);
+
+    if (!isAllowed) {
+      router.push(getAuthRedirectPath(user.role));
+    }
+  }, [isPending, isError, user, isAllowed, router]);
 
   if (isPending) {
     return (
@@ -23,7 +39,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!meData?.user) {
+  if (!user || !isAllowed) {
     return null;
   }
 

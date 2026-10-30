@@ -1,5 +1,5 @@
 import api from "@/services/api";
-import { getErrorMessage } from "@/services/api/getErrorMessage";
+import { getErrorMessage } from "@/services/Api/getErrorMessage";
 import type {
   LoginRequest,
   LoginResponse,

@@ -3,7 +3,9 @@
 import { Pencil } from "lucide-react";
 import { AuctionCardsSkeleton } from "@/components/auction/AuctionCardsSkeleton";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/format";
+import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
+import { formatDate, formatSnakeCase } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
 type AuctionCardsProps = {
@@ -43,8 +45,13 @@ export function AuctionCards({
             <p className="text-sm font-semibold tracking-tight text-foreground">
               {auction.title || "Untitled"}
             </p>
-            <span className="shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-              {auction.status}
+            <span
+              className={cn(
+                "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
+                getAuctionStatusClass(auction.status),
+              )}
+            >
+              {formatSnakeCase(auction.status)}
             </span>
           </div>
           <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">

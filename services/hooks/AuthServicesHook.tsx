@@ -12,7 +12,7 @@ import {
   registerUser,
   resetPassword,
   verifyEmail,
-} from "@/services/api/AuthServicesApi";
+} from "@/services/Api/AuthServicesApi";
 import type {
   ForgotPasswordRequest,
   LoginRequest,

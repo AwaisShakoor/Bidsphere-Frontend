@@ -16,6 +16,7 @@ import {
   itemSchema,
   type ItemFormValues,
 } from "@/lib/validationSchema/itemSchema";
+import { formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
 import {
@@ -185,7 +186,7 @@ export function ItemForm({
             >
               {Object.values(ItemCondition).map((condition) => (
                 <option key={condition} value={condition}>
-                  {condition.replaceAll("_", " ")}
+                  {formatSnakeCase(condition)}
                 </option>
               ))}
             </select>
@@ -230,7 +231,7 @@ export function ItemForm({
             >
               {Object.values(ShippingType).map((type) => (
                 <option key={type} value={type}>
-                  {type.replaceAll("_", " ")}
+                  {formatSnakeCase(type)}
                 </option>
               ))}
             </select>

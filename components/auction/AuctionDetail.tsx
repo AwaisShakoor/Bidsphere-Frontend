@@ -2,10 +2,20 @@
 
 import { ArrowLeft, Plus, Send } from "lucide-react";
 import { AuctionDetailSkeleton } from "@/components/auction/AuctionDetailSkeleton";
-import { ItemList } from "@/components/item";
+import { ItemTable } from "@/components/item";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { AuctionStatus } from "@/enums/auctionStatus";
-import { formatDate } from "@/lib/format";
+import {
+  canSellerEditAuction,
+  getAuctionStatusClass,
+} from "@/lib/constants/auctionStatus";
+import { formatDate, formatSnakeCase } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import {
   useAuction,
   useSubmitAuction,
@@ -41,8 +51,11 @@ export function AuctionDetail({
     error: itemsError,
   } = useItems(auctionId);
   const { mutate: submitAuction, isPending: isSubmitting } = useSubmitAuction();
-  const isDraft =
-    auction?.status?.toUpperCase() === AuctionStatus.DRAFT;
+  const status = (auction?.status?.toUpperCase() ?? "") as AuctionStatus | "";
+  const isDraft = status === AuctionStatus.DRAFT;
+  const isRejected = status === AuctionStatus.REJECTED;
+  const canManageItems = canSellerEditAuction(status);
+  const canSubmit = canManageItems;
 
   return (
     <main className="relative flex-1 overflow-hidden">
@@ -75,50 +88,67 @@ export function AuctionDetail({
             <section className="rounded-2xl bg-card p-5 shadow-md shadow-primary/5 ring-1 ring-border sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-medium tracking-wide text-primary uppercase">
-                      Auction
-                    </p>
-                    <span className="rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                      {auction.status.replaceAll("_", " ")}
-                    </span>
-                  </div>
+                  <p className="text-xs font-medium tracking-wide text-primary uppercase">
+                    Auction
+                  </p>
 
-                  <h1 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                    {auction.title || "Untitled"}
-                  </h1>
+                  <div className="mt-3 flex flex-wrap items-center gap-2.5">
+                    <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+                      {auction.title || "Untitled"}
+                    </h1>
+                    {status && !isDraft ? (
+                      <span
+                        className={cn(
+                          "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold",
+                          getAuctionStatusClass(status),
+                        )}
+                      >
+                        {formatSnakeCase(status)}
+                      </span>
+                    ) : null}
+                  </div>
 
                   <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {auction.description || "No description"}
                   </p>
 
                   {auction.rejectionReason ? (
-                    <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                      {auction.rejectionReason}
-                    </p>
+                    <div className="mt-3 max-w-2xl rounded-xl border border-destructive/20 bg-destructive/5 px-3.5 py-3">
+                      <p className="text-xs font-semibold tracking-wide text-destructive uppercase">
+                        Rejection reason
+                      </p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-destructive">
+                        {auction.rejectionReason}
+                      </p>
+                    </div>
                   ) : null}
                 </div>
 
-                {isDraft ? (
+                {canSubmit ? (
                   <Button
                     type="button"
                     className="h-10 shrink-0 gap-1.5"
                     disabled={
-                      isSubmitting ||
-                      isItemsPending ||
-                      items.length === 0
+                      isSubmitting || isItemsPending || items.length === 0
                     }
                     onClick={() => submitAuction(auctionId)}
                   >
                     <Send data-icon="inline-start" />
-                    {isSubmitting ? "Submitting..." : "Submit for approval"}
+                    {isSubmitting
+                      ? isRejected
+                        ? "Resubmitting..."
+                        : "Submitting..."
+                      : isRejected
+                        ? "Resubmit for approval"
+                        : "Submit for approval"}
                   </Button>
                 ) : null}
               </div>
 
-              {isDraft && !isItemsPending && items.length === 0 ? (
+              {canSubmit && !isItemsPending && items.length === 0 ? (
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Add at least one item before submitting for approval.
+                  Add at least one item before{" "}
+                  {isRejected ? "resubmitting" : "submitting"} for approval.
                 </p>
               ) : null}
 
@@ -157,24 +187,39 @@ export function AuctionDetail({
                     Lots listed under this auction.
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  className="h-10 gap-1.5"
-                  onClick={onAddItem}
-                >
-                  <Plus data-icon="inline-start" />
-                  Add item
-                </Button>
+                {canManageItems ? (
+                  <Button
+                    type="button"
+                    className="h-10 gap-1.5"
+                    onClick={onAddItem}
+                  >
+                    <Plus data-icon="inline-start" />
+                    Add item
+                  </Button>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex">
+                        <Button type="button" className="h-10 gap-1.5" disabled>
+                          <Plus data-icon="inline-start" />
+                          Add item
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Items can only be created for draft or rejected auctions
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
 
-              <ItemList
+              <ItemTable
                 auctionId={auctionId}
                 items={items}
                 isPending={isItemsPending}
                 isError={isItemsError}
-                errorMessage={
-                  itemsError instanceof Error ? itemsError.message : undefined
-                }
+                error={itemsError}
+                actionsDisabled={!canManageItems}
                 onOpenItem={(item) => onOpenItem(item.id)}
                 onEditItem={onEditItem}
               />

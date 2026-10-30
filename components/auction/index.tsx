@@ -6,12 +6,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { AuctionDetail } from "./AuctionDetail";
 import { AuctionForm } from "./AuctionForm";
-import { AuctionList } from "./AuctionList";
+import { AuctionTable } from "./AuctionTable";
 import { ItemDetail, ItemForm } from "@/components/item";
 import { Button } from "@/components/ui/button";
 import { useAuctions } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 import type { Item } from "@/services/types/ItemsServicesTypes";
+
+export { AuctionTable } from "./AuctionTable";
 
 export function AuctionPage() {
   const router = useRouter();
@@ -24,7 +26,12 @@ export function AuctionPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingItem, setIsCreatingItem] = useState(false);
 
-  const { data: auctions = [], isPending } = useAuctions();
+  const {
+    data: auctions = [],
+    isPending,
+    isError,
+    error,
+  } = useAuctions();
 
   const showAuctionForm = isCreating || editingAuction !== null;
   const showItemForm = isCreatingItem || editingItem !== null;
@@ -241,11 +248,14 @@ export function AuctionPage() {
           </Button>
         </section>
 
-        <AuctionList
+        <AuctionTable
           auctions={auctions}
           isPending={isPending}
+          isError={isError}
+          error={error}
           onOpenAuction={handleOpenAuction}
           onEditAuction={handleEditAuction}
+          onCreateAuction={handleCreateAuction}
         />
       </div>
     </main>

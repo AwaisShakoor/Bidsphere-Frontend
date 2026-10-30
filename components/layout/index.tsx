@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Gavel, LogOut, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@/enums/userRole";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { cn } from "@/lib/utils";
 import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
 
@@ -13,9 +14,10 @@ export function Navbar() {
   const { data: meData, isPending: isMePending } = useMe();
   const logout = useLogout();
   const user = meData?.user;
-  const isSeller =
-    user?.role === UserRole.SELLER || user?.role === UserRole.ADMIN;
+  const isAdmin = user?.role === UserRole.ADMIN;
+  const isSeller = user?.role === UserRole.SELLER;
   const isSellActive = pathname.startsWith("/my-auctions");
+  const homeHref = getAuthRedirectPath(user?.role);
 
   function handleLogout() {
     logout.mutate(undefined, {
@@ -29,24 +31,28 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/70 bg-card/90 backdrop-blur-md">
       <div className="app-container flex h-16 items-center gap-4">
         <Link
-          href="/dashboard"
+          href={homeHref}
           className="shrink-0 text-sm font-semibold tracking-[0.18em] text-primary uppercase"
         >
           BidSphere
         </Link>
 
-        <label className="relative min-w-0 flex-1">
-          <span className="sr-only">Search auctions</span>
-          <Search
-            className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden
-          />
-          <input
-            type="search"
-            placeholder="Search auctions..."
-            className="h-11 w-full rounded-xl border-0 bg-muted/70 pr-4 pl-10 text-sm text-foreground outline-none ring-1 ring-border/80 transition placeholder:text-muted-foreground focus:bg-card focus:ring-2 focus:ring-primary/30"
-          />
-        </label>
+        {!isAdmin ? (
+          <label className="relative min-w-0 flex-1">
+            <span className="sr-only">Search auctions</span>
+            <Search
+              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <input
+              type="search"
+              placeholder="Search auctions..."
+              className="h-11 w-full rounded-xl border-0 bg-muted/70 pr-4 pl-10 text-sm text-foreground outline-none ring-1 ring-border/80 transition placeholder:text-muted-foreground focus:bg-card focus:ring-2 focus:ring-primary/30"
+            />
+          </label>
+        ) : (
+          <div className="min-w-0 flex-1" />
+        )}
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {isSeller ? (
