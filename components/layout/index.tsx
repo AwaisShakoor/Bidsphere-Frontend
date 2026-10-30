@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Gavel, LogOut, Search } from "lucide-react";
+import { Gavel, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@/enums/userRole";
 import { getAuthRedirectPath } from "@/lib/auth/routes";
@@ -14,7 +14,6 @@ export function Navbar() {
   const { data: meData, isPending: isMePending } = useMe();
   const logout = useLogout();
   const user = meData?.user;
-  const isAdmin = user?.role === UserRole.ADMIN;
   const isSeller = user?.role === UserRole.SELLER;
   const isSellActive = pathname.startsWith("/my-auctions");
   const homeHref = getAuthRedirectPath(user?.role);
@@ -37,22 +36,7 @@ export function Navbar() {
           BidSphere
         </Link>
 
-        {!isAdmin ? (
-          <label className="relative min-w-0 flex-1">
-            <span className="sr-only">Search auctions</span>
-            <Search
-              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
-              aria-hidden
-            />
-            <input
-              type="search"
-              placeholder="Search auctions..."
-              className="h-11 w-full rounded-xl border-0 bg-muted/70 pr-4 pl-10 text-sm text-foreground outline-none ring-1 ring-border/80 transition placeholder:text-muted-foreground focus:bg-card focus:ring-2 focus:ring-primary/30"
-            />
-          </label>
-        ) : (
-          <div className="min-w-0 flex-1" />
-        )}
+        <div className="min-w-0 flex-1" />
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {isSeller ? (
