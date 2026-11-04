@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/services/types/CategoryServicesTypes";
 
-type CategoryScrollerProps = {
+type CategoryFilterProps = {
   categories: Category[];
   categoryId: string;
   onCategoryChange: (id: string) => void;
@@ -20,12 +20,12 @@ function chipClass(selected: boolean) {
   );
 }
 
-export function CategoryScroller({
+export function CategoryFilter({
   categories,
   categoryId,
   onCategoryChange,
   trailing,
-}: CategoryScrollerProps) {
+}: CategoryFilterProps) {
   return (
     <div
       role="listbox"

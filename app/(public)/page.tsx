@@ -1,4 +1,4 @@
-import { PublicActiveItems } from "@/components/public/PublicActiveItems";
+import { PublicActiveItems } from "@/components/public";
 
 export default function Home() {
   return (

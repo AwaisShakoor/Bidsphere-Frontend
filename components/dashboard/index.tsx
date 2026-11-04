@@ -1,6 +1,7 @@
 "use client";
 
-import { PublicActiveItems } from "@/components/public/PublicActiveItems";
+import { PublicActiveItems } from "@/components/public";
+import { MyBids } from "@/components/dashboard/MyBids";
 import { SellerActiveAuctions } from "./SellerActiveAuctions";
 import { UserRole } from "@/enums/userRole";
 import { useMe } from "@/services/hooks/AuthServicesHook";
@@ -82,7 +83,12 @@ export function Dashboard() {
         </header>
 
         {!isPending && isSeller ? <SellerActiveAuctions isSeller /> : null}
-        {!isPending && !isSeller ? <PublicActiveItems /> : null}
+        {!isPending && !isSeller ? (
+          <>
+            <MyBids />
+            <PublicActiveItems />
+          </>
+        ) : null}
       </div>
     </main>
   );

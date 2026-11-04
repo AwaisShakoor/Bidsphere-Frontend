@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { CategoryScroller } from "@/components/public/CategoryScroller";
+import { CategoryFilter } from "./CategoryFilter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Category } from "@/services/types/CategoryServicesTypes";
@@ -61,7 +61,7 @@ export function MarketplaceFilterBar({
         <p className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
           Categories
         </p>
-        <CategoryScroller
+        <CategoryFilter
           categories={categories}
           categoryId={categoryId}
           onCategoryChange={onCategoryChange}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Clock, Gavel } from "lucide-react";
 import { MarketplaceCard } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceFilterBar } from "@/components/marketplace/MarketplaceFilterBar";
-import { PublicActiveItemsSkeleton } from "@/components/public/PublicActiveItemsSkeleton";
+import { PublicActiveItemsSkeleton } from "./PublicActiveItemsSkeleton";
 import { Button } from "@/components/ui/button";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";

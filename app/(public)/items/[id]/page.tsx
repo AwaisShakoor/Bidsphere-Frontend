@@ -1,4 +1,4 @@
-import { PublicItemDetail } from "@/components/public/PublicItemDetail";
+import { PublicItemDetail } from "@/components/public";
 
 export default async function PublicItemPage({
   params,
