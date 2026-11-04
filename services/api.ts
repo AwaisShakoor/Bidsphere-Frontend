@@ -44,11 +44,16 @@ api.interceptors.response.use(
         await refreshPromise;
         return api(originalRequest);
       } catch (refreshError) {
-        if (
-          typeof window !== "undefined" &&
-          !window.location.pathname.startsWith("/login")
-        ) {
-          window.location.href = "/login";
+        // Only bounce off protected app areas; public browse stays open for guests
+        if (typeof window !== "undefined") {
+          const path = window.location.pathname;
+          const isProtectedArea =
+            path.startsWith("/dashboard") ||
+            path.startsWith("/admin") ||
+            path.startsWith("/my-auctions");
+          if (isProtectedArea) {
+            window.location.href = "/login";
+          }
         }
         return Promise.reject(refreshError);
       }

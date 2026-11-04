@@ -6,6 +6,8 @@ export enum CacheKeys {
   ITEMS = "items",
   ITEM = "item",
   CATEGORY_ITEMS = "category-items",
+  PUBLIC_ITEMS = "public-items",
+  PUBLIC_ITEM = "public-item",
   ADMIN_USERS = "admin-users",
   ADMIN_AUCTIONS = "admin-auctions",
   ADMIN_AUCTION = "admin-auction",

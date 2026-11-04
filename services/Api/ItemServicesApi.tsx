@@ -8,6 +8,9 @@ import type {
   Item,
   ItemResponse,
   ItemsResponse,
+  PublicItem,
+  PublicItemResponse,
+  PublicItemsResponse,
   UpdateItemRequest,
   UpdateItemResponse,
 } from "@/services/types/ItemsServicesTypes";
@@ -38,6 +41,26 @@ export async function getItem(auctionId: string, itemId: string) {
   try {
     const { data } = await api.get<ItemResponse>(
       `/api/${auctionId}/items/${itemId}`,
+    );
+    return data.item;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to load item");
+  }
+}
+
+export async function getPublicItems(): Promise<PublicItem[]> {
+  try {
+    const { data } = await api.get<PublicItemsResponse>("/api/public/items");
+    return data.items ?? [];
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to load public items");
+  }
+}
+
+export async function getPublicItem(itemId: string): Promise<PublicItem> {
+  try {
+    const { data } = await api.get<PublicItemResponse>(
+      `/api/public/items/${itemId}`,
     );
     return data.item;
   } catch (error) {

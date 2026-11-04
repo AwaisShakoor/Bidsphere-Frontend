@@ -3,6 +3,15 @@ import type { NextConfig } from "next";
 const apiProxyTarget = process.env.API_PROXY_TARGET ?? "http://localhost:8080";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
+  },
   async rewrites() {
     return [
       {

@@ -61,11 +61,14 @@ export function ItemForm({
     handleSubmit,
     setValue,
     clearErrors,
+    watch,
     formState: { errors, isSubmitted },
   } = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
     defaultValues: item ? getItemFormValues(item) : itemDefaultValues,
   });
+
+  const shippingType = watch("shippingType");
 
   useEffect(() => {
     setValue("imageCount", imageField.count);
@@ -247,7 +250,7 @@ export function ItemForm({
             type="number"
             step="0.01"
             min="0"
-            disabled={isFormLocked}
+            disabled={isFormLocked || shippingType === ShippingType.FREE}
             error={errors.shippingCost}
             {...register("shippingCost")}
           />

@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { BidSphereCard } from "@/components/auth/AuthCard";
@@ -16,8 +16,15 @@ import {
 import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useLogin } from "@/services/hooks/AuthServicesHook";
 
+function getSafeNextPath(next: string | null) {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
+
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = getSafeNextPath(searchParams.get("next"));
   const { mutate, isPending } = useLogin();
   const {
     register,
@@ -30,7 +37,8 @@ export function LoginForm() {
 
   function onSubmit(values: LoginFormValues) {
     mutate(values, {
-      onSuccess: (data) => router.push(getAuthRedirectPath(data.user.role)),
+      onSuccess: (data) =>
+        router.push(nextPath ?? getAuthRedirectPath(data.user.role)),
     });
   }
 
