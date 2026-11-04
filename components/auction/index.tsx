@@ -9,6 +9,7 @@ import { AuctionForm } from "./AuctionForm";
 import { AuctionTable } from "./AuctionTable";
 import { ItemDetail, ItemForm } from "@/components/item";
 import { Button } from "@/components/ui/button";
+import { canSellerEditAuction } from "@/lib/constants/auctionStatus";
 import { useAuctions } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 import type { Item } from "@/services/types/ItemsServicesTypes";
@@ -60,6 +61,7 @@ export function AuctionPage() {
   }
 
   function handleEditAuction(auction: Auction) {
+    if (!canSellerEditAuction(auction.status)) return;
     setIsCreating(false);
     setIsCreatingItem(false);
     setEditingItem(null);

@@ -72,23 +72,8 @@ export function PublicActiveItems() {
   });
 
   if (isPending) return <PublicActiveItemsSkeleton />;
-  if (isError) return <p className="text-sm text-destructive">{error.message}</p>;
-
-  if (items.length === 0) {
-    return (
-      <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-14 text-center shadow-md shadow-primary/5">
-        <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-          <Gavel className="size-6" />
-        </span>
-        <p className="mt-4 text-sm font-medium text-foreground">
-          No active items
-        </p>
-        <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-          Live listings will show up here when auctions go active.
-        </p>
-      </section>
-    );
-  }
+  if (isError)
+    return <p className="text-sm text-destructive">{error.message}</p>;
 
   return (
     <div className="space-y-4">
@@ -101,41 +86,59 @@ export function PublicActiveItems() {
         searchInputId="public-item-search"
       />
 
-      <p className="text-sm text-muted-foreground">
-        <span className="font-medium text-foreground">{filtered.length}</span>{" "}
-        active {filtered.length === 1 ? "item" : "items"}
-        {categoryId
-          ? ` in ${categories.find((c) => c.id === categoryId)?.name ?? "category"}`
-          : ""}
-      </p>
-
-      {filtered.length === 0 ? (
-        <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-md shadow-primary/5">
-          <p className="text-sm font-medium text-foreground">
-            No items match your filters
+      {items.length === 0 ? (
+        <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-14 text-center shadow-md shadow-primary/5">
+          <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+            <Gavel className="size-6" />
+          </span>
+          <p className="mt-4 text-sm font-medium text-foreground">
+            No active items
           </p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            Try another category or clear your search.
+            Live listings will show up here when auctions go active.
           </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-4"
-            onClick={() => {
-              setSearch("");
-              setCategoryId("");
-            }}
-          >
-            Clear filters
-          </Button>
         </section>
       ) : (
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-          {filtered.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))}
-        </ul>
+        <>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {filtered.length}
+            </span>{" "}
+            active {filtered.length === 1 ? "item" : "items"}
+            {categoryId
+              ? ` in ${categories.find((c) => c.id === categoryId)?.name ?? "category"}`
+              : ""}
+          </p>
+
+          {filtered.length === 0 ? (
+            <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-md shadow-primary/5">
+              <p className="text-sm font-medium text-foreground">
+                No items match your filters
+              </p>
+              <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+                Try another category or clear your search.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-4"
+                onClick={() => {
+                  setSearch("");
+                  setCategoryId("");
+                }}
+              >
+                Clear filters
+              </Button>
+            </section>
+          ) : (
+            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+              {filtered.map((item) => (
+                <ItemCard key={item.id} item={item} />
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );

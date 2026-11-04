@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import {
-  canSellerEditAuction,
+  canSellerManageAuctionItems,
   getAuctionStatusClass,
 } from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
@@ -54,7 +54,7 @@ export function AuctionDetail({
   const status = (auction?.status?.toUpperCase() ?? "") as AuctionStatus | "";
   const isDraft = status === AuctionStatus.DRAFT;
   const isRejected = status === AuctionStatus.REJECTED;
-  const canManageItems = canSellerEditAuction(status);
+  const canManageItems = canSellerManageAuctionItems(status);
   const canSubmit = canManageItems;
 
   return (

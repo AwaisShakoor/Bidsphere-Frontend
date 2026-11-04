@@ -8,6 +8,7 @@ import { MarketplaceCardsSkeleton } from "@/components/marketplace/MarketplaceCa
 import { MarketplaceFilterBar } from "@/components/marketplace/MarketplaceFilterBar";
 import { Button } from "@/components/ui/button";
 import { AuctionStatus } from "@/enums/auctionStatus";
+import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
 import { useAuctions } from "@/services/hooks/AuctionServicesHook";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
@@ -45,6 +46,7 @@ function ActiveAuctionCard({
       imageUrl={coverUrl}
       imagePending={isPending}
       badge={formatSnakeCase(auction.status)}
+      badgeClassName={getAuctionStatusClass(auction.status)}
       footer={
         <>
           <p className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
@@ -82,6 +84,7 @@ export function SellerActiveAuctions({
       auction.description.toLowerCase().includes(q)
     );
   });
+
   return (
     <section className="space-y-4">
       <MarketplaceFilterBar
@@ -135,7 +138,7 @@ export function SellerActiveAuctions({
           </span>
           <div className="space-y-1.5">
             <p className="text-base font-semibold tracking-tight text-foreground">
-              No auctions yet
+              No active auctions
             </p>
             <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
               {isSeller
@@ -168,7 +171,7 @@ export function SellerActiveAuctions({
       filtered.length === 0 ? (
         <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-md shadow-primary/5">
           <p className="text-sm font-medium text-foreground">
-            No auctions match your filters
+            No items match your filters
           </p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
             Try another category or clear your search.

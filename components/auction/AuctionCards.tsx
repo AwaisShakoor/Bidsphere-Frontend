@@ -3,7 +3,10 @@
 import { Pencil } from "lucide-react";
 import { AuctionCardsSkeleton } from "@/components/auction/AuctionCardsSkeleton";
 import { Button } from "@/components/ui/button";
-import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
+import {
+  canSellerEditAuction,
+  getAuctionStatusClass,
+} from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
@@ -72,18 +75,20 @@ export function AuctionCards({
             </div>
           </div>
 
-          <div className="mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={() => onEditAuction(auction)}
-            >
-              <Pencil className="size-3.5" />
-              Edit
-            </Button>
-          </div>
+          {canSellerEditAuction(auction.status) ? (
+            <div className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5"
+                onClick={() => onEditAuction(auction)}
+              >
+                <Pencil className="size-3.5" />
+                Edit
+              </Button>
+            </div>
+          ) : null}
         </li>
       ))}
     </ul>
