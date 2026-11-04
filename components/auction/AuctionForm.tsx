@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/FormField";
 import { Label } from "@/components/ui/label";
+import { toDatetimeLocal } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
   auctionDefaultValues,
@@ -24,11 +25,18 @@ type AuctionFormProps = {
   onBack: () => void;
 };
 
+function getMinDatetimeLocal() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return toDatetimeLocal(today.toISOString());
+}
+
 export function AuctionForm({ auction, onBack }: AuctionFormProps) {
   const isEdit = Boolean(auction);
   const { mutate: createAuction, isPending: isCreating } = useCreateAuction();
   const { mutate: updateAuction, isPending: isUpdating } = useUpdateAuction();
   const isPending = isCreating || isUpdating;
+  const minDatetime = getMinDatetimeLocal();
 
   const {
     register,
@@ -107,7 +115,9 @@ export function AuctionForm({ auction, onBack }: AuctionFormProps) {
             {...register("description")}
           />
           {errors.description?.message ? (
-            <p className="text-sm text-destructive">{errors.description.message}</p>
+            <p className="text-sm text-destructive">
+              {errors.description.message}
+            </p>
           ) : null}
         </div>
 
@@ -115,6 +125,7 @@ export function AuctionForm({ auction, onBack }: AuctionFormProps) {
           <Field
             label="Start time"
             type="datetime-local"
+            min={minDatetime}
             disabled={isPending}
             error={errors.startTime}
             {...register("startTime")}
@@ -122,6 +133,7 @@ export function AuctionForm({ auction, onBack }: AuctionFormProps) {
           <Field
             label="End time"
             type="datetime-local"
+            min={minDatetime}
             disabled={isPending}
             error={errors.endTime}
             {...register("endTime")}

@@ -1,14 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Gavel, ImageIcon, Inbox } from "lucide-react";
-import { AuctionCardsSkeleton } from "@/components/auction/AuctionCardsSkeleton";
+import { ArrowRight, Clock, Gavel, Inbox } from "lucide-react";
+import { MarketplaceCard } from "@/components/marketplace/MarketplaceCard";
+import { MarketplaceCardsSkeleton } from "@/components/marketplace/MarketplaceCardsSkeleton";
+import { MarketplaceFilterBar } from "@/components/marketplace/MarketplaceFilterBar";
 import { Button } from "@/components/ui/button";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
-import { cn } from "@/lib/utils";
 import { useAuctions } from "@/services/hooks/AuctionServicesHook";
+import { useCategories } from "@/services/hooks/CategoryServicesHook";
 import { useItems } from "@/services/hooks/ItemServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
@@ -19,79 +22,80 @@ function getCoverUrl(images: { url: string; sortOrder: number }[]) {
 function ActiveAuctionCard({
   auction,
   href,
+  categoryId,
 }: {
   auction: Auction;
   href: string;
+  categoryId: string;
 }) {
   const { data: items = [], isPending } = useItems(auction.id);
   const coverUrl = items[0] ? getCoverUrl(items[0].images) : null;
 
-  return (
-    <li>
-      <Link
-        href={href}
-        className="block h-full overflow-hidden rounded-2xl bg-card shadow-md shadow-primary/5 ring-1 ring-border transition-all hover:-translate-y-0.5 hover:ring-primary/30 hover:shadow-md hover:shadow-primary/10"
-      >
-        <div className="relative aspect-video overflow-hidden bg-muted">
-          {isPending ? (
-            <div className="size-full animate-pulse bg-muted" />
-          ) : coverUrl ? (
-            <img
-              src={coverUrl}
-              alt={auction.title || "Auction cover"}
-              className="size-full object-cover"
-            />
-          ) : (
-            <span className="flex size-full items-center justify-center text-muted-foreground">
-              <ImageIcon className="size-6" aria-hidden />
-            </span>
-          )}
-          <span
-            className={cn(
-              "absolute top-2 right-2 rounded-md px-2 py-0.5 text-[11px] font-medium shadow-sm",
-              getAuctionStatusClass(auction.status),
-            )}
-          >
-            {formatSnakeCase(auction.status)}
-          </span>
-        </div>
+  if (
+    categoryId &&
+    !isPending &&
+    !items.some((item) => item.categoryId === categoryId)
+  ) {
+    return null;
+  }
 
-        <div className="p-3.5">
-          <p className="truncate text-sm font-semibold tracking-tight text-foreground">
-            {auction.title || "Untitled"}
+  return (
+    <MarketplaceCard
+      href={href}
+      title={auction.title || "Untitled"}
+      imageUrl={coverUrl}
+      imagePending={isPending}
+      badge={formatSnakeCase(auction.status)}
+      badgeClassName={getAuctionStatusClass(auction.status)}
+      footer={
+        <>
+          <p className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Clock className="size-3 shrink-0 text-primary" aria-hidden />
+            Ends {formatDate(auction.endTime)}
           </p>
-          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-            {auction.description || "No description"}
+          <p className="text-[10px] text-muted-foreground">
+            Starts {formatDate(auction.startTime)}
           </p>
-          <div className="mt-3 flex items-end justify-between gap-2 text-[11px] text-muted-foreground">
-            <div>
-              <p>Starts</p>
-              <p className="mt-0.5 font-medium text-foreground">
-                {formatDate(auction.startTime)}
-              </p>
-            </div>
-            <div className="text-right">
-              <p>Ends</p>
-              <p className="mt-0.5 font-medium text-foreground">
-                {formatDate(auction.endTime)}
-              </p>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </li>
+        </>
+      }
+    />
   );
 }
 
-export function SellerActiveAuctions({ isSeller = false }: { isSeller?: boolean }) {
+export function SellerActiveAuctions({
+  isSeller = false,
+}: {
+  isSeller?: boolean;
+}) {
   const { data: auctions = [], isPending, isError, error } = useAuctions();
+  const { data: categoriesData } = useCategories();
+  const categories = categoriesData?.data ?? [];
+  const [search, setSearch] = useState("");
+  const [categoryId, setCategoryId] = useState("");
 
+  const q = search.trim().toLowerCase();
   const activeAuctions = auctions.filter(
     (auction) => auction.status?.toUpperCase() === AuctionStatus.ACTIVE,
   );
+  const filtered = activeAuctions.filter((auction) => {
+    if (!q) return true;
+    return (
+      auction.title.toLowerCase().includes(q) ||
+      auction.description.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <section className="space-y-4">
+      <MarketplaceFilterBar
+        search={search}
+        onSearchChange={setSearch}
+        categoryId={categoryId}
+        onCategoryChange={setCategoryId}
+        categories={categories}
+        searchInputId="seller-auction-search"
+      />
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-foreground">
@@ -119,13 +123,11 @@ export function SellerActiveAuctions({ isSeller = false }: { isSeller?: boolean 
         ) : null}
       </div>
 
-      {isPending ? <AuctionCardsSkeleton /> : null}
+      {isPending ? <MarketplaceCardsSkeleton count={5} /> : null}
 
       {isError ? (
         <p className="text-sm text-destructive">
-          {error instanceof Error
-            ? error.message
-            : "Could not load auctions."}
+          {error instanceof Error ? error.message : "Could not load auctions."}
         </p>
       ) : null}
 
@@ -136,7 +138,7 @@ export function SellerActiveAuctions({ isSeller = false }: { isSeller?: boolean 
           </span>
           <div className="space-y-1.5">
             <p className="text-base font-semibold tracking-tight text-foreground">
-              No auctions yet
+              No active auctions
             </p>
             <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
               {isSeller
@@ -163,17 +165,40 @@ export function SellerActiveAuctions({ isSeller = false }: { isSeller?: boolean 
         </div>
       ) : null}
 
-      {!isPending && !isError && activeAuctions.length > 0 ? (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {activeAuctions.map((auction) => (
+      {!isPending &&
+      !isError &&
+      activeAuctions.length > 0 &&
+      filtered.length === 0 ? (
+        <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-md shadow-primary/5">
+          <p className="text-sm font-medium text-foreground">
+            No items match your filters
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+            Try another category or clear your search.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-4"
+            onClick={() => {
+              setSearch("");
+              setCategoryId("");
+            }}
+          >
+            Clear filters
+          </Button>
+        </section>
+      ) : null}
+
+      {!isPending && !isError && filtered.length > 0 ? (
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+          {filtered.map((auction) => (
             <ActiveAuctionCard
               key={auction.id}
               auction={auction}
-              href={
-                isSeller
-                  ? `/my-auctions?id=${auction.id}`
-                  : `/dashboard`
-              }
+              categoryId={categoryId}
+              href={isSeller ? `/my-auctions?id=${auction.id}` : `/dashboard`}
             />
           ))}
         </ul>

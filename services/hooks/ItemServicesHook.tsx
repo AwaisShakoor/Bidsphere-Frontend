@@ -10,6 +10,8 @@ import {
   getCategoryItems,
   getItem,
   getItems,
+  getPublicItem,
+  getPublicItems,
   updateItem,
 } from "@/services/Api/ItemServicesApi";
 import type {
@@ -38,6 +40,21 @@ export function useItem(auctionId: string | null, itemId: string | null) {
     queryKey: [CacheKeys.ITEM, auctionId, itemId],
     queryFn: () => getItem(auctionId!, itemId!),
     enabled: Boolean(auctionId && itemId),
+  });
+}
+
+export function usePublicItems() {
+  return useQuery({
+    queryKey: [CacheKeys.PUBLIC_ITEMS],
+    queryFn: getPublicItems,
+  });
+}
+
+export function usePublicItem(itemId: string | null) {
+  return useQuery({
+    queryKey: [CacheKeys.PUBLIC_ITEM, itemId],
+    queryFn: () => getPublicItem(itemId!),
+    enabled: Boolean(itemId),
   });
 }
 

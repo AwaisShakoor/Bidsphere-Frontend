@@ -1,6 +1,6 @@
 "use client";
 
-import { CategoryList } from "@/components/category";
+import { PublicActiveItems } from "@/components/public/PublicActiveItems";
 import { SellerActiveAuctions } from "./SellerActiveAuctions";
 import { UserRole } from "@/enums/userRole";
 import { useMe } from "@/services/hooks/AuthServicesHook";
@@ -73,7 +73,7 @@ export function Dashboard() {
                   <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {isSeller
                       ? "Your live auctions appear below. Use Manage auctions anytime to create or edit listings."
-                      : "Browse categories below and find auctions to bid on."}
+                      : "Browse listings below and find auctions to bid on."}
                   </p>
                 </>
               )}
@@ -81,19 +81,8 @@ export function Dashboard() {
           </div>
         </header>
 
-        <section>
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold tracking-tight">
-              Shop by category
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Open a category to browse its items.
-            </p>
-          </div>
-          <CategoryList />
-        </section>
-
-        {!isPending ? <SellerActiveAuctions isSeller={isSeller} /> : null}
+        {!isPending && isSeller ? <SellerActiveAuctions isSeller /> : null}
+        {!isPending && !isSeller ? <PublicActiveItems /> : null}
       </div>
     </main>
   );

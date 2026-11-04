@@ -1,5 +1,7 @@
 import type { ItemCondition } from "@/enums/itemCondition";
 import type { ShippingType } from "@/enums/shippingType";
+import type { Auction } from "@/services/types/AuctionServicesTypes";
+import type { Category } from "@/services/types/CategoryServicesTypes";
 
 export type ItemImage = {
   id: string;
@@ -87,4 +89,30 @@ export type CategoryItemsResponse = {
 export type ItemResponse = {
   message: string;
   item: Item;
+};
+
+/** Public marketplace list/detail payload */
+export type PublicItem = {
+  id: string;
+  title: string;
+  description: string;
+  startingPrice: string;
+  reservePrice: string | null;
+  currentBid: string | null;
+  itemCondition: ItemCondition;
+  shippingType: ShippingType;
+  shippingCost: string | null;
+  category: Category;
+  images: Pick<ItemImage, "id" | "url">[];
+  auction: Pick<Auction, "id" | "title" | "status" | "startTime" | "endTime">;
+};
+
+export type PublicItemsResponse = {
+  message: string;
+  items: PublicItem[];
+};
+
+export type PublicItemResponse = {
+  message: string;
+  item: PublicItem;
 };
