@@ -1,6 +1,6 @@
 "use client";
 
-import { PublicActiveItems } from "@/components/public/PublicActiveItems";
+import { PublicActiveItems } from "@/components/public";
 import { SellerActiveAuctions } from "./SellerActiveAuctions";
 import { UserRole } from "@/enums/userRole";
 import { useMe } from "@/services/hooks/AuthServicesHook";
@@ -73,7 +73,7 @@ export function Dashboard() {
                   <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {isSeller
                       ? "Your live auctions appear below. Use Manage auctions anytime to create or edit listings."
-                      : "Browse listings below and find auctions to bid on."}
+                      : "Browse listings below to bid. Open My bids anytime to track your activity."}
                   </p>
                 </>
               )}
@@ -81,7 +81,7 @@ export function Dashboard() {
           </div>
         </header>
 
-        {!isPending && isSeller ? <SellerActiveAuctions isSeller /> : null}
+        {!isPending && isSeller ? <SellerActiveAuctions /> : null}
         {!isPending && !isSeller ? <PublicActiveItems /> : null}
       </div>
     </main>

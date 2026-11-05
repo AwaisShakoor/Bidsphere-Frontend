@@ -85,6 +85,12 @@ function appendItemFields(
   if (body.shippingCost != null) {
     formData.append("shippingCost", String(body.shippingCost));
   }
+  if (body.shippingEstimatedDays != null) {
+    formData.append(
+      "shippingEstimatedDays",
+      String(body.shippingEstimatedDays),
+    );
+  }
 }
 
 export async function createItem(auctionId: string, body: CreateItemRequest) {

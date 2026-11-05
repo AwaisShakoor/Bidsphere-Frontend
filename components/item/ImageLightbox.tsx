@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalLock } from "@/hooks/useModalLock";
 
 export function ImageLightbox({
   src,
@@ -13,21 +13,7 @@ export function ImageLightbox({
   alt?: string;
   onClose: () => void;
 }) {
-  useEffect(() => {
-    if (!src) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [src, onClose]);
+  useModalLock({ open: Boolean(src), onClose });
 
   if (!src) return null;
 

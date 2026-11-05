@@ -38,7 +38,10 @@ export const itemSchema = z.object({
     .string()
     .trim()
     .min(1, "Starting price is required")
-    .refine((value) => Number(value) > 0, "Starting price must be greater than 0"),
+    .refine(
+      (value) => Number(value) > 0,
+      "Starting price must be greater than 0",
+    ),
   reservePrice: z
     .string()
     .trim()
@@ -53,6 +56,14 @@ export const itemSchema = z.object({
     .refine(
       (value) => value === "" || Number(value) >= 0,
       "Shipping cost cannot be negative",
+    ),
+  shippingEstimatedDays: z
+    .string()
+    .trim()
+    .refine(
+      (value) =>
+        value === "" || (Number.isInteger(Number(value)) && Number(value) > 0),
+      "Estimated days must be a whole number greater than 0",
     ),
   imageCount: z
     .number()
@@ -71,6 +82,7 @@ export const itemDefaultValues: ItemFormValues = {
   reservePrice: "",
   shippingType: ShippingType.FLAT_RATE,
   shippingCost: "",
+  shippingEstimatedDays: "",
   imageCount: 0,
 };
 
@@ -84,6 +96,10 @@ export function getItemFormValues(item: Item): ItemFormValues {
     reservePrice: item.reservePrice ?? "",
     shippingType: item.shippingType,
     shippingCost: item.shippingCost ?? "",
+    shippingEstimatedDays:
+      item.shippingEstimatedDays != null
+        ? String(item.shippingEstimatedDays)
+        : "",
     imageCount: item.images.length,
   };
 }

@@ -63,18 +63,20 @@ export function useCreateItem() {
     mutationFn: ({
       auctionId,
       ...body
-    }: CreateItemRequest & { auctionId: string }) => createItem(auctionId, body),
+    }: CreateItemRequest & { auctionId: string }) =>
+      toast.promise(createItem(auctionId, body), {
+        loading: "Please wait, creating item…",
+        success: (data) => data.message || "Item created successfully!",
+        error: (error) =>
+          error instanceof Error ? error.message : "Failed to create item",
+      }),
     onSuccess: (data) => {
-      toast.success(data.message || "Item created successfully!");
       queryClient.invalidateQueries({
         queryKey: [CacheKeys.ITEMS, data.item.auctionId],
       });
       queryClient.invalidateQueries({
         queryKey: [CacheKeys.CATEGORY_ITEMS],
       });
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 }

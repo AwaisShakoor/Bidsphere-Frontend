@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalLock } from "@/hooks/useModalLock";
 import { cn } from "@/lib/utils";
 
 export function DeleteConfirmationDialog({
@@ -30,21 +31,7 @@ export function DeleteConfirmationDialog({
   icon?: ReactNode;
   variant?: "destructive" | "default";
 }) {
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && !isLoading) onClose();
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [open, isLoading, onClose]);
+  useModalLock({ open, onClose, enabled: !isLoading });
 
   if (!open) return null;
 
