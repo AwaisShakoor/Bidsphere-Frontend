@@ -37,8 +37,8 @@ export function PublicItemDetailSkeleton() {
           <div className="h-4 w-full animate-pulse rounded bg-muted" />
           <div className="h-4 w-80 max-w-full animate-pulse rounded bg-muted" />
           <div className="h-11 w-full animate-pulse rounded-lg bg-primary/20" />
-          <div className="grid gap-2.5 sm:grid-cols-2">
-            {Array.from({ length: 2 }).map((_, index) => (
+          <div className="grid gap-2.5 sm:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
                 className="h-16 animate-pulse rounded-xl bg-muted"

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Gavel, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@/enums/userRole";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { cn } from "@/lib/utils";
 import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
 
@@ -13,7 +14,10 @@ export function Navbar() {
   const { data: meData, isPending: isMePending } = useMe();
   const logout = useLogout();
   const user = meData?.user;
+  const homeHref = user ? getAuthRedirectPath(user.role) : "/";
+  const isBuyer = user?.role === UserRole.BUYER;
   const isSeller = user?.role === UserRole.SELLER;
+  const isBidsActive = pathname.startsWith("/my-bids");
   const isSellActive = pathname.startsWith("/my-auctions");
   const isLoginActive = pathname.startsWith("/login");
   const isRegisterActive = pathname.startsWith("/register");
@@ -30,7 +34,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-card/85 shadow-sm shadow-primary/5 backdrop-blur-md">
       <div className="app-container flex h-16 items-center gap-3 sm:gap-4">
         <Link
-          href="/"
+          href={homeHref}
           className="group flex shrink-0 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground shadow-sm shadow-primary/25 transition-transform group-hover:scale-[1.03]">
@@ -49,6 +53,27 @@ export function Navbar() {
         <div className="min-w-0 flex-1" />
 
         <div className="flex shrink-0 items-center gap-2">
+          {isBuyer ? (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className={cn(
+                "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                isBidsActive &&
+                  "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
+              )}
+            >
+              <Link
+                href="/my-bids"
+                aria-current={isBidsActive ? "page" : undefined}
+              >
+                <Gavel className="size-3.5" />
+                <span className="hidden sm:inline">My bids</span>
+              </Link>
+            </Button>
+          ) : null}
+
           {isSeller ? (
             <Button
               asChild

@@ -44,6 +44,7 @@ export type CreateItemRequest = {
   reservePrice?: number;
   shippingType: ShippingType;
   shippingCost?: number;
+  shippingEstimatedDays?: number;
   images: File[];
 };
 
@@ -56,6 +57,7 @@ export type UpdateItemRequest = {
   reservePrice?: number;
   shippingType: ShippingType;
   shippingCost?: number;
+  shippingEstimatedDays?: number;
   images?: File[];
   removeImageIds?: string[];
 };
@@ -102,6 +104,7 @@ export type PublicItem = {
   itemCondition: ItemCondition;
   shippingType: ShippingType;
   shippingCost: string | null;
+  shippingEstimatedDays: number | null;
   category: Category;
   images: Pick<ItemImage, "id" | "url">[];
   auction: Pick<Auction, "id" | "title" | "status" | "startTime" | "endTime">;

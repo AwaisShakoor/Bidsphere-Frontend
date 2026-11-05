@@ -3,6 +3,7 @@ import { AuctionStatus } from "@/enums/auctionStatus";
 export const AUCTION_STATUS_CLASS: Record<AuctionStatus, string> = {
   [AuctionStatus.DRAFT]: "bg-muted text-muted-foreground",
   [AuctionStatus.PENDING_APPROVAL]: "bg-amber-100 text-amber-800",
+  [AuctionStatus.SCHEDULED]: "bg-sky-100 text-sky-800",
   [AuctionStatus.ACTIVE]: "bg-primary text-primary-foreground",
   [AuctionStatus.ENDED]: "bg-rose-100 text-rose-800",
   [AuctionStatus.COMPLETED]: "bg-slate-100 text-slate-700",

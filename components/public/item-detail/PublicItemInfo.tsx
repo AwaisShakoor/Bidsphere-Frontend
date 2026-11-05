@@ -5,16 +5,18 @@ import { useRouter } from "next/navigation";
 import { Clock, Gavel, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BidStatus } from "@/enums/bidStatus";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { usePlaceBid } from "@/services/hooks/BidServicesHook";
+import { useItemBids, usePlaceBid } from "@/services/hooks/BidServicesHook";
 import type { PublicItem } from "@/services/types/ItemsServicesTypes";
 import { PlaceBidPulse } from "./PublicItemDetailSkeleton";
 
 type PublicItemInfoProps = {
   item: PublicItem;
   itemId: string;
+  userId: string | null;
   isLoggedIn: boolean;
   isAuthPending: boolean;
 };
@@ -22,15 +24,22 @@ type PublicItemInfoProps = {
 export function PublicItemInfo({
   item,
   itemId,
+  userId,
   isLoggedIn,
   isAuthPending,
 }: PublicItemInfoProps) {
   const router = useRouter();
+  const { data: bids = [] } = useItemBids(itemId);
   const { mutate: placeBid, isPending: isPlacingBid } = usePlaceBid();
   const [bidAmount, setBidAmount] = useState("");
+  const [bidError, setBidError] = useState("");
   const price = item.currentBid ?? item.startingPrice;
   const bidLabel = item.currentBid ? "Current bid" : "Starting bid";
-  const minBid = Number(item.currentBid ?? item.startingPrice ?? 0);
+  const startingPrice = Number(item.startingPrice ?? 0);
+  const currentBid = item.currentBid != null ? Number(item.currentBid) : null;
+  const leadingBid =
+    bids.find((bid) => bid.status === BidStatus.ACTIVE) ?? bids[0];
+  const isLeadingBidder = Boolean(userId && leadingBid?.bidder.id === userId);
 
   function handleLoginToBid() {
     router.push(`/login?next=${encodeURIComponent(`/items/${itemId}`)}`);
@@ -38,9 +47,23 @@ export function PublicItemInfo({
 
   function handlePlaceBid(event: FormEvent) {
     event.preventDefault();
-    const amount = Number(bidAmount);
-    if (!Number.isFinite(amount) || amount <= 0) return;
+    if (isLeadingBidder) return;
 
+    const amount = Number(bidAmount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setBidError("Enter a valid bid amount.");
+      return;
+    }
+    if (amount < startingPrice) {
+      setBidError(`Bid must be at least ${formatMoney(item.startingPrice)}.`);
+      return;
+    }
+    if (currentBid != null && amount <= currentBid) {
+      setBidError(`Bid must be higher than ${formatMoney(item.currentBid)}.`);
+      return;
+    }
+
+    setBidError("");
     placeBid(
       { itemId, amount },
       {
@@ -88,7 +111,7 @@ export function PublicItemInfo({
         </p>
       </div>
 
-      <div className="grid gap-2.5 sm:grid-cols-2">
+      <div className="grid gap-2.5 sm:grid-cols-3">
         <div className="rounded-xl border border-primary/15 bg-card/80 px-3.5 py-3">
           <p className="text-[11px] font-semibold tracking-wide text-primary uppercase">
             Starting
@@ -105,6 +128,16 @@ export function PublicItemInfo({
           <p className="mt-1 text-sm font-semibold text-foreground">
             {formatSnakeCase(item.shippingType)}
             {item.shippingCost ? ` · ${formatMoney(item.shippingCost)}` : ""}
+          </p>
+        </div>
+        <div className="rounded-xl border border-primary/15 bg-card/80 px-3.5 py-3">
+          <p className="text-[11px] font-semibold tracking-wide text-primary uppercase">
+            Est. delivery
+          </p>
+          <p className="mt-1 text-sm font-semibold text-foreground">
+            {item.shippingEstimatedDays != null
+              ? `${item.shippingEstimatedDays} day${item.shippingEstimatedDays === 1 ? "" : "s"}`
+              : "—"}
           </p>
         </div>
       </div>
@@ -129,6 +162,7 @@ export function PublicItemInfo({
       ) : (
         <form
           onSubmit={handlePlaceBid}
+          noValidate
           className="mt-auto flex flex-col gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4"
         >
           <div className="space-y-1">
@@ -139,34 +173,47 @@ export function PublicItemInfo({
               Your bid
             </label>
             <p className="text-xs text-muted-foreground">
-              {item.currentBid
-                ? `Must be higher than ${formatMoney(item.currentBid)}`
-                : `Starting bid is ${formatMoney(item.startingPrice)}`}
+              {isLeadingBidder
+                ? "Your bid is active. You can bid again after someone else outbids you."
+                : item.currentBid
+                  ? `Must be higher than ${formatMoney(item.currentBid)}`
+                  : `Starting bid is ${formatMoney(item.startingPrice)}`}
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input
               id="bid-amount"
               type="number"
-              min={minBid || undefined}
-              step="1"
               inputMode="decimal"
               placeholder="Enter amount"
               value={bidAmount}
-              onChange={(event) => setBidAmount(event.target.value)}
-              required
+              onChange={(event) => {
+                setBidAmount(event.target.value);
+                setBidError("");
+              }}
+              disabled={isLeadingBidder || isPlacingBid}
+              aria-invalid={Boolean(bidError)}
               className="h-10 bg-card"
             />
             <Button
               type="submit"
               size="lg"
-              disabled={isPlacingBid || !bidAmount}
+              disabled={isLeadingBidder || isPlacingBid || !bidAmount}
               className="h-10 shrink-0 gap-2 px-4 shadow-sm shadow-primary/15"
             >
               <Gavel className="size-4" />
-              {isPlacingBid ? "Placing…" : "Place bid"}
+              {isPlacingBid
+                ? "Placing…"
+                : isLeadingBidder
+                  ? "Active"
+                  : "Place bid"}
             </Button>
           </div>
+          {bidError ? (
+            <p className="text-sm text-destructive" role="alert">
+              {bidError}
+            </p>
+          ) : null}
         </form>
       )}
     </div>

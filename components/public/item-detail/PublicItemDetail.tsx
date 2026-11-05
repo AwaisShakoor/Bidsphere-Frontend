@@ -9,6 +9,7 @@ import { PublicItemDetailSkeleton } from "./PublicItemDetailSkeleton";
 import { PublicItemGallery } from "./PublicItemGallery";
 import { PublicItemInfo } from "./PublicItemInfo";
 import { Button } from "@/components/ui/button";
+import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 import { usePublicItem } from "@/services/hooks/ItemServicesHook";
 
@@ -17,6 +18,7 @@ export function PublicItemDetail({ itemId }: { itemId: string }) {
   const { data: item, isPending, isError, error } = usePublicItem(itemId);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const user = meData?.user;
+  const backHref = user ? getAuthRedirectPath(user.role) : "/";
 
   return (
     <main className="relative flex-1 overflow-hidden">
@@ -32,9 +34,9 @@ export function PublicItemDetail({ itemId }: { itemId: string }) {
           asChild
           className="w-fit text-muted-foreground hover:text-foreground"
         >
-          <Link href="/">
+          <Link href={backHref}>
             <ArrowLeft data-icon="inline-start" />
-            Back to items
+            {user ? "Back to dashboard" : "Back to items"}
           </Link>
         </Button>
 
@@ -50,6 +52,7 @@ export function PublicItemDetail({ itemId }: { itemId: string }) {
                 <PublicItemInfo
                   item={item}
                   itemId={itemId}
+                  userId={user?.id ?? null}
                   isLoggedIn={Boolean(user)}
                   isAuthPending={isMePending}
                 />
