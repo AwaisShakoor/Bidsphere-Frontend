@@ -1,3 +1,18 @@
+export function PlaceBidPulse() {
+  return (
+    <div className="mt-auto flex flex-col gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4">
+      <div className="space-y-2">
+        <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+        <div className="h-3 w-44 animate-pulse rounded bg-muted" />
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="h-10 w-full animate-pulse rounded-lg bg-muted" />
+        <div className="h-10 w-full shrink-0 animate-pulse rounded-lg bg-primary/20 sm:w-32" />
+      </div>
+    </div>
+  );
+}
+
 export function PublicItemDetailSkeleton() {
   return (
     <div className="overflow-hidden rounded-2xl bg-card shadow-md shadow-primary/10 ring-1 ring-primary/20">
@@ -30,16 +45,7 @@ export function PublicItemDetailSkeleton() {
               />
             ))}
           </div>
-          <div className="mt-auto flex flex-col gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4">
-            <div className="space-y-2">
-              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
-              <div className="h-3 w-44 animate-pulse rounded bg-muted" />
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="h-10 w-full animate-pulse rounded-lg bg-muted" />
-              <div className="h-10 w-full shrink-0 animate-pulse rounded-lg bg-primary/20 sm:w-32" />
-            </div>
-          </div>
+          <PlaceBidPulse />
         </div>
       </div>
     </div>

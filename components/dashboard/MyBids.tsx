@@ -2,26 +2,16 @@
 
 import Link from "next/link";
 import { Clock, Gavel, Inbox } from "lucide-react";
-import { BidStatus } from "@/enums/bidStatus";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { getBidStatusClass } from "@/enums/bidStatus";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useMyBids } from "@/services/hooks/BidServicesHook";
 import type { MyBid } from "@/services/types/BidServicesTypes";
 
-function bidStatusClass(status: string) {
-  if (status === BidStatus.ACTIVE) {
-    return "bg-primary/10 text-primary";
-  }
-  if (status === BidStatus.OUTBID) {
-    return "bg-muted text-muted-foreground";
-  }
-  return "bg-muted text-muted-foreground";
-}
-
 function sortMyBids(bids: MyBid[]) {
   return [...bids].sort(
-    (a, b) =>
-      new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime(),
+    (a, b) => new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime(),
   );
 }
 
@@ -58,12 +48,11 @@ export function MyBids() {
             {error instanceof Error ? error.message : "Could not load bids."}
           </p>
         ) : bids.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-8 text-center">
-            <Inbox className="size-8 text-muted-foreground/50" aria-hidden />
-            <p className="text-sm text-muted-foreground">
-              You haven&apos;t placed any bids yet.
-            </p>
-          </div>
+          <EmptyState
+            icon={<Inbox className="size-5" aria-hidden />}
+            title="No bids yet"
+            description="You haven't placed any bids yet."
+          />
         ) : (
           <ul className="max-h-80 divide-y divide-border/70 overflow-y-auto pr-1">
             {sortedBids.map((bid) => (
@@ -96,7 +85,7 @@ export function MyBids() {
                     <span
                       className={cn(
                         "rounded-md px-2 py-0.5 text-[11px] font-semibold",
-                        bidStatusClass(bid.status),
+                        getBidStatusClass(bid.status),
                       )}
                     >
                       {formatSnakeCase(bid.status)}

@@ -1,49 +1,42 @@
 "use client";
 
-import { useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BidStatus } from "@/enums/bidStatus";
+import { getBidStatusClass } from "@/enums/bidStatus";
+import { useModalLock } from "@/hooks/useModalLock";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Bid } from "@/services/types/BidServicesTypes";
 
 export function BidHistoryRows({ bids }: { bids: Bid[] }) {
-  const leadingId = bids[0]?.id;
-
   return (
     <ul className="divide-y divide-border/70">
-      {bids.map((bid) => {
-        const isLeading = bid.id === leadingId;
-        return (
-          <li
-            key={bid.id}
-            className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 py-3 first:pt-0 last:pb-0"
-          >
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-foreground">
-                {bid.bidder.firstName} {bid.bidder.lastName}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {formatDate(bid.placedAt)}
-              </p>
-            </div>
-            <span
-              className={cn(
-                "rounded-md px-2 py-0.5 text-[11px] font-semibold",
-                bid.status === BidStatus.ACTIVE || isLeading
-                  ? "bg-primary/10 text-primary"
-                  : "bg-muted text-muted-foreground",
-              )}
-            >
-              {formatSnakeCase(bid.status)}
-            </span>
-            <p className="text-sm font-semibold text-primary tabular-nums">
-              {formatMoney(bid.amount)}
+      {bids.map((bid) => (
+        <li
+          key={bid.id}
+          className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 py-3 first:pt-0 last:pb-0"
+        >
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-foreground">
+              {bid.bidder.firstName} {bid.bidder.lastName}
             </p>
-          </li>
-        );
-      })}
+            <p className="text-xs text-muted-foreground">
+              {formatDate(bid.placedAt)}
+            </p>
+          </div>
+          <span
+            className={cn(
+              "rounded-md px-2 py-0.5 text-[11px] font-semibold",
+              getBidStatusClass(bid.status),
+            )}
+          >
+            {formatSnakeCase(bid.status)}
+          </span>
+          <p className="text-sm font-semibold text-primary tabular-nums">
+            {formatMoney(bid.amount)}
+          </p>
+        </li>
+      ))}
     </ul>
   );
 }
@@ -57,21 +50,7 @@ export function BidHistoryDialog({
   bids: Bid[];
   onClose: () => void;
 }) {
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [open, onClose]);
+  useModalLock({ open, onClose });
 
   if (!open) return null;
 

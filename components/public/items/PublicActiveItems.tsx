@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Clock, Gavel } from "lucide-react";
+import { FilterEmptyState } from "@/components/marketplace/FilterEmptyState";
 import { MarketplaceCard } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceFilterBar } from "@/components/marketplace/MarketplaceFilterBar";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { PublicActiveItemsSkeleton } from "./PublicActiveItemsSkeleton";
-import { Button } from "@/components/ui/button";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -87,17 +88,11 @@ export function PublicActiveItems() {
       />
 
       {items.length === 0 ? (
-        <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-14 text-center shadow-md shadow-primary/5">
-          <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-            <Gavel className="size-6" />
-          </span>
-          <p className="mt-4 text-sm font-medium text-foreground">
-            No active items
-          </p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            Live listings will show up here when auctions go active.
-          </p>
-        </section>
+        <EmptyState
+          icon={<Gavel className="size-5" aria-hidden />}
+          title="No active items"
+          description="Live listings will show up here when auctions go active."
+        />
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
@@ -111,26 +106,12 @@ export function PublicActiveItems() {
           </p>
 
           {filtered.length === 0 ? (
-            <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-md shadow-primary/5">
-              <p className="text-sm font-medium text-foreground">
-                No items match your filters
-              </p>
-              <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-                Try another category or clear your search.
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-4"
-                onClick={() => {
-                  setSearch("");
-                  setCategoryId("");
-                }}
-              >
-                Clear filters
-              </Button>
-            </section>
+            <FilterEmptyState
+              onClear={() => {
+                setSearch("");
+                setCategoryId("");
+              }}
+            />
           ) : (
             <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
               {filtered.map((item) => (

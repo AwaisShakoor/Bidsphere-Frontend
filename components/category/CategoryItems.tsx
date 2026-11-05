@@ -2,16 +2,10 @@
 
 import { ImageIcon } from "lucide-react";
 import { ItemListSkeleton } from "@/components/item/ItemListSkeleton";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { formatSnakeCase, formatMoney } from "@/lib/format";
+import { getPrimaryImage } from "@/lib/getPrimaryImage";
 import { useCategoryItems } from "@/services/hooks/ItemServicesHook";
-import type { Item } from "@/services/types/ItemsServicesTypes";
-
-function getThumbnail(item: Item) {
-  return (
-    [...(item.images ?? [])].sort((a, b) => a.sortOrder - b.sortOrder)[0] ??
-    null
-  );
-}
 
 export function CategoryItems({ slug }: { slug: string }) {
   const {
@@ -37,24 +31,18 @@ export function CategoryItems({ slug }: { slug: string }) {
 
   if (items.length === 0) {
     return (
-      <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-14 text-center shadow-md shadow-primary/5">
-        <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-          <ImageIcon className="size-6" />
-        </span>
-        <p className="mt-4 text-sm font-medium text-foreground">
-          No items found
-        </p>
-        <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-          There are no listings in this category yet.
-        </p>
-      </section>
+      <EmptyState
+        icon={<ImageIcon className="size-5" aria-hidden />}
+        title="No items found"
+        description="There are no listings in this category yet."
+      />
     );
   }
 
   return (
     <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => {
-        const thumbnail = getThumbnail(item);
+        const thumbnail = getPrimaryImage(item.images);
 
         return (
           <li

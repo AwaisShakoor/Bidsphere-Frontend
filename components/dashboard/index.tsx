@@ -82,7 +82,7 @@ export function Dashboard() {
           </div>
         </header>
 
-        {!isPending && isSeller ? <SellerActiveAuctions isSeller /> : null}
+        {!isPending && isSeller ? <SellerActiveAuctions /> : null}
         {!isPending && !isSeller ? (
           <>
             <MyBids />
