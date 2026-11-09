@@ -22,7 +22,8 @@ export function BidHistoryRows({ bids }: { bids: Bid[] }) {
             className={cn(
               "flex items-center gap-3 px-1 py-2.5",
               isActive && "rounded-lg bg-primary/5",
-              isWon && "rounded-lg bg-emerald-500/5",
+              isWon &&
+                "rounded-lg bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/20",
             )}
           >
             <div className="min-w-0 flex-1">
@@ -43,7 +44,14 @@ export function BidHistoryRows({ bids }: { bids: Bid[] }) {
                 {formatDate(bid.placedAt)}
               </p>
             </div>
-            <p className="shrink-0 text-sm font-semibold text-primary tabular-nums">
+            <p
+              className={cn(
+                "shrink-0 text-sm font-semibold tabular-nums",
+                isWon
+                  ? "text-emerald-700 dark:text-emerald-400"
+                  : "text-primary",
+              )}
+            >
               {formatMoney(bid.amount)}
             </p>
           </li>

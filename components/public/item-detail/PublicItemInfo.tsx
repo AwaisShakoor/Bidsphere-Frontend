@@ -148,16 +148,31 @@ export function PublicItemInfo({
       {isAuthPending ? (
         <PlaceBidPulse />
       ) : isWinner ? (
-        <div className="mt-auto flex flex-col gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <p className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-              <Trophy className="size-4 shrink-0" aria-hidden />
-              You won
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Your bid won this auction
-              {item.currentBid ? ` at ${formatMoney(item.currentBid)}` : ""}.
-            </p>
+        <div className="mt-auto overflow-hidden rounded-xl border border-emerald-500/30 bg-linear-to-br from-emerald-500/15 via-emerald-500/8 to-card p-4 shadow-sm shadow-emerald-500/10">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-700 ring-1 ring-emerald-500/30 dark:text-emerald-300">
+                <Trophy className="size-4" aria-hidden />
+              </span>
+              <div className="min-w-0 space-y-0.5">
+                <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                  You won this item
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Congratulations — your bid took it.
+                </p>
+              </div>
+            </div>
+            {item.currentBid ? (
+              <div className="inline-flex shrink-0 flex-col items-center justify-center rounded-lg bg-emerald-500/15 px-4 py-2 text-center ring-1 ring-emerald-500/25">
+                <p className="text-[10px] font-semibold tracking-wide text-emerald-700/80 uppercase dark:text-emerald-400/80">
+                  Winning bid
+                </p>
+                <p className="text-base font-bold leading-tight text-emerald-800 tabular-nums dark:text-emerald-300">
+                  {formatMoney(item.currentBid)}
+                </p>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : isLive && !isLoggedIn ? (

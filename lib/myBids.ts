@@ -3,8 +3,22 @@ import type { MyBid } from "@/services/types/BidServicesTypes";
 
 export type MyBidFilter = "all" | "active" | "outbid" | "won" | "lost";
 
+export const MY_BIDS_PAGE_SIZE = 10;
+
+const EMPTY_MESSAGES: Record<MyBidFilter, string> = {
+  all: "No bids right now.",
+  active: "No active bids right now.",
+  outbid: "No outbid auctions right now.",
+  won: "No won auctions yet.",
+  lost: "No lost auctions yet.",
+};
+
 function countByStatus(bids: MyBid[], status: BidStatus) {
   return bids.filter((bid) => bid.status.toUpperCase() === status).length;
+}
+
+export function getMyBidsEmptyMessage(filter: MyBidFilter) {
+  return EMPTY_MESSAGES[filter];
 }
 
 export function getMyBidsView(bids: MyBid[], filter: MyBidFilter) {

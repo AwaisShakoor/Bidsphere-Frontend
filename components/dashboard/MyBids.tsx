@@ -2,19 +2,39 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock, Inbox } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Clock, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BidStatus, getBidStatusClass } from "@/enums/bidStatus";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
-import { getMyBidsView, type MyBidFilter } from "@/lib/myBids";
+import {
+  getMyBidsEmptyMessage,
+  getMyBidsView,
+  MY_BIDS_PAGE_SIZE,
+  type MyBidFilter,
+} from "@/lib/myBids";
 import { cn } from "@/lib/utils";
 import { useMyBids } from "@/services/hooks/BidServicesHook";
 
 export function MyBids() {
   const { data: bids = [], isPending, isError, error } = useMyBids();
   const [filter, setFilter] = useState<MyBidFilter>("all");
+  const [page, setPage] = useState(0);
   const { items, filters } = getMyBidsView(bids, filter);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / MY_BIDS_PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages - 1);
+  const pageItems = items.slice(
+    currentPage * MY_BIDS_PAGE_SIZE,
+    currentPage * MY_BIDS_PAGE_SIZE + MY_BIDS_PAGE_SIZE,
+  );
+  const from = currentPage * MY_BIDS_PAGE_SIZE + 1;
+  const to = Math.min(items.length, (currentPage + 1) * MY_BIDS_PAGE_SIZE);
+
+  function handleFilterChange(next: MyBidFilter) {
+    setFilter(next);
+    setPage(0);
+  }
 
   return (
     <section className="overflow-hidden rounded-2xl bg-card shadow-md shadow-primary/5 ring-1 ring-border">
@@ -55,7 +75,7 @@ export function MyBids() {
                   type="button"
                   role="option"
                   aria-selected={filter === value}
-                  onClick={() => setFilter(value)}
+                  onClick={() => handleFilterChange(value)}
                   className={cn(
                     "inline-flex w-fit cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-all",
                     filter === value
@@ -71,73 +91,118 @@ export function MyBids() {
 
             {items.length === 0 ? (
               <p className="py-5 text-center text-sm text-muted-foreground">
-                No {filter} bids right now.
+                {getMyBidsEmptyMessage(filter)}
               </p>
             ) : (
-              <ul className="divide-y divide-border/70">
-                {items.map((bid) => {
-                  const status = bid.status.toUpperCase();
-                  const isActive = status === BidStatus.ACTIVE;
-                  const isWon = status === BidStatus.WON;
+              <>
+                <ul className="divide-y divide-border/70">
+                  {pageItems.map((bid) => {
+                    const status = bid.status.toUpperCase();
+                    const isActive = status === BidStatus.ACTIVE;
+                    const isWon = status === BidStatus.WON;
 
-                  return (
-                    <li key={bid.id}>
-                      <Link
-                        href={`/items/${bid.item.id}`}
-                        className={cn(
-                          "group flex items-center gap-3 rounded-lg px-2 py-2.5 outline-none transition-colors hover:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 sm:gap-4",
-                          isActive && "bg-primary/5 hover:bg-primary/10",
-                          isWon && "bg-emerald-500/5 hover:bg-emerald-500/10",
-                        )}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
-                            <p className="truncate text-sm font-semibold text-foreground">
-                              {bid.item.title || "Untitled"}
-                            </p>
-                            <span
-                              className={cn(
-                                "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
-                                getBidStatusClass(bid.status),
-                              )}
-                            >
-                              {formatSnakeCase(bid.status)}
-                            </span>
-                          </div>
-                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                            {bid.item.auction.title}
-                            <span className="mx-1.5 text-border">·</span>
-                            <span className="inline-flex items-center gap-1">
-                              <Clock
-                                className="size-3 shrink-0 text-primary"
-                                aria-hidden
-                              />
-                              Ends {formatDate(bid.item.auction.endTime)}
-                            </span>
-                          </p>
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                          <div className="text-right">
-                            <p className="text-sm font-semibold text-primary tabular-nums">
-                              {formatMoney(bid.amount)}
-                            </p>
-                            {!isActive && bid.item.currentBid ? (
-                              <p className="text-[11px] text-muted-foreground tabular-nums">
-                                High {formatMoney(bid.item.currentBid)}
+                    return (
+                      <li key={bid.id}>
+                        <Link
+                          href={`/items/${bid.item.id}`}
+                          className={cn(
+                            "group flex items-center gap-3 rounded-lg px-2 py-2.5 outline-none transition-colors hover:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 sm:gap-4",
+                            isActive && "bg-primary/5 hover:bg-primary/10",
+                            isWon &&
+                              "bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/20 hover:bg-emerald-500/15",
+                          )}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+                              <p className="truncate text-sm font-semibold text-foreground">
+                                {bid.item.title || "Untitled"}
                               </p>
-                            ) : null}
+                              <span
+                                className={cn(
+                                  "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                                  getBidStatusClass(bid.status),
+                                )}
+                              >
+                                {formatSnakeCase(bid.status)}
+                              </span>
+                            </div>
+                            <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                              {bid.item.auction.title}
+                              <span className="mx-1.5 text-border">·</span>
+                              <span className="inline-flex items-center gap-1">
+                                <Clock
+                                  className="size-3 shrink-0 text-primary"
+                                  aria-hidden
+                                />
+                                Ends {formatDate(bid.item.auction.endTime)}
+                              </span>
+                            </p>
                           </div>
-                          <ArrowRight
-                            className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
-                            aria-hidden
-                          />
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+
+                          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                            <div className="text-right">
+                              <p
+                                className={cn(
+                                  "text-sm font-semibold tabular-nums",
+                                  isWon
+                                    ? "text-emerald-700 dark:text-emerald-400"
+                                    : "text-primary",
+                                )}
+                              >
+                                {formatMoney(bid.amount)}
+                              </p>
+                              {!isActive && bid.item.currentBid ? (
+                                <p className="text-[11px] text-muted-foreground tabular-nums">
+                                  High {formatMoney(bid.item.currentBid)}
+                                </p>
+                              ) : null}
+                            </div>
+                            <ArrowRight
+                              className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
+                              aria-hidden
+                            />
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                {items.length > MY_BIDS_PAGE_SIZE ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                    <p className="text-xs text-muted-foreground tabular-nums">
+                      Showing {from}–{to} of {items.length}
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={currentPage === 0}
+                        onClick={() => setPage(Math.max(0, currentPage - 1))}
+                        aria-label="Previous page"
+                      >
+                        <ChevronLeft className="size-4" />
+                      </Button>
+                      <p className="min-w-16 text-center text-xs font-medium text-muted-foreground tabular-nums">
+                        {currentPage + 1} / {totalPages}
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        disabled={currentPage >= totalPages - 1}
+                        onClick={() =>
+                          setPage(Math.min(totalPages - 1, currentPage + 1))
+                        }
+                        aria-label="Next page"
+                      >
+                        <ChevronRight className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </>
             )}
           </div>
         )}
