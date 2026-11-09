@@ -12,7 +12,9 @@ export function BidHistoryRows({ bids }: { bids: Bid[] }) {
   return (
     <ul className="divide-y divide-border/70">
       {bids.map((bid) => {
-        const isActive = bid.status.toUpperCase() === BidStatus.ACTIVE;
+        const status = bid.status.toUpperCase();
+        const isActive = status === BidStatus.ACTIVE;
+        const isWon = status === BidStatus.WON;
 
         return (
           <li
@@ -20,6 +22,7 @@ export function BidHistoryRows({ bids }: { bids: Bid[] }) {
             className={cn(
               "flex items-center gap-3 px-1 py-2.5",
               isActive && "rounded-lg bg-primary/5",
+              isWon && "rounded-lg bg-emerald-500/5",
             )}
           >
             <div className="min-w-0 flex-1">

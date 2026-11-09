@@ -76,8 +76,9 @@ export function MyBids() {
             ) : (
               <ul className="divide-y divide-border/70">
                 {items.map((bid) => {
-                  const isActive =
-                    bid.status.toUpperCase() === BidStatus.ACTIVE;
+                  const status = bid.status.toUpperCase();
+                  const isActive = status === BidStatus.ACTIVE;
+                  const isWon = status === BidStatus.WON;
 
                   return (
                     <li key={bid.id}>
@@ -86,6 +87,7 @@ export function MyBids() {
                         className={cn(
                           "group flex items-center gap-3 rounded-lg px-2 py-2.5 outline-none transition-colors hover:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 sm:gap-4",
                           isActive && "bg-primary/5 hover:bg-primary/10",
+                          isWon && "bg-emerald-500/5 hover:bg-emerald-500/10",
                         )}
                       >
                         <div className="min-w-0 flex-1">

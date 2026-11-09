@@ -52,10 +52,6 @@ export function PublicItemGallery({ item, onPreview }: PublicItemGalleryProps) {
             <ImageIcon className="size-10" />
           </span>
         )}
-        <span className="pointer-events-none absolute top-3 left-3 z-10 rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
-          {item.category.name}
-        </span>
-
         {item.images.length > 1 ? (
           <>
             <Button

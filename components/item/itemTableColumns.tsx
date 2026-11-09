@@ -6,7 +6,7 @@ import { getPrimaryImage } from "@/lib/getPrimaryImage";
 import type { Item } from "@/services/types/ItemsServicesTypes";
 
 export const ITEM_TABLE_GRID =
-  "grid-cols-[minmax(0,1.8fr)_7rem_minmax(6rem,1fr)_minmax(7rem,1fr)_5.5rem]";
+  "grid-cols-[2.5rem_minmax(0,1.8fr)_7rem_minmax(6rem,1fr)_minmax(7rem,1fr)_5.5rem]";
 
 type ItemTableColumnOptions = {
   isDeleting: boolean;

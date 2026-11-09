@@ -2,9 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Gavel, Truck } from "lucide-react";
+import { Clock, Gavel, Trophy, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AuctionStatus } from "@/enums/auctionStatus";
 import { BidStatus } from "@/enums/bidStatus";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
@@ -40,6 +41,8 @@ export function PublicItemInfo({
   const leadingBid =
     bids.find((bid) => bid.status === BidStatus.ACTIVE) ?? bids[0];
   const isLeadingBidder = Boolean(userId && leadingBid?.bidder.id === userId);
+  const isLive = item.auction.status.toUpperCase() === AuctionStatus.LIVE;
+  const isWinner = Boolean(userId && item.winnerId === userId);
 
   function handleLoginToBid() {
     router.push(`/login?next=${encodeURIComponent(`/items/${itemId}`)}`);
@@ -47,7 +50,7 @@ export function PublicItemInfo({
 
   function handlePlaceBid(event: FormEvent) {
     event.preventDefault();
-    if (isLeadingBidder) return;
+    if (!isLive || isLeadingBidder) return;
 
     const amount = Number(bidAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -77,7 +80,7 @@ export function PublicItemInfo({
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-md bg-primary px-2 py-0.5 text-[11px] font-semibold tracking-wide text-primary-foreground uppercase shadow-sm shadow-primary/20">
-            Active
+            {formatSnakeCase(item.auction.status)}
           </span>
           <span
             className={cn(
@@ -144,7 +147,20 @@ export function PublicItemInfo({
 
       {isAuthPending ? (
         <PlaceBidPulse />
-      ) : !isLoggedIn ? (
+      ) : isWinner ? (
+        <div className="mt-auto flex flex-col gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+              <Trophy className="size-4 shrink-0" aria-hidden />
+              You won
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Your bid won this auction
+              {item.currentBid ? ` at ${formatMoney(item.currentBid)}` : ""}.
+            </p>
+          </div>
+        </div>
+      ) : isLive && !isLoggedIn ? (
         <div className="mt-auto flex flex-col gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
             Sign in to place a bid on this item.
@@ -159,7 +175,7 @@ export function PublicItemInfo({
             Log in to bid
           </Button>
         </div>
-      ) : (
+      ) : isLive && isLoggedIn ? (
         <form
           onSubmit={handlePlaceBid}
           noValidate
@@ -215,6 +231,16 @@ export function PublicItemInfo({
             </p>
           ) : null}
         </form>
+      ) : (
+        <div className="mt-auto rounded-xl border border-border/80 bg-muted/40 p-4">
+          <p className="text-sm font-medium text-foreground">
+            Bidding is closed
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            This auction is {formatSnakeCase(item.auction.status).toLowerCase()}
+            .
+          </p>
+        </div>
       )}
     </div>
   );

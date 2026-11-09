@@ -101,6 +101,7 @@ export type PublicItem = {
   startingPrice: string;
   reservePrice: string | null;
   currentBid: string | null;
+  winnerId: string | null;
   itemCondition: ItemCondition;
   shippingType: ShippingType;
   shippingCost: string | null;

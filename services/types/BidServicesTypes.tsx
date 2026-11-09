@@ -33,6 +33,7 @@ export type MyBidItem = {
   title: string;
   currentBid: string;
   startingPrice: string;
+  winnerId: string | null;
   auction: MyBidAuction;
 };
 

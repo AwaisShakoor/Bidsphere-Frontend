@@ -29,7 +29,8 @@ export default function MyBidsPage() {
             My bids
           </h1>
           <p className="text-sm text-muted-foreground">
-            Active means you hold the high bid until the auction ends.
+            Active is the high bid while live; Won and Lost show after the
+            auction ends.
           </p>
         </header>
 

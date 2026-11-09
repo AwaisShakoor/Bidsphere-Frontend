@@ -38,6 +38,7 @@ export function AdminAuctionsTable({
       emptyTitle="No pending auctions"
       emptyDescription="When sellers submit auctions for approval, they will appear here for review."
       filterPlaceholder="Search auctions..."
+      pagination
       onRowClick={onOpenAuction}
     />
   );

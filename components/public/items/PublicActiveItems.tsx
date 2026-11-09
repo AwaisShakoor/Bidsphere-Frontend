@@ -24,7 +24,7 @@ function ItemCard({ item }: { item: PublicItem }) {
       href={`/items/${item.id}`}
       title={item.title || "Untitled"}
       imageUrl={thumbnail?.url}
-      badge={item.category.name}
+      badge={formatSnakeCase(item.auction.status)}
       chip={
         <span
           className={cn(
@@ -90,8 +90,8 @@ export function PublicActiveItems() {
       {items.length === 0 ? (
         <EmptyState
           icon={<Gavel className="size-5" aria-hidden />}
-          title="No active items"
-          description="Live listings will show up here when auctions go active."
+          title="No live items"
+          description="Live listings will show up here when auctions go live."
         />
       ) : (
         <>
@@ -99,7 +99,7 @@ export function PublicActiveItems() {
             <span className="font-medium text-foreground">
               {filtered.length}
             </span>{" "}
-            active {filtered.length === 1 ? "item" : "items"}
+            live {filtered.length === 1 ? "item" : "items"}
             {categoryId
               ? ` in ${categories.find((c) => c.id === categoryId)?.name ?? "category"}`
               : ""}

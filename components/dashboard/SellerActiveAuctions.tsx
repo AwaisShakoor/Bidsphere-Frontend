@@ -70,7 +70,7 @@ export function SellerActiveAuctions() {
 
   const q = search.trim().toLowerCase();
   const activeAuctions = auctions.filter(
-    (auction) => auction.status?.toUpperCase() === AuctionStatus.ACTIVE,
+    (auction) => auction.status?.toUpperCase() === AuctionStatus.LIVE,
   );
   const filtered = activeAuctions.filter((auction) => {
     if (!q) return true;
@@ -94,7 +94,7 @@ export function SellerActiveAuctions() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-foreground">
-            Your active auctions
+            Your live auctions
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Live listings currently open on the marketplace.
@@ -125,8 +125,8 @@ export function SellerActiveAuctions() {
       {!isPending && !isError && activeAuctions.length === 0 ? (
         <EmptyState
           icon={<Inbox className="size-5" aria-hidden />}
-          title="No active auctions"
-          description="Create your first auction to list items, set a schedule, and submit it for approval. Active auctions will show up here."
+          title="No live auctions"
+          description="Create your first auction to list items, set a schedule, and submit it for approval. Live auctions will show up here."
           action={
             <Button
               type="button"
