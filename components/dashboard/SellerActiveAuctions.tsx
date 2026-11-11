@@ -3,21 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Clock, Gavel, Inbox } from "lucide-react";
+import { FilterEmptyState } from "@/components/marketplace/FilterEmptyState";
 import { MarketplaceCard } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceCardsSkeleton } from "@/components/marketplace/MarketplaceCardsSkeleton";
 import { MarketplaceFilterBar } from "@/components/marketplace/MarketplaceFilterBar";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
+import { getPrimaryImage } from "@/lib/getPrimaryImage";
 import { useAuctions } from "@/services/hooks/AuctionServicesHook";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
 import { useItems } from "@/services/hooks/ItemServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
-
-function getCoverUrl(images: { url: string; sortOrder: number }[]) {
-  return [...images].sort((a, b) => a.sortOrder - b.sortOrder)[0]?.url ?? null;
-}
 
 function ActiveAuctionCard({
   auction,
@@ -29,7 +28,7 @@ function ActiveAuctionCard({
   categoryId: string;
 }) {
   const { data: items = [], isPending } = useItems(auction.id);
-  const coverUrl = items[0] ? getCoverUrl(items[0].images) : null;
+  const coverUrl = getPrimaryImage(items[0]?.images)?.url ?? null;
 
   if (
     categoryId &&
@@ -62,11 +61,7 @@ function ActiveAuctionCard({
   );
 }
 
-export function SellerActiveAuctions({
-  isSeller = false,
-}: {
-  isSeller?: boolean;
-}) {
+export function SellerActiveAuctions() {
   const { data: auctions = [], isPending, isError, error } = useAuctions();
   const { data: categoriesData } = useCategories();
   const categories = categoriesData?.data ?? [];
@@ -75,7 +70,7 @@ export function SellerActiveAuctions({
 
   const q = search.trim().toLowerCase();
   const activeAuctions = auctions.filter(
-    (auction) => auction.status?.toUpperCase() === AuctionStatus.ACTIVE,
+    (auction) => auction.status?.toUpperCase() === AuctionStatus.LIVE,
   );
   const filtered = activeAuctions.filter((auction) => {
     if (!q) return true;
@@ -99,28 +94,24 @@ export function SellerActiveAuctions({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-foreground">
-            {isSeller ? "Your active auctions" : "Live auctions"}
+            Your live auctions
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isSeller
-              ? "Live listings currently open on the marketplace."
-              : "Auctions currently open for bidding."}
+            Live listings currently open on the marketplace.
           </p>
         </div>
-        {isSeller ? (
-          <Button
-            type="button"
-            size="sm"
-            className="h-10 w-fit gap-1.5 rounded-lg px-3 shadow-sm shadow-primary/10"
-            asChild
-          >
-            <Link href="/my-auctions">
-              <Gavel className="size-3.5" aria-hidden />
-              Manage auctions
-              <ArrowRight className="size-3.5 opacity-80" aria-hidden />
-            </Link>
-          </Button>
-        ) : null}
+        <Button
+          type="button"
+          size="sm"
+          className="h-10 w-fit gap-1.5 rounded-lg px-3 shadow-sm shadow-primary/10"
+          asChild
+        >
+          <Link href="/my-auctions">
+            <Gavel className="size-3.5" aria-hidden />
+            Manage auctions
+            <ArrowRight className="size-3.5 opacity-80" aria-hidden />
+          </Link>
+        </Button>
       </div>
 
       {isPending ? <MarketplaceCardsSkeleton count={5} /> : null}
@@ -132,63 +123,37 @@ export function SellerActiveAuctions({
       ) : null}
 
       {!isPending && !isError && activeAuctions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center shadow-sm shadow-primary/5">
-          <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <Inbox className="size-5" aria-hidden />
-          </span>
-          <div className="space-y-1.5">
-            <p className="text-base font-semibold tracking-tight text-foreground">
-              No active auctions
-            </p>
-            <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {isSeller
-                ? "Create your first auction to list items, set a schedule, and submit it for approval. Active auctions will show up here."
-                : "There are no live auctions right now. Check back soon — new listings will appear here when they go live."}
-            </p>
-          </div>
-          {isSeller ? (
-            <div className="pt-1">
-              <Button
-                type="button"
-                size="sm"
-                className="h-8 gap-1.5 rounded-lg px-3 shadow-sm shadow-primary/10"
-                asChild
-              >
-                <Link href="/my-auctions">
-                  <Gavel className="size-3.5" aria-hidden />
-                  Go to my auctions
-                  <ArrowRight className="size-3.5 opacity-80" aria-hidden />
-                </Link>
-              </Button>
-            </div>
-          ) : null}
-        </div>
+        <EmptyState
+          icon={<Inbox className="size-5" aria-hidden />}
+          title="No live auctions"
+          description="Create your first auction to list items, set a schedule, and submit it for approval. Live auctions will show up here."
+          action={
+            <Button
+              type="button"
+              size="sm"
+              className="h-8 gap-1.5 rounded-lg px-3 shadow-sm shadow-primary/10"
+              asChild
+            >
+              <Link href="/my-auctions">
+                <Gavel className="size-3.5" aria-hidden />
+                Go to my auctions
+                <ArrowRight className="size-3.5 opacity-80" aria-hidden />
+              </Link>
+            </Button>
+          }
+        />
       ) : null}
 
       {!isPending &&
       !isError &&
       activeAuctions.length > 0 &&
       filtered.length === 0 ? (
-        <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-md shadow-primary/5">
-          <p className="text-sm font-medium text-foreground">
-            No items match your filters
-          </p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            Try another category or clear your search.
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-4"
-            onClick={() => {
-              setSearch("");
-              setCategoryId("");
-            }}
-          >
-            Clear filters
-          </Button>
-        </section>
+        <FilterEmptyState
+          onClear={() => {
+            setSearch("");
+            setCategoryId("");
+          }}
+        />
       ) : null}
 
       {!isPending && !isError && filtered.length > 0 ? (
@@ -198,7 +163,7 @@ export function SellerActiveAuctions({
               key={auction.id}
               auction={auction}
               categoryId={categoryId}
-              href={isSeller ? `/my-auctions?id=${auction.id}` : `/dashboard`}
+              href={`/my-auctions?id=${auction.id}`}
             />
           ))}
         </ul>

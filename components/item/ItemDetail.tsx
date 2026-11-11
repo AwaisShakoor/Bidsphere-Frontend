@@ -95,6 +95,16 @@ export function ItemDetail({
               </div>
               <div className="rounded-xl bg-muted/50 px-4 py-3">
                 <p className="text-xs tracking-wide text-muted-foreground uppercase">
+                  Est. delivery
+                </p>
+                <p className="mt-1 text-sm font-medium text-foreground">
+                  {item.shippingEstimatedDays != null
+                    ? `${item.shippingEstimatedDays} day${item.shippingEstimatedDays === 1 ? "" : "s"}`
+                    : "—"}
+                </p>
+              </div>
+              <div className="rounded-xl bg-muted/50 px-4 py-3">
+                <p className="text-xs tracking-wide text-muted-foreground uppercase">
                   Current bid
                 </p>
                 <p className="mt-1 text-sm font-medium text-foreground">

@@ -36,6 +36,8 @@ export function AdminUsersTable({
       emptyTitle="No users found"
       emptyDescription="Buyers and sellers will show up here once they create accounts."
       filterPlaceholder="Search users..."
+      pagination
+      rowNumbers
     />
   );
 }

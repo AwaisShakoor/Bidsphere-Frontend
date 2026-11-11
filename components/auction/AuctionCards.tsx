@@ -1,8 +1,9 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { Inbox, Pencil } from "lucide-react";
 import { AuctionCardsSkeleton } from "@/components/auction/AuctionCardsSkeleton";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import {
   canSellerEditAuction,
   getAuctionStatusClass,
@@ -28,12 +29,11 @@ export function AuctionCards({
 
   if (auctions.length === 0) {
     return (
-      <section className="rounded-2xl border border-dashed border-border bg-card/60 px-6 py-14 text-center">
-        <p className="text-sm font-medium text-foreground">No auctions yet</p>
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Create an auction and it will show up here.
-        </p>
-      </section>
+      <EmptyState
+        icon={<Inbox className="size-5" aria-hidden />}
+        title="No auctions yet"
+        description="Create an auction and it will show up here."
+      />
     );
   }
 

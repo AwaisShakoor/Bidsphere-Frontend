@@ -67,6 +67,8 @@ export function ItemTable({
         emptyTitle="No items yet"
         emptyDescription="Add items to this auction so buyers have lots to bid on."
         filterPlaceholder="Search items..."
+        pagination
+        rowNumbers
         onRowClick={onOpenItem}
       />
 

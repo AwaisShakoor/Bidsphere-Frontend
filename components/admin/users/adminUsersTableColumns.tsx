@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import type { AdminUser } from "@/services/types/AdminServicesTypes";
 
 export const ADMIN_USERS_TABLE_GRID =
-  "grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(10rem,1.3fr)_6.5rem_minmax(8rem,1fr)]";
+  "grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_minmax(10rem,1.3fr)_6.5rem_minmax(8rem,1fr)]";
 
 export const adminUsersTableColumns: DataTableColumn<AdminUser>[] = [
   {

@@ -94,6 +94,9 @@ export function ItemForm({
       ...(values.shippingCost
         ? { shippingCost: Number(values.shippingCost) }
         : {}),
+      ...(values.shippingEstimatedDays
+        ? { shippingEstimatedDays: Number(values.shippingEstimatedDays) }
+        : {}),
     };
 
     if (isEdit && item) {
@@ -255,6 +258,17 @@ export function ItemForm({
             {...register("shippingCost")}
           />
         </div>
+
+        <Field
+          label="Estimated delivery days (optional)"
+          type="number"
+          step="1"
+          min="1"
+          placeholder="e.g. 3"
+          disabled={isFormLocked}
+          error={errors.shippingEstimatedDays}
+          {...register("shippingEstimatedDays")}
+        />
 
         <ItemImageField
           existingImages={item?.images}

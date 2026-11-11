@@ -174,21 +174,21 @@ export function AdminAuctionDetail({
           <div className="flex shrink-0 flex-wrap gap-2">
             <Button
               type="button"
-              className="h-10"
-              disabled={isDeciding}
-              onClick={() => setApproveOpen(true)}
-            >
-              <Check data-icon="inline-start" />
-              Approve
-            </Button>
-            <Button
-              type="button"
               className="h-10 bg-destructive text-white hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30"
               disabled={isDeciding}
               onClick={() => setRejectOpen(true)}
             >
               <X data-icon="inline-start" />
               Reject
+            </Button>
+            <Button
+              type="button"
+              className="h-10"
+              disabled={isDeciding}
+              onClick={() => setApproveOpen(true)}
+            >
+              <Check data-icon="inline-start" />
+              Approve
             </Button>
           </div>
         ) : null}

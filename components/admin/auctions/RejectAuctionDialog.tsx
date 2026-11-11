@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalLock } from "@/hooks/useModalLock";
 
 export function RejectAuctionDialog({
   open,
@@ -19,24 +20,11 @@ export function RejectAuctionDialog({
 }) {
   const [reason, setReason] = useState("");
 
+  useModalLock({ open, onClose, enabled: !isLoading });
+
   useEffect(() => {
-    if (!open) {
-      setReason("");
-      return;
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape" && !isLoading) onClose();
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-    };
-  }, [open, isLoading, onClose]);
+    if (!open) setReason("");
+  }, [open]);
 
   if (!open) return null;
 

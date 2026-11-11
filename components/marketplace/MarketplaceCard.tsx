@@ -51,7 +51,7 @@ export function MarketplaceCard({
           )}
           <span
             className={cn(
-              "absolute top-2 left-2 max-w-[calc(100%-1rem)] truncate rounded-md bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground shadow-sm",
+              "absolute top-2 left-2 max-w-[calc(100%-1rem)] truncate rounded-md bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground uppercase shadow-sm",
               badgeClassName,
             )}
           >

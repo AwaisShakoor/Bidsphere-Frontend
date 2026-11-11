@@ -81,6 +81,8 @@ export function AuctionTable({
           ) : null
         }
         filterPlaceholder="Search auctions..."
+        pagination
+        rowNumbers
         onRowClick={onOpenAuction}
       />
 

@@ -1,9 +1,21 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Inbox, Search } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  Inbox,
+  Search,
+} from "lucide-react";
+import { Button } from "./button";
+import { EmptyState } from "./EmptyState";
 import { Loader } from "./Loader";
 import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 10;
 
 export type DataTableColumn<T> = {
   accessorKey: string;
@@ -30,6 +42,8 @@ type DataTableProps<T> = {
   enableFilter?: boolean;
   enableSort?: boolean;
   filterPlaceholder?: string;
+  pagination?: boolean;
+  rowNumbers?: boolean;
 };
 
 function getAccessorValue<T>(row: T, accessorKey: string): unknown {
@@ -79,10 +93,13 @@ export function DataTable<T>({
   enableFilter = true,
   enableSort = true,
   filterPlaceholder = "Search...",
+  pagination = false,
+  rowNumbers = false,
 }: DataTableProps<T>) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [page, setPage] = useState(0);
 
   const rows = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -119,22 +136,38 @@ export function DataTable<T>({
     return next;
   }, [columns, data, search, sortDirection, sortKey]);
 
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages - 1);
+  const pageRows = pagination
+    ? rows.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE)
+    : rows;
+  const from = currentPage * PAGE_SIZE + 1;
+  const to = Math.min(rows.length, (currentPage + 1) * PAGE_SIZE);
+
+  function handleSearchChange(value: string) {
+    setSearch(value);
+    setPage(0);
+  }
+
   function handleSort(column: DataTableColumn<T>) {
     if (!enableSort || column.sortable === false) return;
 
     if (sortKey !== column.accessorKey) {
       setSortKey(column.accessorKey);
       setSortDirection("asc");
+      setPage(0);
       return;
     }
 
     if (sortDirection === "asc") {
       setSortDirection("desc");
+      setPage(0);
       return;
     }
 
     setSortKey(null);
     setSortDirection("asc");
+    setPage(0);
   }
 
   if (isPending) {
@@ -151,22 +184,12 @@ export function DataTable<T>({
 
   if (data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center shadow-sm shadow-primary/5">
-        <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <Inbox className="size-5" aria-hidden />
-        </span>
-        <div className="space-y-1.5">
-          <p className="text-base font-semibold tracking-tight text-foreground">
-            {emptyTitle}
-          </p>
-          {emptyDescription ? (
-            <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {emptyDescription}
-            </p>
-          ) : null}
-        </div>
-        {emptyAction ? <div className="pt-1">{emptyAction}</div> : null}
-      </div>
+      <EmptyState
+        icon={<Inbox className="size-5" aria-hidden />}
+        title={emptyTitle}
+        description={emptyDescription}
+        action={emptyAction}
+      />
     );
   }
 
@@ -182,7 +205,7 @@ export function DataTable<T>({
           <input
             type="search"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => handleSearchChange(event.target.value)}
             placeholder={filterPlaceholder}
             className="h-10 w-full rounded-xl border border-border bg-card pr-3 pl-9 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
           />
@@ -196,6 +219,7 @@ export function DataTable<T>({
             gridClassName,
           )}
         >
+          {rowNumbers ? <span>#</span> : null}
           {columns.map((column) => {
             const canSort = enableSort && column.sortable !== false;
             const isActive = sortKey === column.accessorKey;
@@ -235,7 +259,7 @@ export function DataTable<T>({
           </p>
         ) : (
           <ul className="divide-y divide-border">
-            {rows.map((row) => (
+            {pageRows.map((row, index) => (
               <li
                 key={getRowKey(row)}
                 className={cn(
@@ -246,6 +270,13 @@ export function DataTable<T>({
                 )}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
+                {rowNumbers ? (
+                  <p className="text-sm tabular-nums text-muted-foreground">
+                    {pagination
+                      ? currentPage * PAGE_SIZE + index + 1
+                      : index + 1}
+                  </p>
+                ) : null}
                 {columns.map((column) => (
                   <div key={column.accessorKey}>
                     {getCellValue(row, column)}
@@ -256,6 +287,39 @@ export function DataTable<T>({
           </ul>
         )}
       </div>
+
+      {pagination && rows.length > PAGE_SIZE ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground tabular-nums">
+            Showing {from}–{to} of {rows.length}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              disabled={currentPage === 0}
+              onClick={() => setPage(Math.max(0, currentPage - 1))}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <p className="min-w-16 text-center text-xs font-medium text-muted-foreground tabular-nums">
+              {currentPage + 1} / {totalPages}
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => setPage(Math.min(totalPages - 1, currentPage + 1))}
+              aria-label="Next page"
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

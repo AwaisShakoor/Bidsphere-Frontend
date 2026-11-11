@@ -2,10 +2,11 @@ import { ImageIcon } from "lucide-react";
 import type { DataTableColumn } from "@/components/ui/DataTable";
 import { ActionsCell } from "@/components/ui/ActionsCell";
 import { formatMoney, formatSnakeCase } from "@/lib/format";
+import { getPrimaryImage } from "@/lib/getPrimaryImage";
 import type { Item } from "@/services/types/ItemsServicesTypes";
 
 export const ITEM_TABLE_GRID =
-  "grid-cols-[minmax(0,1.8fr)_7rem_minmax(6rem,1fr)_minmax(7rem,1fr)_5.5rem]";
+  "grid-cols-[2.5rem_minmax(0,1.8fr)_7rem_minmax(6rem,1fr)_minmax(7rem,1fr)_5.5rem]";
 
 type ItemTableColumnOptions = {
   isDeleting: boolean;
@@ -27,8 +28,7 @@ export function getItemTableColumns({
       accessorKey: "title",
       header: "Item",
       cell: (item) => {
-        const thumbnail =
-          [...item.images].sort((a, b) => a.sortOrder - b.sortOrder)[0] ?? null;
+        const thumbnail = getPrimaryImage(item.images);
 
         return (
           <div className="flex min-w-0 items-center gap-3">

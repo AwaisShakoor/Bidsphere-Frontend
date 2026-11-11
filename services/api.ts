@@ -50,7 +50,8 @@ api.interceptors.response.use(
           const isProtectedArea =
             path.startsWith("/dashboard") ||
             path.startsWith("/admin") ||
-            path.startsWith("/my-auctions");
+            path.startsWith("/my-auctions") ||
+            path.startsWith("/my-bids");
           if (isProtectedArea) {
             window.location.href = "/login";
           }

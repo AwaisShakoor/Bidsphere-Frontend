@@ -8,6 +8,8 @@ export enum CacheKeys {
   CATEGORY_ITEMS = "category-items",
   PUBLIC_ITEMS = "public-items",
   PUBLIC_ITEM = "public-item",
+  ITEM_BIDS = "item-bids",
+  MY_BIDS = "my-bids",
   ADMIN_USERS = "admin-users",
   ADMIN_AUCTIONS = "admin-auctions",
   ADMIN_AUCTION = "admin-auction",
