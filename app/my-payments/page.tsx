@@ -24,12 +24,16 @@ export default function MyPaymentsPage() {
           </Link>
         </Button>
 
-        <header className="space-y-0.5">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <header className="space-y-1">
+          <p className="text-sm font-medium tracking-wide text-primary uppercase">
+            Buyer
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             My payments
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Track pending and completed payments for auctions you won.
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Paid checkouts first. Unpaid wins still need Pay now before the
+            deadline.
           </p>
         </header>
 

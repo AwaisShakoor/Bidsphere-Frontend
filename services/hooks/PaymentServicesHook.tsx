@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { queryClient } from "@/components/providers/queryProvider/queryClient";
@@ -38,18 +37,10 @@ function invalidatePaymentQueries(itemId?: string | null) {
 }
 
 export function usePaymentSuccess(itemId: string | null, enabled: boolean) {
-  const router = useRouter();
-
   useEffect(() => {
     if (!enabled) return;
 
-    toast.success("Payment successful");
+    toast.success("Payment successful", { id: "payment-success" });
     invalidatePaymentQueries(itemId);
-
-    const timer = window.setTimeout(() => {
-      router.replace("/my-payments");
-    }, 1800);
-
-    return () => window.clearTimeout(timer);
-  }, [enabled, itemId, router]);
+  }, [enabled, itemId]);
 }

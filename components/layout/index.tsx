@@ -4,10 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CreditCard, Gavel, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PaymentStatus } from "@/enums/paymentStatus";
 import { UserRole } from "@/enums/userRole";
 import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { cn } from "@/lib/utils";
 import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
+import { useMyPayments } from "@/services/hooks/PaymentServicesHook";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -17,6 +19,10 @@ export function Navbar() {
   const homeHref = user ? getAuthRedirectPath(user.role) : "/";
   const isBuyer = user?.role === UserRole.BUYER;
   const isSeller = user?.role === UserRole.SELLER;
+  const { data: payments = [] } = useMyPayments(isBuyer);
+  const duePaymentCount = payments.filter(
+    (payment) => payment.status === PaymentStatus.PENDING,
+  ).length;
   const isBidsActive = pathname.startsWith("/my-bids");
   const isPaymentsActive = pathname.startsWith("/my-payments");
   const isSellActive = pathname.startsWith("/my-auctions");
@@ -79,7 +85,7 @@ export function Navbar() {
                 variant="outline"
                 size="sm"
                 className={cn(
-                  "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                  "relative h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
                   isPaymentsActive &&
                     "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
                 )}
@@ -87,9 +93,19 @@ export function Navbar() {
                 <Link
                   href="/my-payments"
                   aria-current={isPaymentsActive ? "page" : undefined}
+                  aria-label={
+                    duePaymentCount > 0
+                      ? `My payments, ${duePaymentCount} due`
+                      : "My payments"
+                  }
                 >
                   <CreditCard className="size-3.5" />
-                  <span className="hidden sm:inline">Payments</span>
+                  <span className="hidden sm:inline">My payments</span>
+                  {duePaymentCount > 0 ? (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground tabular-nums">
+                      {duePaymentCount > 9 ? "9+" : duePaymentCount}
+                    </span>
+                  ) : null}
                 </Link>
               </Button>
             </>
