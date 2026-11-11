@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Gavel, LogIn, LogOut } from "lucide-react";
+import { CreditCard, Gavel, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@/enums/userRole";
 import { getAuthRedirectPath } from "@/lib/auth/routes";
@@ -18,6 +18,7 @@ export function Navbar() {
   const isBuyer = user?.role === UserRole.BUYER;
   const isSeller = user?.role === UserRole.SELLER;
   const isBidsActive = pathname.startsWith("/my-bids");
+  const isPaymentsActive = pathname.startsWith("/my-payments");
   const isSellActive = pathname.startsWith("/my-auctions");
   const isLoginActive = pathname.startsWith("/login");
   const isRegisterActive = pathname.startsWith("/register");
@@ -54,24 +55,44 @@ export function Navbar() {
 
         <div className="flex shrink-0 items-center gap-2">
           {isBuyer ? (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className={cn(
-                "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
-                isBidsActive &&
-                  "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
-              )}
-            >
-              <Link
-                href="/my-bids"
-                aria-current={isBidsActive ? "page" : undefined}
+            <>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                  isBidsActive &&
+                    "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
+                )}
               >
-                <Gavel className="size-3.5" />
-                <span className="hidden sm:inline">My bids</span>
-              </Link>
-            </Button>
+                <Link
+                  href="/my-bids"
+                  aria-current={isBidsActive ? "page" : undefined}
+                >
+                  <Gavel className="size-3.5" />
+                  <span className="hidden sm:inline">My bids</span>
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                  isPaymentsActive &&
+                    "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
+                )}
+              >
+                <Link
+                  href="/my-payments"
+                  aria-current={isPaymentsActive ? "page" : undefined}
+                >
+                  <CreditCard className="size-3.5" />
+                  <span className="hidden sm:inline">Payments</span>
+                </Link>
+              </Button>
+            </>
           ) : null}
 
           {isSeller ? (
