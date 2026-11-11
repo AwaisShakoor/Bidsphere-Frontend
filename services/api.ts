@@ -53,7 +53,10 @@ api.interceptors.response.use(
             path.startsWith("/dashboard") ||
             path.startsWith("/admin") ||
             path.startsWith("/my-auctions") ||
-            path.startsWith("/my-bids");
+            path.startsWith("/my-bids") ||
+            path.startsWith("/checkout") ||
+            path.startsWith("/payments") ||
+            path.startsWith("/my-payments");
           if (isProtectedArea) {
             window.location.href = "/login";
           }

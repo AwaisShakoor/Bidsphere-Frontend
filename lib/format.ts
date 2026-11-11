@@ -1,7 +1,7 @@
-export function formatMoney(value: string | null) {
+export function formatMoney(value: string | number | null) {
   if (value == null || value === "") return "—";
   const amount = Number(value);
-  if (Number.isNaN(amount)) return value;
+  if (Number.isNaN(amount)) return String(value);
   return `$${amount.toFixed(2)}`;
 }
 

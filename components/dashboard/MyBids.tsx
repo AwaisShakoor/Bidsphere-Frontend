@@ -2,10 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight, Clock, Inbox } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  CreditCard,
+  Inbox,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { BidStatus, getBidStatusClass } from "@/enums/bidStatus";
+import { PaymentStatus } from "@/enums/paymentStatus";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import {
   getMyBidsEmptyMessage,
@@ -15,9 +24,19 @@ import {
 } from "@/lib/myBids";
 import { cn } from "@/lib/utils";
 import { useMyBids } from "@/services/hooks/BidServicesHook";
+import { useMyPayments } from "@/services/hooks/PaymentServicesHook";
+import type { Payment } from "@/services/types/PaymentServicesTypes";
+
+function isItemPaid(payments: Payment[], itemId: string) {
+  return payments.some(
+    (payment) =>
+      payment.itemId === itemId && payment.status === PaymentStatus.COMPLETED,
+  );
+}
 
 export function MyBids() {
   const { data: bids = [], isPending, isError, error } = useMyBids();
+  const { data: payments = [] } = useMyPayments();
   const [filter, setFilter] = useState<MyBidFilter>("all");
   const [page, setPage] = useState(0);
   const { items, filters } = getMyBidsView(bids, filter);
@@ -103,66 +122,103 @@ export function MyBids() {
 
                     return (
                       <li key={bid.id}>
-                        <Link
-                          href={`/items/${bid.item.id}`}
+                        <div
                           className={cn(
-                            "group flex items-center gap-3 rounded-lg px-2 py-2.5 outline-none transition-colors hover:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 sm:gap-4",
-                            isActive && "bg-primary/5 hover:bg-primary/10",
+                            "flex items-center gap-2 rounded-lg px-2 py-2.5 sm:gap-3",
+                            isActive && "bg-primary/5",
                             isWon &&
-                              "bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/20 hover:bg-emerald-500/15",
+                              "bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/20",
                           )}
                         >
-                          <div className="min-w-0 flex-1">
-                            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
-                              <p className="truncate text-sm font-semibold text-foreground">
-                                {bid.item.title || "Untitled"}
+                          <Link
+                            href={`/items/${bid.item.id}`}
+                            className={cn(
+                              "group flex min-w-0 flex-1 items-center gap-3 outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 sm:gap-4",
+                            )}
+                          >
+                            <div className="min-w-0 flex-1">
+                              <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+                                <p className="truncate text-sm font-semibold text-foreground">
+                                  {bid.item.title || "Untitled"}
+                                </p>
+                                <span
+                                  className={cn(
+                                    "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                                    getBidStatusClass(bid.status),
+                                  )}
+                                >
+                                  {formatSnakeCase(bid.status)}
+                                </span>
+                              </div>
+                              <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                                {bid.item.auction.title}
+                                <span className="mx-1.5 text-border">·</span>
+                                <span className="inline-flex items-center gap-1">
+                                  <Clock
+                                    className="size-3 shrink-0 text-primary"
+                                    aria-hidden
+                                  />
+                                  Ends {formatDate(bid.item.auction.endTime)}
+                                </span>
                               </p>
-                              <span
-                                className={cn(
-                                  "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
-                                  getBidStatusClass(bid.status),
-                                )}
-                              >
-                                {formatSnakeCase(bid.status)}
-                              </span>
                             </div>
-                            <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                              {bid.item.auction.title}
-                              <span className="mx-1.5 text-border">·</span>
-                              <span className="inline-flex items-center gap-1">
-                                <Clock
-                                  className="size-3 shrink-0 text-primary"
+
+                            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                              <div className="text-right">
+                                <p
+                                  className={cn(
+                                    "text-sm font-semibold tabular-nums",
+                                    isWon
+                                      ? "text-emerald-700 dark:text-emerald-400"
+                                      : "text-primary",
+                                  )}
+                                >
+                                  {formatMoney(bid.amount)}
+                                </p>
+                                {!isActive && bid.item.currentBid ? (
+                                  <p className="text-[11px] text-muted-foreground tabular-nums">
+                                    High {formatMoney(bid.item.currentBid)}
+                                  </p>
+                                ) : null}
+                              </div>
+                              {!isWon ? (
+                                <ArrowRight
+                                  className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
                                   aria-hidden
                                 />
-                                Ends {formatDate(bid.item.auction.endTime)}
-                              </span>
-                            </p>
-                          </div>
-
-                          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                            <div className="text-right">
-                              <p
-                                className={cn(
-                                  "text-sm font-semibold tabular-nums",
-                                  isWon
-                                    ? "text-emerald-700 dark:text-emerald-400"
-                                    : "text-primary",
-                                )}
-                              >
-                                {formatMoney(bid.amount)}
-                              </p>
-                              {!isActive && bid.item.currentBid ? (
-                                <p className="text-[11px] text-muted-foreground tabular-nums">
-                                  High {formatMoney(bid.item.currentBid)}
-                                </p>
                               ) : null}
                             </div>
-                            <ArrowRight
-                              className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
-                              aria-hidden
-                            />
-                          </div>
-                        </Link>
+                          </Link>
+
+                          {isWon ? (
+                            isItemPaid(payments, bid.item.id) ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                className="h-8 gap-1.5 border-emerald-500/25 bg-emerald-500/5 text-emerald-800 hover:bg-emerald-500/10 dark:text-emerald-300"
+                                asChild
+                              >
+                                <Link href="/my-payments">
+                                  <CheckCircle2 className="size-3.5" />
+                                  Paid
+                                </Link>
+                              </Button>
+                            ) : (
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="h-8 gap-1.5 px-3 shadow-sm shadow-primary/25"
+                                asChild
+                              >
+                                <Link href={`/checkout/${bid.item.id}`}>
+                                  <CreditCard className="size-3.5" />
+                                  Pay now
+                                </Link>
+                              </Button>
+                            )
+                          ) : null}
+                        </div>
                       </li>
                     );
                   })}
