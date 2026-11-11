@@ -5,6 +5,10 @@ export function formatMoney(value: string | number | null) {
   return `$${amount.toFixed(2)}`;
 }
 
+export function titleInitial(title: string) {
+  return (title.trim().charAt(0) || "?").toUpperCase();
+}
+
 export function formatSnakeCase(value: string) {
   return value
     .trim()

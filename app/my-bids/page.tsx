@@ -24,13 +24,16 @@ export default function MyBidsPage() {
           </Link>
         </Button>
 
-        <header className="space-y-0.5">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <header className="space-y-1">
+          <p className="text-sm font-medium tracking-wide text-primary uppercase">
+            Buyer
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             My bids
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Active is the high bid while live; Won and Lost show after the
-            auction ends.
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Track active bids while live. Won and Lost update after each auction
+            ends.
           </p>
         </header>
 
