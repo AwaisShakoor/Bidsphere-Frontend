@@ -51,10 +51,19 @@ export function PublicItemInfo({
   const leadingBid =
     bids.find((bid) => bid.status === BidStatus.ACTIVE) ?? bids[0];
   const isLeadingBidder = Boolean(userId && leadingBid?.bidder.id === userId);
-  const isLive = item.auction.status.toUpperCase() === AuctionStatus.LIVE;
+  const auctionStatus = item.auction.status.toUpperCase();
+  const isLive = auctionStatus === AuctionStatus.LIVE;
+  const isAuctionOver =
+    auctionStatus === AuctionStatus.ENDED ||
+    auctionStatus === AuctionStatus.COMPLETED;
   const isWinner = Boolean(userId && item.winnerId === userId);
-  const { data: payment } = useItemPayment(itemId, isWinner);
-  const isPaid = payment?.status === PaymentStatus.COMPLETED;
+  const { data: fetchedPayment } = useItemPayment(
+    itemId,
+    isWinner && isAuctionOver && !item.payment,
+  );
+  const payment = item.payment ?? fetchedPayment;
+  const isPaid = payment?.status?.toUpperCase() === PaymentStatus.COMPLETED;
+  const showPayNow = isWinner && isAuctionOver && !isPaid;
 
   function handleLoginToBid() {
     router.push(`/login?next=${encodeURIComponent(`/items/${itemId}`)}`);
@@ -102,10 +111,24 @@ export function PublicItemInfo({
           >
             {formatSnakeCase(item.itemCondition)}
           </span>
+          {item.category?.name ? (
+            <span className="rounded-md border border-border/80 bg-background px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
+              {item.category.name}
+            </span>
+          ) : null}
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           {item.title || "Untitled"}
         </h1>
+        <p className="text-sm text-muted-foreground">
+          <span className="text-[11px] font-semibold tracking-wide text-primary uppercase">
+            Auction
+          </span>
+          <span className="mx-2 text-border">·</span>
+          <span className="font-medium text-foreground">
+            {item.auction.title || "Untitled auction"}
+          </span>
+        </p>
         <p className="text-sm leading-relaxed text-muted-foreground">
           {item.description || "No description"}
         </p>
@@ -159,7 +182,7 @@ export function PublicItemInfo({
 
       {isAuthPending ? (
         <PlaceBidPulse />
-      ) : isWinner ? (
+      ) : isWinner && isAuctionOver ? (
         <div className="mt-auto overflow-hidden rounded-xl border border-emerald-500/25 bg-linear-to-br from-emerald-500/12 via-card to-card p-4 shadow-sm shadow-emerald-500/5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-3">
@@ -185,8 +208,7 @@ export function PublicItemInfo({
               <Button
                 type="button"
                 size="sm"
-                variant="outline"
-                className="h-8 w-fit gap-1.5 self-start border-emerald-500/25 bg-emerald-500/5 text-emerald-800 hover:bg-emerald-500/10 dark:text-emerald-300 sm:self-center"
+                className="h-8 w-fit gap-1.5 self-start px-3.5 shadow-sm shadow-primary/25 sm:self-center"
                 asChild
               >
                 <Link href="/my-payments">
@@ -194,7 +216,7 @@ export function PublicItemInfo({
                   View payment
                 </Link>
               </Button>
-            ) : (
+            ) : showPayNow ? (
               <Button
                 type="button"
                 size="sm"
@@ -204,7 +226,7 @@ export function PublicItemInfo({
                 <CreditCard className="size-3.5" />
                 Pay now
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
       ) : isLive && !isLoggedIn ? (
