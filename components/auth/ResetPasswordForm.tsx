@@ -1,10 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { BidSphereCard } from "@/components/auth/AuthCard";
+import { RESET_TOKEN_KEY } from "@/components/auth/VerifyResetOtpForm";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/FormField";
 import { getAuthRedirectPath } from "@/lib/auth/routes";
@@ -17,9 +19,7 @@ import { useResetPassword } from "@/services/hooks/AuthServicesHook";
 
 export function ResetPasswordForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const defaultEmail = searchParams.get("email") || "";
-
+  const [resetToken, setResetToken] = useState<string | null>(null);
   const { mutate, isPending } = useResetPassword();
   const {
     register,
@@ -27,61 +27,55 @@ export function ResetPasswordForm() {
     formState: { errors },
   } = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      ...resetPasswordDefaultValues,
-      email: defaultEmail,
-    },
+    defaultValues: resetPasswordDefaultValues,
   });
 
+  useEffect(() => {
+    const token = sessionStorage.getItem(RESET_TOKEN_KEY);
+    if (!token) {
+      router.replace("/forgot-password");
+      return;
+    }
+    setResetToken(token);
+  }, [router]);
+
   function onSubmit(values: ResetPasswordFormValues) {
+    if (!resetToken) {
+      router.replace("/forgot-password");
+      return;
+    }
+
     mutate(
       {
-        email: values.email,
-        otp: values.otp,
+        resetToken,
         newPassword: values.newPassword,
       },
       {
-        onSuccess: () => {
-          router.push(getAuthRedirectPath());
+        onSuccess: (data) => {
+          sessionStorage.removeItem(RESET_TOKEN_KEY);
+          router.push(getAuthRedirectPath(data.user?.role));
         },
-      }
+        onError: (error) => {
+          if (!/token|expired/i.test(error.message)) return;
+          sessionStorage.removeItem(RESET_TOKEN_KEY);
+          router.push("/forgot-password");
+        },
+      },
     );
   }
 
-  const cardDescription = defaultEmail
-    ? `Enter the OTP sent to ${defaultEmail} and set a new password.`
-    : "Enter your email, OTP, and your new password.";
+  if (!resetToken) return null;
 
   return (
     <BidSphereCard
       title="Create new password"
-      description={cardDescription}
+      description="Enter your new password to finish resetting your account."
       footerText="Remember your password?"
       footerLinkText="Log in"
       footerHref="/login"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-5">
-          <Field
-            label="Email"
-            type="email"
-            autoComplete="email"
-            placeholder="Enter your email"
-            disabled={Boolean(defaultEmail)}
-            error={errors.email}
-            {...register("email")}
-          />
-
-          <Field
-            label="OTP Code"
-            type="text"
-            placeholder="123456"
-            maxLength={6}
-            autoFocus={Boolean(defaultEmail)}
-            error={errors.otp}
-            {...register("otp")}
-          />
-
           <Field
             label="New Password"
             type="password"

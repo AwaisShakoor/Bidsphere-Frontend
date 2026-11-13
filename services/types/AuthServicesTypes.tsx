@@ -51,6 +51,14 @@ export type VerifyEmailResponse = {
   user?: User;
 };
 
+export type ResendVerificationOtpRequest = {
+  email: string;
+};
+
+export type ResendVerificationOtpResponse = {
+  message: string;
+};
+
 export type ForgotPasswordRequest = {
   email: string;
 };
@@ -59,13 +67,23 @@ export type ForgotPasswordResponse = {
   message: string;
 };
 
-export type ResetPasswordRequest = {
+export type VerifyResetOtpRequest = {
   email: string;
   otp: string;
+};
+
+export type VerifyResetOtpResponse = {
+  message: string;
+  resetToken: string;
+};
+
+export type ResetPasswordRequest = {
+  resetToken: string;
   newPassword: string;
 };
 
 export type ResetPasswordResponse = {
   message: string;
+  user?: User;
 };
 

@@ -14,3 +14,17 @@ export function getErrorMessage(error: unknown): string | undefined {
   const trimmed = message.trim();
   return trimmed || undefined;
 }
+
+export function getErrorCode(error: unknown): string | undefined {
+  if (typeof error !== "object" || error === null || !("response" in error)) {
+    return undefined;
+  }
+
+  const data = (error as { response?: { data?: unknown } }).response?.data;
+  if (typeof data !== "object" || data === null || !("code" in data)) {
+    return undefined;
+  }
+
+  const code = (data as { code: unknown }).code;
+  return typeof code === "string" ? code : undefined;
+}

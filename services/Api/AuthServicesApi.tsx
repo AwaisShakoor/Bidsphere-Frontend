@@ -1,5 +1,5 @@
 import api from "@/services/api";
-import { getErrorMessage } from "@/services/Api/getErrorMessage";
+import { getErrorCode, getErrorMessage } from "@/services/Api/getErrorMessage";
 import type {
   LoginRequest,
   LoginResponse,
@@ -9,8 +9,12 @@ import type {
   RegisterResponse,
   VerifyEmailRequest,
   VerifyEmailResponse,
+  ResendVerificationOtpRequest,
+  ResendVerificationOtpResponse,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
+  VerifyResetOtpRequest,
+  VerifyResetOtpResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
 } from "@/services/types/AuthServicesTypes";
@@ -20,6 +24,9 @@ export async function loginUser(body: LoginRequest) {
     const { data } = await api.post<LoginResponse>("/api/login", body);
     return data;
   } catch (error) {
+    if (getErrorCode(error) === "EMAIL_NOT_VERIFIED") {
+      throw new Error(getErrorMessage(error) || "Email not verified");
+    }
     throw new Error(getErrorMessage(error) || "Invalid email or password");
   }
 }
@@ -42,12 +49,36 @@ export async function verifyEmail(body: VerifyEmailRequest) {
   }
 }
 
+export async function resendVerificationOtp(body: ResendVerificationOtpRequest) {
+  try {
+    const { data } = await api.post<ResendVerificationOtpResponse>(
+      "/api/resend-otp",
+      body,
+    );
+    return data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to resend OTP. Try again.");
+  }
+}
+
 export async function forgotPassword(body: ForgotPasswordRequest) {
   try {
     const { data } = await api.post<ForgotPasswordResponse>("/api/forgot-password", body);
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to send OTP. Try again.");
+  }
+}
+
+export async function verifyResetOtp(body: VerifyResetOtpRequest) {
+  try {
+    const { data } = await api.post<VerifyResetOtpResponse>(
+      "/api/verify-reset-otp",
+      body,
+    );
+    return data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Invalid or expired OTP");
   }
 }
 
