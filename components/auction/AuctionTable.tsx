@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/DataTable";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
 import { Loader } from "@/components/ui/Loader";
-import { canSellerEditAuction } from "@/lib/constants/auctionStatus";
+import { canSellerDeleteAuction } from "@/lib/constants/auctionStatus";
 import { useDeleteAuction } from "@/services/hooks/AuctionServicesHook";
 import type { Auction } from "@/services/types/AuctionServicesTypes";
 
@@ -38,7 +38,7 @@ export function AuctionTable({
 
   function handleConfirmDelete() {
     if (!auctionToDelete) return;
-    if (!canSellerEditAuction(auctionToDelete.status)) {
+    if (!canSellerDeleteAuction(auctionToDelete.status)) {
       setAuctionToDelete(null);
       return;
     }

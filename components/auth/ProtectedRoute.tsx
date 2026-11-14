@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { SessionResumeGuard } from "@/components/auth/SessionResumeGuard";
 import { Loader } from "@/components/ui/Loader";
 import { UserRole } from "@/enums/userRole";
 import { getAuthRedirectPath } from "@/lib/auth/routes";
@@ -43,5 +44,10 @@ export function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <SessionResumeGuard />
+    </>
+  );
 }

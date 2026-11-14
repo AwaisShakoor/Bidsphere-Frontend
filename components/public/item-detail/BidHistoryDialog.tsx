@@ -2,7 +2,8 @@
 
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BidStatus, getBidStatusClass } from "@/enums/bidStatus";
+import { BidStatus } from "@/enums/bidStatus";
+import { getBidStatusClass } from "@/lib/constants/bidStatus";
 import { useModalLock } from "@/hooks/useModalLock";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";

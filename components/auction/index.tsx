@@ -207,6 +207,7 @@ export function AuctionPage() {
         onAddItem={handleAddItem}
         onOpenItem={handleOpenItem}
         onEditItem={handleEditItem}
+        onEditAuction={handleEditAuction}
       />
     );
   }
