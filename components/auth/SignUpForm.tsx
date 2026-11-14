@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { BidSphereCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/FormField";
+import { UserRole } from "@/enums/userRole";
 import { cn } from "@/lib/utils";
 import {
   signUpDefaultValues,
@@ -15,7 +16,6 @@ import {
   type SignUpFormValues,
 } from "@/lib/validationSchema/authSchema";
 import { useRegister } from "@/services/hooks/AuthServicesHook";
-import { UserRole } from "@/enums/userRole";
 
 const roleOptions = [
   {
@@ -56,7 +56,12 @@ export function RegisterPage() {
       },
       {
         onSuccess: () =>
-          router.push(`/verify-email?email=${encodeURIComponent(values.email)}`),
+          router.push(
+            `/verify-email?email=${encodeURIComponent(values.email)}`,
+          ),
+        onError: (error) => {
+          if (/already exists/i.test(error.message)) router.push("/login");
+        },
       },
     );
   }

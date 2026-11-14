@@ -40,13 +40,24 @@ export const forgotPasswordSchema = z.object({
 
 export const verifyEmailSchema = z.object({
   email: emailField,
-  otp: z.string().min(1, "OTP is required").length(6, "OTP must be 6 digits"),
+  otp: z
+    .string()
+    .min(1, "OTP is required")
+    .length(6, "OTP must be 6 digits")
+    .regex(/^\d{6}$/, "OTP must be 6 digits"),
+});
+
+export const verifyResetOtpSchema = z.object({
+  email: emailField,
+  otp: z
+    .string()
+    .min(1, "OTP is required")
+    .length(6, "OTP must be 6 digits")
+    .regex(/^\d{6}$/, "OTP must be 6 digits"),
 });
 
 export const resetPasswordSchema = z
   .object({
-    email: emailField,
-    otp: z.string().min(1, "OTP is required").length(6, "OTP must be 6 digits"),
     newPassword: passwordField,
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
@@ -59,6 +70,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 export type VerifyEmailFormValues = z.infer<typeof verifyEmailSchema>;
+export type VerifyResetOtpFormValues = z.infer<typeof verifyResetOtpSchema>;
 export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
 
 export const loginDefaultValues: LoginFormValues = {
@@ -75,9 +87,12 @@ export const verifyEmailDefaultValues: VerifyEmailFormValues = {
   otp: "",
 };
 
-export const resetPasswordDefaultValues: ResetPasswordFormValues = {
+export const verifyResetOtpDefaultValues: VerifyResetOtpFormValues = {
   email: "",
   otp: "",
+};
+
+export const resetPasswordDefaultValues: ResetPasswordFormValues = {
   newPassword: "",
   confirmPassword: "",
 };

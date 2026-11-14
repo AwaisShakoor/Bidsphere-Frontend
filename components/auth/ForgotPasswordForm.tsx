@@ -29,7 +29,9 @@ export function ForgotPasswordForm() {
   function onSubmit(values: ForgotPasswordFormValues) {
     mutate(values, {
       onSuccess: () => {
-        router.push(`/reset-password?email=${encodeURIComponent(values.email)}`);
+        router.push(
+          `/verify-reset-otp?email=${encodeURIComponent(values.email)}`,
+        );
       },
     });
   }

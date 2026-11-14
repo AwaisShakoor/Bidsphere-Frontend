@@ -10,15 +10,19 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  resendVerificationOtp,
   resetPassword,
   verifyEmail,
+  verifyResetOtp,
 } from "@/services/Api/AuthServicesApi";
 import type {
   ForgotPasswordRequest,
   LoginRequest,
   RegisterRequest,
+  ResendVerificationOtpRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
+  VerifyResetOtpRequest,
 } from "@/services/types/AuthServicesTypes";
 
 export function useLogin() {
@@ -59,11 +63,36 @@ export function useVerifyEmail() {
   });
 }
 
+export function useResendVerificationOtp() {
+  return useMutation({
+    mutationFn: (body: ResendVerificationOtpRequest) =>
+      resendVerificationOtp(body),
+    onSuccess: (data) => {
+      toast.success(data.message || "Resend OTP sent successfully!");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
 export function useForgotPassword() {
   return useMutation({
     mutationFn: (body: ForgotPasswordRequest) => forgotPassword(body),
     onSuccess: (data) => {
       toast.success(data.message || "OTP sent successfully!");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useVerifyResetOtp() {
+  return useMutation({
+    mutationFn: (body: VerifyResetOtpRequest) => verifyResetOtp(body),
+    onSuccess: (data) => {
+      toast.success(data.message || "OTP verified successfully!");
     },
     onError: (error) => {
       toast.error(error.message);

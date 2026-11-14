@@ -19,8 +19,10 @@ function shouldSkipRefresh(url?: string) {
     "/api/register",
     "/api/logout",
     "/api/forgot-password",
+    "/api/verify-reset-otp",
     "/api/reset-password",
     "/api/verify-email",
+    "/api/resend-otp",
   ].some((path) => url.includes(path));
 }
 
