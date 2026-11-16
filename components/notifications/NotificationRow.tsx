@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { iconForType } from "@/lib/constants/notifications";
@@ -11,7 +12,6 @@ type NotificationRowProps = {
 };
 
 function NotificationRowBody({ notification }: { notification: Notification }) {
-  const Icon = iconForType(notification.type);
   const unread = !notification.isRead;
 
   return (
@@ -24,7 +24,10 @@ function NotificationRowBody({ notification }: { notification: Notification }) {
             : "bg-muted/80 text-muted-foreground",
         )}
       >
-        <Icon className="size-3" aria-hidden />
+        {createElement(iconForType(notification.type), {
+          className: "size-3",
+          "aria-hidden": true,
+        })}
       </span>
       <span className="min-w-0 flex-1">
         <span
