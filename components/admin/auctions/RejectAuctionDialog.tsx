@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useModalLock } from "@/hooks/useModalLock";
@@ -20,11 +20,13 @@ export function RejectAuctionDialog({
 }) {
   const [reason, setReason] = useState("");
 
-  useModalLock({ open, onClose, enabled: !isLoading });
+  function handleClose() {
+    if (isLoading) return;
+    setReason("");
+    onClose();
+  }
 
-  useEffect(() => {
-    if (!open) setReason("");
-  }, [open]);
+  useModalLock({ open, onClose: handleClose, enabled: !isLoading });
 
   if (!open) return null;
 
@@ -37,9 +39,7 @@ export function RejectAuctionDialog({
       aria-labelledby="reject-dialog-title"
       aria-describedby="reject-dialog-description"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-[2px]"
-      onClick={() => {
-        if (!isLoading) onClose();
-      }}
+      onClick={handleClose}
     >
       <div
         className="w-full max-w-md rounded-2xl bg-card p-4 shadow-xl shadow-black/10 ring-1 ring-border sm:p-5"
@@ -85,7 +85,7 @@ export function RejectAuctionDialog({
           <Button
             type="button"
             variant="outline"
-            onClick={onClose}
+            onClick={handleClose}
             disabled={isLoading}
           >
             Cancel
@@ -93,7 +93,10 @@ export function RejectAuctionDialog({
           <Button
             type="button"
             disabled={isLoading || !reason.trim()}
-            onClick={() => onConfirm(reason.trim())}
+            onClick={() => {
+              onConfirm(reason.trim());
+              setReason("");
+            }}
             className="bg-destructive text-white hover:bg-destructive/90 focus-visible:border-destructive focus-visible:ring-destructive/30"
           >
             {isLoading ? "Rejecting..." : "Reject auction"}

@@ -21,9 +21,7 @@ export async function createCheckout(
   }
 }
 
-export async function getItemPayment(
-  itemId: string,
-): Promise<Payment | null> {
+export async function getItemPayment(itemId: string): Promise<Payment | null> {
   try {
     const { data } = await api.get<ItemPaymentResponse>(
       `/api/payments/items/${itemId}`,

@@ -19,7 +19,10 @@ import { useResetPassword } from "@/services/hooks/AuthServicesHook";
 
 export function ResetPasswordForm() {
   const router = useRouter();
-  const [resetToken, setResetToken] = useState<string | null>(null);
+  const [resetToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem(RESET_TOKEN_KEY);
+  });
   const { mutate, isPending } = useResetPassword();
   const {
     register,
@@ -31,13 +34,10 @@ export function ResetPasswordForm() {
   });
 
   useEffect(() => {
-    const token = sessionStorage.getItem(RESET_TOKEN_KEY);
-    if (!token) {
+    if (!resetToken) {
       router.replace("/forgot-password");
-      return;
     }
-    setResetToken(token);
-  }, [router]);
+  }, [resetToken, router]);
 
   function onSubmit(values: ResetPasswordFormValues) {
     if (!resetToken) {

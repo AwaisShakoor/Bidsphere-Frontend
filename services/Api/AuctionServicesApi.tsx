@@ -31,7 +31,10 @@ export async function getAuction(id: string) {
 
 export async function createAuction(body: CreateAuctionRequest) {
   try {
-    const { data } = await api.post<CreateAuctionResponse>("/api/auctions", body);
+    const { data } = await api.post<CreateAuctionResponse>(
+      "/api/auctions",
+      body,
+    );
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to create auction");

@@ -10,10 +10,8 @@ export const BID_STATUS_CLASS: Record<BidStatus, string> = {
 
 export const BID_ACCENT_CLASS: Record<BidStatus, string> = {
   [BidStatus.ACTIVE]: "bg-primary/12 text-primary",
-  [BidStatus.OUTBID]:
-    "bg-amber-500/12 text-amber-800 dark:text-amber-300",
-  [BidStatus.WON]:
-    "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300",
+  [BidStatus.OUTBID]: "bg-amber-500/12 text-amber-800 dark:text-amber-300",
+  [BidStatus.WON]: "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300",
   [BidStatus.LOST]: "bg-muted text-muted-foreground",
 };
 

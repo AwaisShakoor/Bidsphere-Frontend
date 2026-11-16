@@ -33,8 +33,6 @@ export function canSellerDeleteAuction(status: string | null | undefined) {
 }
 
 /** Seller can add/edit items and submit/resubmit for approval. */
-export function canSellerManageAuctionItems(
-  status: string | null | undefined,
-) {
+export function canSellerManageAuctionItems(status: string | null | undefined) {
   return canSellerEditAuction(status);
 }

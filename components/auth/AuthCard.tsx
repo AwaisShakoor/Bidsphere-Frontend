@@ -34,7 +34,7 @@ export function BidSphereCard({
     <Card
       className={cn(
         "relative mx-auto w-full max-w-110 gap-0 rounded-2xl border-0 bg-card py-0 shadow-xl shadow-primary/10 ring-1 ring-border",
-        className
+        className,
       )}
     >
       <CardHeader className="gap-2 px-8 pt-8 pb-0 text-center">

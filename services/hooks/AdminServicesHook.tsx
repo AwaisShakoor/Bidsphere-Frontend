@@ -48,7 +48,9 @@ export function useApproveAdminAuction() {
     onSuccess: (data, id) => {
       toast.success(data.message || "Auction approved successfully!");
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTIONS] });
-      queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTION, id] });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.ADMIN_AUCTION, id],
+      });
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_OVERVIEW] });
     },
     onError: (error) => {
@@ -69,7 +71,9 @@ export function useRejectAdminAuction() {
     onSuccess: (data, { id }) => {
       toast.success(data.message || "Auction rejected successfully!");
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTIONS] });
-      queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_AUCTION, id] });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.ADMIN_AUCTION, id],
+      });
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_OVERVIEW] });
     },
     onError: (error) => {

@@ -10,7 +10,9 @@ export default async function CheckoutItemPage({
   const { itemId } = await params;
 
   return (
-    <Suspense fallback={<Loader label="Preparing secure checkout…" variant="orbit" />}>
+    <Suspense
+      fallback={<Loader label="Preparing secure checkout…" variant="orbit" />}
+    >
       <CheckoutPage itemId={itemId} />
     </Suspense>
   );

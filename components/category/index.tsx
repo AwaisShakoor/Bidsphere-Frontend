@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import { useRouter } from "next/navigation";
 import { CategoriesSkeleton } from "./CategoriesSkeleton";
 import { getCategoryIcon } from "@/lib/constants/categories";
@@ -21,19 +22,18 @@ export function CategoryList() {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
       {categories.map((category) => {
-        const Icon = getCategoryIcon(category.slug);
-
         return (
           <button
             key={category.id}
             type="button"
-            onClick={() =>
-              router.push(`/dashboard/category/${category.slug}`)
-            }
+            onClick={() => router.push(`/dashboard/category/${category.slug}`)}
             className="cursor-pointer rounded-2xl bg-card p-4 text-left shadow-md shadow-primary/5 ring-1 ring-border transition hover:ring-primary/30"
           >
             <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Icon className="size-5" aria-hidden />
+              {createElement(getCategoryIcon(category.slug), {
+                className: "size-5",
+                "aria-hidden": true,
+              })}
             </span>
             <span className="mt-3 block text-sm font-medium text-foreground">
               {category.name}

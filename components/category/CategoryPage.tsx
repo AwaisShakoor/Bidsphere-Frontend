@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CategoryItems } from "@/components/category/CategoryItems";
@@ -11,7 +12,6 @@ export function CategoryPage({ slug }: { slug: string }) {
   const router = useRouter();
   const { data: categoriesData, isPending } = useCategories();
   const category = categoriesData?.data?.find((item) => item.slug === slug);
-  const Icon = getCategoryIcon(slug);
 
   return (
     <main className="relative flex-1 overflow-hidden">
@@ -34,7 +34,10 @@ export function CategoryPage({ slug }: { slug: string }) {
         <section className="rounded-2xl bg-card p-5 shadow-md shadow-primary/5 ring-1 ring-border sm:p-6">
           <div className="flex items-start gap-4">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Icon className="size-6" aria-hidden />
+              {createElement(getCategoryIcon(slug), {
+                className: "size-6",
+                "aria-hidden": true,
+              })}
             </span>
             <div className="min-w-0 space-y-1">
               <p className="text-xs font-medium tracking-wide text-primary uppercase">
