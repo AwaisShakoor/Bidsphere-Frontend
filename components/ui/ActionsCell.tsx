@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/tooltip";
 
 type ActionsCellProps = {
+  editDisabled?: boolean;
+  deleteDisabled?: boolean;
   disabled?: boolean;
   editTooltip?: string;
   deleteTooltip?: string;
@@ -17,12 +19,17 @@ type ActionsCellProps = {
 };
 
 export function ActionsCell({
+  editDisabled,
+  deleteDisabled,
   disabled = false,
   editTooltip = "Edit",
   deleteTooltip = "Delete",
   onEdit,
   onDelete,
 }: ActionsCellProps) {
+  const isEditDisabled = editDisabled ?? disabled;
+  const isDeleteDisabled = deleteDisabled ?? disabled;
+
   return (
     <div className="flex items-center justify-end gap-1">
       <Tooltip>
@@ -33,7 +40,7 @@ export function ActionsCell({
               variant="ghost"
               size="icon"
               className="size-8 text-primary hover:bg-primary/10 hover:text-primary"
-              disabled={disabled}
+              disabled={isEditDisabled}
               onClick={(event) => {
                 event.stopPropagation();
                 onEdit();
@@ -55,7 +62,7 @@ export function ActionsCell({
               variant="ghost"
               size="icon"
               className="size-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-              disabled={disabled}
+              disabled={isDeleteDisabled}
               onClick={(event) => {
                 event.stopPropagation();
                 onDelete();

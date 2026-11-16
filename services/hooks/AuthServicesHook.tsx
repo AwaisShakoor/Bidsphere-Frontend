@@ -5,6 +5,10 @@ import toast from "react-hot-toast";
 import { queryClient } from "@/components/providers/queryProvider/queryClient";
 import { CacheKeys } from "@/enums/cacheKeys";
 import {
+  clearSessionActivity,
+  touchSessionActivity,
+} from "@/lib/auth/sessionActivity";
+import {
   forgotPassword,
   getMe,
   loginUser,
@@ -30,6 +34,7 @@ export function useLogin() {
     mutationFn: (body: LoginRequest) => loginUser(body),
     onSuccess: (data) => {
       toast.success(data.message);
+      touchSessionActivity();
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
@@ -55,6 +60,7 @@ export function useVerifyEmail() {
     mutationFn: (body: VerifyEmailRequest) => verifyEmail(body),
     onSuccess: (data) => {
       toast.success(data.message || "Email verified successfully!");
+      touchSessionActivity();
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {
@@ -118,6 +124,7 @@ export function useLogout() {
     mutationFn: logoutUser,
     onSuccess: (data) => {
       toast.success(data.message || "Logged out successfully!");
+      clearSessionActivity();
       queryClient.removeQueries({ queryKey: [CacheKeys.ME] });
     },
     onError: (error) => {

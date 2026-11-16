@@ -93,6 +93,13 @@ export type ItemResponse = {
   item: Item;
 };
 
+export type PublicItemPayment = {
+  id: string;
+  status: string;
+  paidAt: string | null;
+  paymentDeadline: string;
+};
+
 /** Public marketplace list/detail payload */
 export type PublicItem = {
   id: string;
@@ -109,6 +116,7 @@ export type PublicItem = {
   category: Category;
   images: Pick<ItemImage, "id" | "url">[];
   auction: Pick<Auction, "id" | "title" | "status" | "startTime" | "endTime">;
+  payment?: PublicItemPayment | null;
 };
 
 export type PublicItemsResponse = {

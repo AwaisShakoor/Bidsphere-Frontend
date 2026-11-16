@@ -64,6 +64,10 @@ export function AdminAuctionDetail({
         setApproveOpen(false);
         onBack();
       },
+      onError: () => {
+        setApproveOpen(false);
+        void refetch();
+      },
     });
   }
 

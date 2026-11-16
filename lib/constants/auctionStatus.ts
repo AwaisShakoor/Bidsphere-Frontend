@@ -17,16 +17,24 @@ export function getAuctionStatusClass(status: string) {
   return AUCTION_STATUS_CLASS[key] ?? "bg-muted text-muted-foreground";
 }
 
-/** Seller can edit/delete the auction itself. */
+/** Seller can edit auction details / manage items / submit. */
 export function canSellerEditAuction(status: string | null | undefined) {
   const key = status?.toUpperCase();
-  return key === AuctionStatus.DRAFT || key === AuctionStatus.REJECTED;
+  return (
+    key === AuctionStatus.DRAFT ||
+    key === AuctionStatus.REJECTED ||
+    key === AuctionStatus.NO_SALE
+  );
+}
+
+/** Seller can hard-delete only drafts. */
+export function canSellerDeleteAuction(status: string | null | undefined) {
+  return status?.toUpperCase() === AuctionStatus.DRAFT;
 }
 
 /** Seller can add/edit items and submit/resubmit for approval. */
 export function canSellerManageAuctionItems(
   status: string | null | undefined,
 ) {
-  const key = status?.toUpperCase();
-  return key === AuctionStatus.DRAFT || key === AuctionStatus.REJECTED;
+  return canSellerEditAuction(status);
 }

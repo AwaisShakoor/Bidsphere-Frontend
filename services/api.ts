@@ -1,4 +1,5 @@
 import axios from "axios";
+import { touchSessionActivity } from "@/lib/auth/sessionActivity";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "",
@@ -26,8 +27,21 @@ function shouldSkipRefresh(url?: string) {
   ].some((path) => url.includes(path));
 }
 
+function shouldCountAsActivity(url?: string) {
+  if (!url) return false;
+  return !shouldSkipRefresh(url);
+}
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (
+      typeof window !== "undefined" &&
+      shouldCountAsActivity(response.config?.url)
+    ) {
+      touchSessionActivity();
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 
@@ -53,7 +67,10 @@ api.interceptors.response.use(
             path.startsWith("/dashboard") ||
             path.startsWith("/admin") ||
             path.startsWith("/my-auctions") ||
-            path.startsWith("/my-bids");
+            path.startsWith("/my-bids") ||
+            path.startsWith("/checkout") ||
+            path.startsWith("/payments") ||
+            path.startsWith("/my-payments");
           if (isProtectedArea) {
             window.location.href = "/login";
           }
