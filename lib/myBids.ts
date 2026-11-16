@@ -1,4 +1,8 @@
 import { BidStatus } from "@/enums/bidStatus";
+import {
+  isWithinDateRange,
+  type DateRangePreset,
+} from "@/lib/dateRange";
 import type { MyBid } from "@/services/types/BidServicesTypes";
 
 export type MyBidFilter = "all" | "active" | "outbid" | "won" | "lost";
@@ -21,8 +25,16 @@ export function getMyBidsEmptyMessage(filter: MyBidFilter) {
   return EMPTY_MESSAGES[filter];
 }
 
-export function getMyBidsView(bids: MyBid[], filter: MyBidFilter) {
-  const items = [...bids]
+export function getMyBidsView(
+  bids: MyBid[],
+  filter: MyBidFilter,
+  dateRange: DateRangePreset = "all",
+) {
+  const byDate = bids.filter((bid) =>
+    isWithinDateRange(bid.placedAt, dateRange),
+  );
+
+  const items = [...byDate]
     .sort((a, b) => +new Date(b.placedAt) - +new Date(a.placedAt))
     .filter(
       (bid) =>
@@ -32,26 +44,26 @@ export function getMyBidsView(bids: MyBid[], filter: MyBidFilter) {
   return {
     items,
     filters: [
-      { value: "all" as const, label: "All", count: bids.length },
+      { value: "all" as const, label: "All", count: byDate.length },
       {
         value: "active" as const,
         label: "Active",
-        count: countByStatus(bids, BidStatus.ACTIVE),
+        count: countByStatus(byDate, BidStatus.ACTIVE),
       },
       {
         value: "outbid" as const,
         label: "Outbid",
-        count: countByStatus(bids, BidStatus.OUTBID),
+        count: countByStatus(byDate, BidStatus.OUTBID),
       },
       {
         value: "won" as const,
         label: "Won",
-        count: countByStatus(bids, BidStatus.WON),
+        count: countByStatus(byDate, BidStatus.WON),
       },
       {
         value: "lost" as const,
         label: "Lost",
-        count: countByStatus(bids, BidStatus.LOST),
+        count: countByStatus(byDate, BidStatus.LOST),
       },
     ],
   };

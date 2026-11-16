@@ -10,7 +10,9 @@ import {
   Inbox,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDateRangeFilter } from "@/components/ui/DateRangeFilter";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import {
   getPaymentDeadlineTone,
   getPaymentStatusClass,
@@ -35,8 +37,11 @@ import { useMyPayments } from "@/services/hooks/PaymentServicesHook";
 export function MyPayments() {
   const { data: payments = [], isPending, isError, error } = useMyPayments();
   const [tab, setTab] = useState<PaymentTab>("paid");
-  const unpaid = getPaymentsByTab(payments, "unpaid");
-  const paid = getPaymentsByTab(payments, "paid");
+  const { dateRange, filter: dateRangeFilter } = useDateRangeFilter({
+    "aria-label": "Filter payments by date",
+  });
+  const unpaid = getPaymentsByTab(payments, "unpaid", dateRange);
+  const paid = getPaymentsByTab(payments, "paid", dateRange);
   const items = tab === "paid" ? paid : unpaid;
   const counts = { paid: paid.length, unpaid: unpaid.length };
 
@@ -125,36 +130,40 @@ export function MyPayments() {
           </div>
         ) : null}
 
-        <div
-          role="tablist"
-          aria-label="Filter payments"
-          className="inline-flex max-w-full flex-wrap rounded-xl border border-border/80 bg-muted/40 p-1"
-        >
-          {PAYMENT_TABS.map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              aria-selected={tab === value}
-              onClick={() => setTab(value)}
-              className={cn(
-                "inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all",
-                tab === value
-                  ? "bg-card text-foreground shadow-sm ring-1 ring-border"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {label}
-              <span
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <div
+            role="tablist"
+            aria-label="Filter payments"
+            className="inline-flex max-w-full flex-wrap rounded-xl border border-border/80 bg-muted/40 p-1"
+          >
+            {PAYMENT_TABS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={tab === value}
+                onClick={() => setTab(value)}
                 className={cn(
-                  "tabular-nums",
-                  tab === value ? "text-primary" : "opacity-70",
+                  "inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all",
+                  tab === value
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-border"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {counts[value]}
-              </span>
-            </button>
-          ))}
+                {label}
+                <span
+                  className={cn(
+                    "tabular-nums",
+                    tab === value ? "text-primary" : "opacity-70",
+                  )}
+                >
+                  {counts[value]}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {dateRangeFilter}
         </div>
 
         {items.length === 0 ? (
@@ -200,9 +209,12 @@ export function MyPayments() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                          <p className="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
-                            {title}
-                          </p>
+                          <TruncatedText
+                            as="span"
+                            text={title}
+                            limit={40}
+                            className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary"
+                          />
                           <span
                             className={cn(
                               "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
@@ -212,12 +224,19 @@ export function MyPayments() {
                             {formatSnakeCase(payment.status)}
                           </span>
                         </div>
-                        <p className="mt-1 truncate text-xs text-muted-foreground">
-                          {payment.auction?.title || "Auction"}
+                        <p className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                          <TruncatedText
+                            as="span"
+                            text={payment.auction?.title || "Auction"}
+                            limit={36}
+                            className="max-w-48"
+                          />
                           {!isUnpaid ? (
                             <>
-                              <span className="mx-1.5 text-border">·</span>
-                              Paid {formatDate(payment.paidAt ?? "")}
+                              <span className="text-border">·</span>
+                              <span>
+                                Paid {formatDate(payment.paidAt ?? "")}
+                              </span>
                             </>
                           ) : null}
                         </p>

@@ -4,6 +4,7 @@ import { ArrowLeft, Pencil, Plus, RefreshCw, Send } from "lucide-react";
 import { AuctionDetailSkeleton } from "@/components/auction/AuctionDetailSkeleton";
 import { ItemTable } from "@/components/item";
 import { Button } from "@/components/ui/button";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import {
   Tooltip,
   TooltipContent,
@@ -97,9 +98,12 @@ export function AuctionDetail({
 
               <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 flex-wrap items-center gap-2.5">
-                  <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                    {auction.title || "Untitled"}
-                  </h1>
+                  <TruncatedText
+                    as="span"
+                    text={auction.title || "Untitled"}
+                    limit={60}
+                    className="block text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+                  />
                   {status ? (
                     <span
                       className={cn(
@@ -154,18 +158,24 @@ export function AuctionDetail({
                 ) : null}
               </div>
 
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                {auction.description || "No description"}
-              </p>
+              <TruncatedText
+                text={auction.description || "No description"}
+                limit={120}
+                lines={2}
+                className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground"
+              />
 
               {auction.rejectionReason ? (
                 <div className="mt-3 max-w-2xl rounded-xl border border-destructive/20 bg-destructive/5 px-3.5 py-3">
                   <p className="text-xs font-semibold tracking-wide text-destructive uppercase">
                     Rejection reason
                   </p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-destructive">
-                    {auction.rejectionReason}
-                  </p>
+                  <TruncatedText
+                    text={auction.rejectionReason}
+                    limit={100}
+                    lines={2}
+                    className="mt-1.5 text-sm leading-relaxed text-destructive"
+                  />
                 </div>
               ) : null}
 

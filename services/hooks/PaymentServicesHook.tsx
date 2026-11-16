@@ -9,9 +9,10 @@ import {
   getItemPayment,
   getMyPayments,
 } from "@/services/Api/PaymentServicesApi";
+import type { Payment } from "@/services/types/PaymentServicesTypes";
 
 export function useItemPayment(itemId: string | null, enabled = true) {
-  return useQuery({
+  return useQuery<Payment | null>({
     queryKey: [CacheKeys.ITEM_PAYMENT, itemId],
     queryFn: () => getItemPayment(itemId!),
     enabled: Boolean(itemId) && enabled,
@@ -19,7 +20,7 @@ export function useItemPayment(itemId: string | null, enabled = true) {
 }
 
 export function useMyPayments(enabled = true) {
-  return useQuery({
+  return useQuery<Payment[]>({
     queryKey: [CacheKeys.MY_PAYMENTS],
     queryFn: getMyPayments,
     enabled,

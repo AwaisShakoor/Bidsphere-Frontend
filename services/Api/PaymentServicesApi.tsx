@@ -1,5 +1,5 @@
 import axios from "axios";
-import api from "@/services/api";
+import api from "@/services/apiClient";
 import { getErrorMessage } from "@/services/Api/getErrorMessage";
 import type {
   CreateCheckoutResponse,

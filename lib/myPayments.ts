@@ -1,4 +1,8 @@
 import { PaymentStatus } from "@/enums/paymentStatus";
+import {
+  isWithinDateRange,
+  type DateRangePreset,
+} from "@/lib/dateRange";
 import type { Payment } from "@/services/types/PaymentServicesTypes";
 
 export type PaymentTab = "unpaid" | "paid";
@@ -12,10 +16,23 @@ export const PAYMENT_TABS: {
   { value: "unpaid", label: "Unpaid", empty: "No unpaid payments right now." },
 ];
 
-export function getPaymentsByTab(payments: Payment[], tab: PaymentTab) {
+function paymentDate(payment: Payment) {
+  return payment.paidAt ?? payment.createdAt;
+}
+
+export function getPaymentsByTab(
+  payments: Payment[],
+  tab: PaymentTab,
+  dateRange: DateRangePreset = "all",
+) {
   const status =
     tab === "unpaid" ? PaymentStatus.PENDING : PaymentStatus.COMPLETED;
-  return payments.filter((payment) => payment.status === status);
+
+  return payments.filter(
+    (payment) =>
+      payment.status === status &&
+      isWithinDateRange(paymentDate(payment), dateRange),
+  );
 }
 
 export function getPaymentTabEmptyMessage(tab: PaymentTab) {

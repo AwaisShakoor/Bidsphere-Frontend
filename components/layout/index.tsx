@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CreditCard, Gavel, LogIn, LogOut } from "lucide-react";
+import { NotificationBell } from "@/components/notifications";
 import { Button } from "@/components/ui/button";
 import { PaymentStatus } from "@/enums/paymentStatus";
 import { UserRole } from "@/enums/userRole";
@@ -14,11 +15,12 @@ import { useMyPayments } from "@/services/hooks/PaymentServicesHook";
 export function Navbar() {
   const pathname = usePathname();
   const { data: meData, isPending: isMePending } = useMe();
-  const logout = useLogout();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const user = meData?.user;
   const homeHref = user ? getAuthRedirectPath(user.role) : "/";
   const isBuyer = user?.role === UserRole.BUYER;
   const isSeller = user?.role === UserRole.SELLER;
+  const isAdmin = user?.role === UserRole.ADMIN;
   const { data: payments = [] } = useMyPayments(isBuyer);
   const duePaymentCount = payments.filter(
     (payment) => payment.status === PaymentStatus.PENDING,
@@ -30,7 +32,7 @@ export function Navbar() {
   const isRegisterActive = pathname.startsWith("/register");
 
   function handleLogout() {
-    logout.mutate(undefined, {
+    logout(undefined, {
       onSuccess: () => {
         window.location.href = "/";
       },
@@ -139,6 +141,8 @@ export function Navbar() {
             </div>
           ) : user ? (
             <>
+              {!isAdmin ? <NotificationBell enabled /> : null}
+
               <div className="hidden items-center gap-2.5 rounded-lg bg-muted/50 py-1 pr-3 pl-1 ring-1 ring-border/60 sm:flex">
                 <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-xs font-semibold text-primary-foreground">
                   {user.firstName.charAt(0).toUpperCase()}
@@ -159,11 +163,11 @@ export function Navbar() {
                 size="sm"
                 className="h-9 gap-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
                 onClick={handleLogout}
-                disabled={logout.isPending}
+                disabled={isLoggingOut}
               >
                 <LogOut className="size-4" />
                 <span className="hidden sm:inline">
-                  {logout.isPending ? "..." : "Log out"}
+                  {isLoggingOut ? "..." : "Log out"}
                 </span>
               </Button>
             </>

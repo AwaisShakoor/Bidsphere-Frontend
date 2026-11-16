@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import { BidStatus } from "@/enums/bidStatus";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
@@ -117,21 +118,39 @@ export function PublicItemInfo({
             </span>
           ) : null}
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          {item.title || "Untitled"}
-        </h1>
-        <p className="text-sm text-muted-foreground">
+        <TruncatedText
+          as="span"
+          text={item.title || "Untitled"}
+          limit={60}
+          className="block text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+        />
+        <p className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
           <span className="text-[11px] font-semibold tracking-wide text-primary uppercase">
             Auction
           </span>
-          <span className="mx-2 text-border">·</span>
-          <span className="font-medium text-foreground">
-            {item.auction.title || "Untitled auction"}
-          </span>
+          <span className="text-border">·</span>
+          <TruncatedText
+            as="span"
+            text={item.auction.title || "Untitled auction"}
+            limit={40}
+            className="font-medium text-foreground"
+          />
         </p>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {item.description || "No description"}
-        </p>
+        <TruncatedText
+          text={item.description || "No description"}
+          limit={120}
+          lines={2}
+          className="text-sm leading-relaxed text-muted-foreground"
+        />
+        {item.winner ? (
+          <p className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1.5 text-sm font-medium text-emerald-800 dark:text-emerald-300">
+            <Trophy className="size-3.5 shrink-0" aria-hidden />
+            <span className="truncate">
+              Winner: {item.winner.firstName} {item.winner.lastName}
+              {isWinner ? " (you)" : ""}
+            </span>
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/20 bg-primary/10 px-3.5 py-2.5">

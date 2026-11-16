@@ -10,6 +10,7 @@ export enum CacheKeys {
   PUBLIC_ITEM = "public-item",
   ITEM_BIDS = "item-bids",
   MY_BIDS = "my-bids",
+  MY_NOTIFICATIONS = "my-notifications",
   ITEM_PAYMENT = "item-payment",
   MY_PAYMENTS = "my-payments",
   ADMIN_USERS = "admin-users",

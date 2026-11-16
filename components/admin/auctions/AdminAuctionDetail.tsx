@@ -17,6 +17,7 @@ import { RejectAuctionDialog } from "./RejectAuctionDialog";
 import { ImageLightbox } from "@/components/item/ImageLightbox";
 import { Button } from "@/components/ui/button";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
@@ -169,9 +170,12 @@ export function AdminAuctionDetail({
               {formatSnakeCase(auction.status)}
             </span>
           </div>
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            {auction.description || "No description"}
-          </p>
+          <TruncatedText
+            text={auction.description || "No description"}
+            limit={120}
+            lines={2}
+            className="max-w-2xl text-sm leading-relaxed text-muted-foreground"
+          />
         </div>
 
         {canDecide ? (
@@ -297,9 +301,12 @@ export function AdminAuctionDetail({
                             {formatSnakeCase(item.itemCondition)}
                           </span>
                         </div>
-                        <p className="text-sm leading-relaxed text-muted-foreground">
-                          {item.description || "No description"}
-                        </p>
+                        <TruncatedText
+                          text={item.description || "No description"}
+                          limit={120}
+                          lines={2}
+                          className="text-sm leading-relaxed text-muted-foreground"
+                        />
                       </div>
 
                       <dl className="rounded-xl bg-accent/60 px-3 sm:px-4">
