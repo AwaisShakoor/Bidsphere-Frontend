@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 import { ImageLightbox } from "@/components/item/ImageLightbox";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,6 @@ export function ItemImageField({
   onChange: (value: ItemImageFieldValue) => void;
 }) {
   const [images, setImages] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
   const [removeImageIds, setRemoveImageIds] = useState<string[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -41,17 +40,20 @@ export function ItemImageField({
   const canAddMore = count < MAX_ITEM_IMAGES;
   const hasImages = count > 0;
 
+  const previews = useMemo(
+    () => images.map((file) => URL.createObjectURL(file)),
+    [images],
+  );
+
   useEffect(() => {
     onChange({ images, removeImageIds, count });
   }, [images, removeImageIds, count, onChange]);
 
   useEffect(() => {
-    const urls = images.map((file) => URL.createObjectURL(file));
-    setPreviews(urls);
     return () => {
-      urls.forEach((url) => URL.revokeObjectURL(url));
+      previews.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [images]);
+  }, [previews]);
 
   function handleImagesChange(event: React.ChangeEvent<HTMLInputElement>) {
     const selected = Array.from(event.target.files ?? []);
@@ -111,7 +113,7 @@ export function ItemImageField({
           {keptImages.map((image) => (
             <div
               key={image.id}
-              className="relative size-16 shrink-0 overflow-hidden rounded-lg ring-1 ring-border sm:size-[4.5rem]"
+              className="relative size-16 shrink-0 overflow-hidden rounded-lg ring-1 ring-border sm:size-18"
             >
               <Button
                 type="button"
@@ -144,7 +146,7 @@ export function ItemImageField({
           {previews.map((url, index) => (
             <div
               key={url}
-              className="relative size-16 shrink-0 overflow-hidden rounded-lg ring-1 ring-border sm:size-[4.5rem]"
+              className="relative size-16 shrink-0 overflow-hidden rounded-lg ring-1 ring-border sm:size-18"
             >
               <Button
                 type="button"
@@ -180,7 +182,7 @@ export function ItemImageField({
             <Label
               htmlFor="images"
               className={cn(
-                "flex size-16 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg border border-dashed border-border bg-muted/30 text-muted-foreground transition hover:border-primary/40 hover:bg-muted/50 hover:text-foreground sm:size-[4.5rem]",
+                "flex size-16 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg border border-dashed border-border bg-muted/30 text-muted-foreground transition hover:border-primary/40 hover:bg-muted/50 hover:text-foreground sm:size-18",
                 disabled && "pointer-events-none opacity-50",
               )}
             >

@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "lint:github": "eslint . --format ./scripts/eslint-github-formatter.cjs",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "audit:check": "npm audit --audit-level=high"
