@@ -1,10 +1,4 @@
-import {
-  Bell,
-  CreditCard,
-  Gavel,
-  Trophy,
-  type LucideIcon,
-} from "lucide-react";
+import { Bell, CreditCard, Gavel, Trophy, type LucideIcon } from "lucide-react";
 
 export function iconForType(type: string): LucideIcon {
   const key = type.toLowerCase();

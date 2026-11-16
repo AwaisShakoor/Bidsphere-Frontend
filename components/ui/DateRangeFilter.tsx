@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
-import {
-  DATE_RANGE_OPTIONS,
-  type DateRangePreset,
-} from "@/lib/dateRange";
+import { DATE_RANGE_OPTIONS, type DateRangePreset } from "@/lib/dateRange";
 import { cn } from "@/lib/utils";
 
 type DateRangeFilterProps = {

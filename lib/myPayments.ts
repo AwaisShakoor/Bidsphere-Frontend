@@ -1,8 +1,5 @@
 import { PaymentStatus } from "@/enums/paymentStatus";
-import {
-  isWithinDateRange,
-  type DateRangePreset,
-} from "@/lib/dateRange";
+import { isWithinDateRange, type DateRangePreset } from "@/lib/dateRange";
 import type { Payment } from "@/services/types/PaymentServicesTypes";
 
 export type PaymentTab = "unpaid" | "paid";
