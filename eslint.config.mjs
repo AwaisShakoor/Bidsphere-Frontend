@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
+      "prefer-const": "error",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -15,6 +16,30 @@ const eslintConfig = defineConfig([
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
           caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "formik",
+              message:
+                "Formik is not allowed — use react-hook-form + zod instead.",
+            },
+            {
+              name: "yup",
+              message:
+                "Yup is not allowed — use zod with react-hook-form instead.",
+            },
+          ],
+          patterns: [
+            {
+              group: ["formik/*", "yup/*"],
+              message:
+                "Formik/Yup are not allowed — use react-hook-form + zod instead.",
+            },
+          ],
         },
       ],
     },
