@@ -97,7 +97,6 @@ export const resetPasswordDefaultValues: ResetPasswordFormValues = {
   confirmPassword: "",
 };
 
-
 export const signUpDefaultValues: SignUpFormValues = {
   firstName: "",
   lastName: "",
@@ -106,4 +105,3 @@ export const signUpDefaultValues: SignUpFormValues = {
   confirmPassword: "",
   role: UserRole.BUYER,
 };
-

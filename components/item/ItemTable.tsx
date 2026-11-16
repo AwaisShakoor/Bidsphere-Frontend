@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  getItemTableColumns,
-  ITEM_TABLE_GRID,
-} from "./itemTableColumns";
+import { getItemTableColumns, ITEM_TABLE_GRID } from "./itemTableColumns";
 import { DataTable } from "@/components/ui/DataTable";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
 import { Loader } from "@/components/ui/Loader";

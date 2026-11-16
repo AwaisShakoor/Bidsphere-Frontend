@@ -31,9 +31,7 @@ export async function getCategoryItems(slug: string): Promise<Item[]> {
     );
     return data.data ?? data.items ?? [];
   } catch (error) {
-    throw new Error(
-      getErrorMessage(error) || "Failed to load category items",
-    );
+    throw new Error(getErrorMessage(error) || "Failed to load category items");
   }
 }
 

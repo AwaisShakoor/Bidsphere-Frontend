@@ -14,9 +14,7 @@ module.exports = function eslintGithubFormatter(results) {
       const rule = message.ruleId ? ` (${message.ruleId})` : "";
       const text = `${message.message}${rule}`.replace(/\r?\n/g, " ");
 
-      lines.push(
-        `::${severity} file=${file},line=${line},col=${col}::${text}`,
-      );
+      lines.push(`::${severity} file=${file},line=${line},col=${col}::${text}`);
     }
   }
 

@@ -41,9 +41,7 @@ export function LoginForm() {
         router.push(nextPath ?? getAuthRedirectPath(data.user.role)),
       onError: (error) => {
         if (!/not verified/i.test(error.message)) return;
-        router.push(
-          `/verify-email?email=${encodeURIComponent(values.email)}`,
-        );
+        router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
       },
     });
   }

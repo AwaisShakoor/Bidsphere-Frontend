@@ -166,9 +166,7 @@ export function ItemImageField({
                 variant="secondary"
                 size="icon-xs"
                 onClick={() =>
-                  setImages((current) =>
-                    current.filter((_, i) => i !== index),
-                  )
+                  setImages((current) => current.filter((_, i) => i !== index))
                 }
                 className="absolute top-0.5 right-0.5 size-5 opacity-90 shadow-sm"
                 aria-label={`Remove image ${index + 1}`}
@@ -193,9 +191,7 @@ export function ItemImageField({
         </div>
       )}
 
-      {error ? (
-        <p className="text-sm text-destructive">{error}</p>
-      ) : null}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       <ImageLightbox
         src={previewUrl}

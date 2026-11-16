@@ -36,20 +36,27 @@ export async function registerUser(body: RegisterRequest) {
     const { data } = await api.post<RegisterResponse>("/api/register", body);
     return data;
   } catch (error) {
-    throw new Error(getErrorMessage(error) || "Registration failed. Try again.");
+    throw new Error(
+      getErrorMessage(error) || "Registration failed. Try again.",
+    );
   }
 }
 
 export async function verifyEmail(body: VerifyEmailRequest) {
   try {
-    const { data } = await api.post<VerifyEmailResponse>("/api/verify-email", body);
+    const { data } = await api.post<VerifyEmailResponse>(
+      "/api/verify-email",
+      body,
+    );
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Invalid or expired OTP");
   }
 }
 
-export async function resendVerificationOtp(body: ResendVerificationOtpRequest) {
+export async function resendVerificationOtp(
+  body: ResendVerificationOtpRequest,
+) {
   try {
     const { data } = await api.post<ResendVerificationOtpResponse>(
       "/api/resend-otp",
@@ -57,13 +64,18 @@ export async function resendVerificationOtp(body: ResendVerificationOtpRequest) 
     );
     return data;
   } catch (error) {
-    throw new Error(getErrorMessage(error) || "Failed to resend OTP. Try again.");
+    throw new Error(
+      getErrorMessage(error) || "Failed to resend OTP. Try again.",
+    );
   }
 }
 
 export async function forgotPassword(body: ForgotPasswordRequest) {
   try {
-    const { data } = await api.post<ForgotPasswordResponse>("/api/forgot-password", body);
+    const { data } = await api.post<ForgotPasswordResponse>(
+      "/api/forgot-password",
+      body,
+    );
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to send OTP. Try again.");
@@ -84,7 +96,10 @@ export async function verifyResetOtp(body: VerifyResetOtpRequest) {
 
 export async function resetPassword(body: ResetPasswordRequest) {
   try {
-    const { data } = await api.post<ResetPasswordResponse>("/api/reset-password", body);
+    const { data } = await api.post<ResetPasswordResponse>(
+      "/api/reset-password",
+      body,
+    );
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to reset password");

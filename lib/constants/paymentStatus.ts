@@ -3,8 +3,7 @@ import { PaymentStatus } from "@/enums/paymentStatus";
 export type PaymentDeadlineTone = "due" | "overdue";
 
 export const PAYMENT_STATUS_CLASS: Record<PaymentStatus, string> = {
-  [PaymentStatus.PENDING]:
-    "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  [PaymentStatus.PENDING]: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
   [PaymentStatus.COMPLETED]:
     "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
   [PaymentStatus.REFUNDED]: "bg-muted text-muted-foreground",

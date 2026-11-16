@@ -1,14 +1,16 @@
 import { cn } from "@/lib/utils";
 
 function Pulse({ className }: { className?: string }) {
-  return (
-    <div className={cn("animate-pulse rounded bg-muted", className)} />
-  );
+  return <div className={cn("animate-pulse rounded bg-muted", className)} />;
 }
 
 export function AdminAuctionDetailSkeleton() {
   return (
-    <div className="relative flex flex-col gap-5" aria-busy="true" aria-live="polite">
+    <div
+      className="relative flex flex-col gap-5"
+      aria-busy="true"
+      aria-live="polite"
+    >
       <span className="sr-only">Loading auction details...</span>
 
       <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

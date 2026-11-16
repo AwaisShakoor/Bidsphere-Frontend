@@ -26,9 +26,7 @@ export function CategoryList() {
           <button
             key={category.id}
             type="button"
-            onClick={() =>
-              router.push(`/dashboard/category/${category.slug}`)
-            }
+            onClick={() => router.push(`/dashboard/category/${category.slug}`)}
             className="cursor-pointer rounded-2xl bg-card p-4 text-left shadow-md shadow-primary/5 ring-1 ring-border transition hover:ring-primary/30"
           >
             <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">

@@ -34,7 +34,11 @@ function Field({
           name={name}
           type={isPassword && visible ? "text" : type}
           aria-invalid={!!error}
-          className={cn("h-11 px-3.5 text-sm", isPassword && "pr-10", className)}
+          className={cn(
+            "h-11 px-3.5 text-sm",
+            isPassword && "pr-10",
+            className,
+          )}
           {...props}
         />
         {isPassword ? (

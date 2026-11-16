@@ -30,7 +30,9 @@ export async function getAdminUsers() {
 
 export async function getAdminAuctions() {
   try {
-    const { data } = await api.get<AdminAuctionsResponse>("/api/admin/auctions");
+    const { data } = await api.get<AdminAuctionsResponse>(
+      "/api/admin/auctions",
+    );
     return data.data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to load auctions");
@@ -62,10 +64,7 @@ export async function approveAdminAuction(id: string) {
   }
 }
 
-export async function rejectAdminAuction(
-  id: string,
-  rejectionReason: string,
-) {
+export async function rejectAdminAuction(id: string, rejectionReason: string) {
   try {
     const { data } = await api.post<AdminAuctionDecisionResponse>(
       `/api/admin/auctions/${id}/reject`,

@@ -56,7 +56,8 @@ export const auctionSchema = z
   )
   .refine(
     (data) => {
-      if (!isValidDate(data.startTime) || !isValidDate(data.endTime)) return true;
+      if (!isValidDate(data.startTime) || !isValidDate(data.endTime))
+        return true;
       return new Date(data.endTime) > new Date(data.startTime);
     },
     {
