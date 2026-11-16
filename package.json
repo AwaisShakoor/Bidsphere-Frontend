@@ -10,7 +10,8 @@
     "lint:github": "eslint . --format ./scripts/eslint-github-formatter.cjs",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "audit:check": "npm audit --audit-level=high"
+    "audit:check": "npm audit --audit-level=high",
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -38,6 +39,8 @@
     "eslint": "^9",
     "eslint-config-next": "^16.4.6",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.1",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
@@ -50,5 +53,14 @@
       "minimatch": "11.0.8"
     },
     "deepmerge": "4.1.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }
