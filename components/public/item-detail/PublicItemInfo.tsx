@@ -30,6 +30,7 @@ type PublicItemInfoProps = {
   itemId: string;
   userId: string | null;
   isLoggedIn: boolean;
+  canBid: boolean;
   isAuthPending: boolean;
 };
 
@@ -38,6 +39,7 @@ export function PublicItemInfo({
   itemId,
   userId,
   isLoggedIn,
+  canBid,
   isAuthPending,
 }: PublicItemInfoProps) {
   const router = useRouter();
@@ -48,7 +50,7 @@ export function PublicItemInfo({
   const price = item.currentBid ?? item.startingPrice;
   const bidLabel = item.currentBid ? "Current bid" : "Starting bid";
   const startingPrice = Number(item.startingPrice ?? 0);
-  const currentBid = item.currentBid != null ? Number(item.currentBid) : null;
+  const currentBid = item.currentBid !== null ? Number(item.currentBid) : null;
   const leadingBid =
     bids.find((bid) => bid.status === BidStatus.ACTIVE) ?? bids[0];
   const isLeadingBidder = Boolean(userId && leadingBid?.bidder.id === userId);
@@ -83,7 +85,7 @@ export function PublicItemInfo({
       setBidError(`Bid must be at least ${formatMoney(item.startingPrice)}.`);
       return;
     }
-    if (currentBid != null && amount <= currentBid) {
+    if (currentBid !== null && amount <= currentBid) {
       setBidError(`Bid must be higher than ${formatMoney(item.currentBid)}.`);
       return;
     }
@@ -192,7 +194,7 @@ export function PublicItemInfo({
             Est. delivery
           </p>
           <p className="mt-1 text-sm font-semibold text-foreground">
-            {item.shippingEstimatedDays != null
+            {item.shippingEstimatedDays !== null
               ? `${item.shippingEstimatedDays} day${item.shippingEstimatedDays === 1 ? "" : "s"}`
               : "—"}
           </p>
@@ -263,7 +265,7 @@ export function PublicItemInfo({
             Log in to bid
           </Button>
         </div>
-      ) : isLive && isLoggedIn ? (
+      ) : isLive && canBid ? (
         <form
           onSubmit={handlePlaceBid}
           noValidate
@@ -319,7 +321,7 @@ export function PublicItemInfo({
             </p>
           ) : null}
         </form>
-      ) : (
+      ) : isLive && isLoggedIn ? null : (
         <div className="mt-auto rounded-xl border border-border/80 bg-muted/40 p-4">
           <p className="text-sm font-medium text-foreground">
             Bidding is closed

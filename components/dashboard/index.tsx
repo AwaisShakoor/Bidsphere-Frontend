@@ -2,6 +2,7 @@
 
 import { PublicActiveItems } from "@/components/public";
 import { SellerActiveAuctions } from "./SellerActiveAuctions";
+import { SellerPayoutsBanner } from "@/components/payouts";
 import { UserRole } from "@/enums/userRole";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 
@@ -82,7 +83,12 @@ export function Dashboard() {
           </div>
         </header>
 
-        {!isPending && isSeller ? <SellerActiveAuctions /> : null}
+        {!isPending && isSeller ? (
+          <>
+            <SellerPayoutsBanner />
+            <SellerActiveAuctions />
+          </>
+        ) : null}
         {!isPending && !isSeller ? <PublicActiveItems /> : null}
       </div>
     </main>

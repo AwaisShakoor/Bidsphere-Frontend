@@ -1,4 +1,4 @@
-import { CategoryPage } from "@/components/category/CategoryPage";
+import { Category } from "@/components/category";
 
 export default async function DashboardCategoryPage({
   params,
@@ -6,5 +6,5 @@ export default async function DashboardCategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <CategoryPage slug={slug} />;
+  return <Category slug={slug} />;
 }

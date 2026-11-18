@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { CheckoutPage } from "@/components/checkout/CheckoutPage";
+import { Checkout } from "@/components/checkout/Checkout";
 import { Loader } from "@/components/ui/Loader";
 
 export default async function CheckoutItemPage({
@@ -13,7 +13,7 @@ export default async function CheckoutItemPage({
     <Suspense
       fallback={<Loader label="Preparing secure checkout…" variant="orbit" />}
     >
-      <CheckoutPage itemId={itemId} />
+      <Checkout itemId={itemId} />
     </Suspense>
   );
 }

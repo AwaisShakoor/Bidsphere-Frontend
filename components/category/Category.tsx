@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { getCategoryIcon } from "@/lib/constants/categories";
 import { useCategories } from "@/services/hooks/CategoryServicesHook";
 
-export function CategoryPage({ slug }: { slug: string }) {
+export function Category({ slug }: { slug: string }) {
   const router = useRouter();
   const { data: categoriesData, isPending } = useCategories();
   const category = categoriesData?.data?.find((item) => item.slug === slug);

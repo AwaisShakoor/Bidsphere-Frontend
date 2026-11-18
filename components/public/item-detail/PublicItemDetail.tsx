@@ -9,6 +9,7 @@ import { PublicItemDetailSkeleton } from "./PublicItemDetailSkeleton";
 import { PublicItemGallery } from "./PublicItemGallery";
 import { PublicItemInfo } from "./PublicItemInfo";
 import { Button } from "@/components/ui/button";
+import { UserRole } from "@/enums/userRole";
 import { getAuthRedirectPath } from "@/lib/auth/routes";
 import { useMe } from "@/services/hooks/AuthServicesHook";
 import { usePublicItem } from "@/services/hooks/ItemServicesHook";
@@ -19,6 +20,7 @@ export function PublicItemDetail({ itemId }: { itemId: string }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const user = meData?.user;
   const backHref = user ? getAuthRedirectPath(user.role) : "/";
+  const canBid = Boolean(user) && user?.role === UserRole.BUYER;
 
   return (
     <main className="relative flex-1 overflow-hidden">
@@ -54,6 +56,7 @@ export function PublicItemDetail({ itemId }: { itemId: string }) {
                   itemId={itemId}
                   userId={user?.id ?? null}
                   isLoggedIn={Boolean(user)}
+                  canBid={canBid}
                   isAuthPending={isMePending}
                 />
               </div>

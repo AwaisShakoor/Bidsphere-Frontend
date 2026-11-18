@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/Loader";
 import { createCheckout } from "@/services/Api/PaymentServicesApi";
 
-type CheckoutPageProps = {
+type CheckoutProps = {
   itemId: string;
 };
 
-export function CheckoutPage({ itemId }: CheckoutPageProps) {
+export function Checkout({ itemId }: CheckoutProps) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
