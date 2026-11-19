@@ -108,7 +108,8 @@ export function getItemFormValues(item: Item): ItemFormValues {
     shippingType: item.shippingType,
     shippingCost: item.shippingCost ?? "",
     shippingEstimatedDays:
-      item.shippingEstimatedDays != null
+      item.shippingEstimatedDays !== null &&
+      item.shippingEstimatedDays !== undefined
         ? String(item.shippingEstimatedDays)
         : "",
     imageCount: item.images.length,

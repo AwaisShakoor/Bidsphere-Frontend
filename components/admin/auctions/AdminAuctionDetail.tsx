@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   AlertCircle,
   ArrowLeft,
@@ -277,12 +278,14 @@ export function AdminAuctionDetail({
                         onClick={() =>
                           setPreview({ url: cover, alt: item.title })
                         }
-                        className="h-auto overflow-hidden rounded-xl p-0 ring-1 ring-primary/20 hover:bg-transparent hover:ring-primary/50"
+                        className="relative aspect-square h-auto w-full overflow-hidden rounded-xl p-0 ring-1 ring-primary/20 hover:bg-transparent hover:ring-primary/50"
                       >
-                        <img
+                        <Image
                           src={cover}
                           alt={item.title}
-                          className="aspect-square w-full object-cover"
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 14rem"
+                          className="object-cover"
                         />
                       </Button>
                     ) : (
@@ -327,7 +330,8 @@ export function AdminAuctionDetail({
                         <DetailRow
                           label="Est. delivery"
                           value={
-                            item.shippingEstimatedDays != null
+                            item.shippingEstimatedDays !== null &&
+                            item.shippingEstimatedDays !== undefined
                               ? `${item.shippingEstimatedDays} day${item.shippingEstimatedDays === 1 ? "" : "s"}`
                               : "—"
                           }
@@ -350,12 +354,14 @@ export function AdminAuctionDetail({
                             onClick={() =>
                               setPreview({ url: image.url, alt: item.title })
                             }
-                            className="h-auto overflow-hidden rounded-lg p-0 ring-1 ring-primary/15 hover:bg-transparent hover:ring-primary/45"
+                            className="relative aspect-square h-auto w-full overflow-hidden rounded-lg p-0 ring-1 ring-primary/15 hover:bg-transparent hover:ring-primary/45"
                           >
-                            <img
+                            <Image
                               src={image.url}
                               alt={item.title}
-                              className="aspect-square w-full object-cover"
+                              fill
+                              sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 10vw"
+                              className="object-cover"
                             />
                           </Button>
                         ))}

@@ -51,7 +51,7 @@ function getAccessorValue<T>(row: T, accessorKey: string): unknown {
 }
 
 function toComparableString(value: unknown): string {
-  if (value == null) return "";
+  if (value === null || value === undefined) return "";
   if (
     typeof value === "string" ||
     typeof value === "number" ||
@@ -74,7 +74,7 @@ function getCellValue<T>(row: T, column: DataTableColumn<T>): ReactNode {
   if (column.cell) return column.cell(row);
 
   const value = getAccessorValue(row, column.accessorKey);
-  if (value == null || value === "") return "—";
+  if (value === null || value === undefined || value === "") return "—";
   return String(value);
 }
 

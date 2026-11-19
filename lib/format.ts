@@ -1,5 +1,5 @@
 export function formatMoney(value: string | number | null) {
-  if (value == null || value === "") return "—";
+  if (value === null || value === undefined || value === "") return "—";
   const amount = Number(value);
   if (Number.isNaN(amount)) return String(value);
   return `$${amount.toFixed(2)}`;

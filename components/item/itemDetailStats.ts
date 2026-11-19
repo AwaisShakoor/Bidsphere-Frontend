@@ -55,7 +55,8 @@ export function getItemDetailStats(item: Item): ItemDetailStat[] {
       icon: Timer,
       label: "Est. delivery",
       value:
-        item.shippingEstimatedDays != null
+        item.shippingEstimatedDays !== null &&
+        item.shippingEstimatedDays !== undefined
           ? `${item.shippingEstimatedDays} day${item.shippingEstimatedDays === 1 ? "" : "s"}`
           : "—",
     },
