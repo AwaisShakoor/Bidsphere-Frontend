@@ -1,21 +1,13 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  Inbox,
-  Search,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Inbox, Search } from "lucide-react";
 import { Button } from "./button";
 import { EmptyState } from "./EmptyState";
+import { ListPagination } from "./ListPagination";
 import { Loader } from "./Loader";
+import { DEFAULT_PAGE_SIZE, getPagedItems } from "@/lib/pagination";
 import { cn } from "@/lib/utils";
-
-const PAGE_SIZE = 10;
 
 export type DataTableColumn<T> = {
   accessorKey: string;
@@ -51,7 +43,7 @@ function getAccessorValue<T>(row: T, accessorKey: string): unknown {
 }
 
 function toComparableString(value: unknown): string {
-  if (value == null) return "";
+  if (value === null || value === undefined) return "";
   if (
     typeof value === "string" ||
     typeof value === "number" ||
@@ -74,7 +66,7 @@ function getCellValue<T>(row: T, column: DataTableColumn<T>): ReactNode {
   if (column.cell) return column.cell(row);
 
   const value = getAccessorValue(row, column.accessorKey);
-  if (value == null || value === "") return "—";
+  if (value === null || value === undefined || value === "") return "—";
   return String(value);
 }
 
@@ -136,13 +128,12 @@ export function DataTable<T>({
     return next;
   }, [columns, data, search, sortDirection, sortKey]);
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages - 1);
-  const pageRows = pagination
-    ? rows.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE)
-    : rows;
-  const from = currentPage * PAGE_SIZE + 1;
-  const to = Math.min(rows.length, (currentPage + 1) * PAGE_SIZE);
+  const { pageItems, currentPage } = getPagedItems(
+    rows,
+    page,
+    DEFAULT_PAGE_SIZE,
+  );
+  const pageRows = pagination ? pageItems : rows;
 
   function handleSearchChange(value: string) {
     setSearch(value);
@@ -234,12 +225,14 @@ export function DataTable<T>({
             }
 
             return (
-              <button
+              <Button
                 key={column.accessorKey}
                 type="button"
+                variant="ghost"
+                size="xs"
                 onClick={() => handleSort(column)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 text-left uppercase transition-colors hover:text-foreground",
+                  "-ml-2 h-auto justify-start gap-1.5 px-2 text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground",
                   isActive && "text-foreground",
                 )}
               >
@@ -248,7 +241,7 @@ export function DataTable<T>({
                   className="size-3.5 shrink-0 opacity-70"
                   aria-hidden
                 />
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -273,7 +266,7 @@ export function DataTable<T>({
                 {rowNumbers ? (
                   <p className="text-sm tabular-nums text-muted-foreground">
                     {pagination
-                      ? currentPage * PAGE_SIZE + index + 1
+                      ? currentPage * DEFAULT_PAGE_SIZE + index + 1
                       : index + 1}
                   </p>
                 ) : null}
@@ -288,37 +281,13 @@ export function DataTable<T>({
         )}
       </div>
 
-      {pagination && rows.length > PAGE_SIZE ? (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground tabular-nums">
-            Showing {from}–{to} of {rows.length}
-          </p>
-          <div className="flex items-center gap-1.5">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              disabled={currentPage === 0}
-              onClick={() => setPage(Math.max(0, currentPage - 1))}
-              aria-label="Previous page"
-            >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <p className="min-w-16 text-center text-xs font-medium text-muted-foreground tabular-nums">
-              {currentPage + 1} / {totalPages}
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              disabled={currentPage >= totalPages - 1}
-              onClick={() => setPage(Math.min(totalPages - 1, currentPage + 1))}
-              aria-label="Next page"
-            >
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        </div>
+      {pagination ? (
+        <ListPagination
+          page={currentPage}
+          total={rows.length}
+          onPageChange={setPage}
+          className="flex flex-wrap items-center justify-between gap-3"
+        />
       ) : null}
     </div>
   );

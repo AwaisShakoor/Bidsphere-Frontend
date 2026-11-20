@@ -1,12 +1,13 @@
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Trophy } from "lucide-react";
 import type { DataTableColumn } from "@/components/ui/DataTable";
 import { ActionsCell } from "@/components/ui/ActionsCell";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { formatMoney, formatSnakeCase } from "@/lib/format";
 import { getPrimaryImage } from "@/lib/getPrimaryImage";
 import type { Item } from "@/services/types/ItemsServicesTypes";
 
 export const ITEM_TABLE_GRID =
-  "grid-cols-[2.5rem_minmax(0,1.8fr)_7rem_minmax(6rem,1fr)_minmax(7rem,1fr)_5.5rem]";
+  "grid-cols-[2.5rem_minmax(0,1.6fr)_7rem_minmax(6rem,0.9fr)_minmax(7rem,1fr)_minmax(7rem,1fr)_5.5rem]";
 
 type ItemTableColumnOptions = {
   isDeleting: boolean;
@@ -46,12 +47,16 @@ export function getItemTableColumns({
               )}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {item.title || "Untitled"}
-              </p>
-              <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
-                {item.description || "No description"}
-              </p>
+              <TruncatedText
+                text={item.title || "Untitled"}
+                limit={40}
+                className="text-sm font-semibold text-foreground"
+              />
+              <TruncatedText
+                text={item.description || "No description"}
+                limit={56}
+                className="mt-0.5 text-sm text-muted-foreground"
+              />
             </div>
           </div>
         );
@@ -85,6 +90,22 @@ export function getItemTableColumns({
         </p>
       ),
     },
+    {
+      accessorKey: "winner",
+      header: "Winner",
+      cell: (item) =>
+        item.winner ? (
+          <span className="inline-flex max-w-full items-center gap-1.5 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-800 dark:text-emerald-300">
+            <Trophy className="size-3 shrink-0" aria-hidden />
+            <span className="truncate">
+              {item.winner.firstName} {item.winner.lastName}
+            </span>
+          </span>
+        ) : (
+          <span className="text-sm text-muted-foreground">—</span>
+        ),
+    },
+
     {
       accessorKey: "actions",
       header: "Actions",

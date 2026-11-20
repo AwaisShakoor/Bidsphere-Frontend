@@ -42,6 +42,16 @@ const nextConfig: NextConfig = {
         destination: "/register",
         permanent: true,
       },
+      {
+        source: "/seller/stripe/return",
+        destination: "/my-payouts",
+        permanent: false,
+      },
+      {
+        source: "/seller/stripe/refresh",
+        destination: "/my-payouts",
+        permanent: false,
+      },
     ];
   },
 };

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { CreditCard, Gavel, LogIn, LogOut } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { CreditCard, Gavel, LogIn, LogOut, Wallet } from "lucide-react";
+import { NotificationBell } from "@/components/notifications";
 import { Button } from "@/components/ui/button";
 import { PaymentStatus } from "@/enums/paymentStatus";
 import { UserRole } from "@/enums/userRole";
@@ -13,12 +14,14 @@ import { useMyPayments } from "@/services/hooks/PaymentServicesHook";
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: meData, isPending: isMePending } = useMe();
-  const logout = useLogout();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const user = meData?.user;
   const homeHref = user ? getAuthRedirectPath(user.role) : "/";
   const isBuyer = user?.role === UserRole.BUYER;
   const isSeller = user?.role === UserRole.SELLER;
+  const isAdmin = user?.role === UserRole.ADMIN;
   const { data: payments = [] } = useMyPayments(isBuyer);
   const duePaymentCount = payments.filter(
     (payment) => payment.status === PaymentStatus.PENDING,
@@ -26,13 +29,15 @@ export function Navbar() {
   const isBidsActive = pathname.startsWith("/my-bids");
   const isPaymentsActive = pathname.startsWith("/my-payments");
   const isSellActive = pathname.startsWith("/my-auctions");
+  const isPayoutsActive = pathname.startsWith("/my-payouts");
   const isLoginActive = pathname.startsWith("/login");
   const isRegisterActive = pathname.startsWith("/register");
 
   function handleLogout() {
-    logout.mutate(undefined, {
+    logout(undefined, {
       onSuccess: () => {
-        window.location.href = "/";
+        router.push("/");
+        router.refresh();
       },
     });
   }
@@ -112,24 +117,44 @@ export function Navbar() {
           ) : null}
 
           {isSeller ? (
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className={cn(
-                "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
-                isSellActive &&
-                  "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
-              )}
-            >
-              <Link
-                href="/my-auctions"
-                aria-current={isSellActive ? "page" : undefined}
+            <>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                  isSellActive &&
+                    "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
+                )}
               >
-                <Gavel className="size-3.5" />
-                <span className="hidden sm:inline">Sell</span>
-              </Link>
-            </Button>
+                <Link
+                  href="/my-auctions"
+                  aria-current={isSellActive ? "page" : undefined}
+                >
+                  <Gavel className="size-3.5" />
+                  <span className="hidden sm:inline">Sell</span>
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "h-9 gap-2 rounded-lg border-border/80 bg-background px-3 text-foreground shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/5 hover:text-primary",
+                  isPayoutsActive &&
+                    "border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/15 hover:text-primary",
+                )}
+              >
+                <Link
+                  href="/my-payouts"
+                  aria-current={isPayoutsActive ? "page" : undefined}
+                >
+                  <Wallet className="size-3.5" />
+                  <span className="hidden sm:inline">Payouts</span>
+                </Link>
+              </Button>
+            </>
           ) : null}
 
           {isMePending ? (
@@ -139,6 +164,8 @@ export function Navbar() {
             </div>
           ) : user ? (
             <>
+              {!isAdmin ? <NotificationBell enabled /> : null}
+
               <div className="hidden items-center gap-2.5 rounded-lg bg-muted/50 py-1 pr-3 pl-1 ring-1 ring-border/60 sm:flex">
                 <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-xs font-semibold text-primary-foreground">
                   {user.firstName.charAt(0).toUpperCase()}
@@ -159,11 +186,11 @@ export function Navbar() {
                 size="sm"
                 className="h-9 gap-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
                 onClick={handleLogout}
-                disabled={logout.isPending}
+                disabled={isLoggingOut}
               >
                 <LogOut className="size-4" />
                 <span className="hidden sm:inline">
-                  {logout.isPending ? "..." : "Log out"}
+                  {isLoggingOut ? "..." : "Log out"}
                 </span>
               </Button>
             </>

@@ -4,6 +4,7 @@ import { Inbox, Pencil } from "lucide-react";
 import { AuctionCardsSkeleton } from "@/components/auction/AuctionCardsSkeleton";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import {
   canSellerEditAuction,
   getAuctionStatusClass,
@@ -45,9 +46,11 @@ export function AuctionCards({
           className="overflow-hidden rounded-2xl bg-card p-4 shadow-md shadow-primary/5 ring-1 ring-border"
         >
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-semibold tracking-tight text-foreground">
-              {auction.title || "Untitled"}
-            </p>
+            <TruncatedText
+              text={auction.title || "Untitled"}
+              limit={40}
+              className="text-sm font-semibold tracking-tight text-foreground"
+            />
             <span
               className={cn(
                 "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
@@ -57,9 +60,12 @@ export function AuctionCards({
               {formatSnakeCase(auction.status)}
             </span>
           </div>
-          <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-            {auction.description || "No description"}
-          </p>
+          <TruncatedText
+            text={auction.description || "No description"}
+            limit={80}
+            lines={2}
+            className="mt-1 text-sm text-muted-foreground"
+          />
           <div className="mt-4 flex items-end justify-between gap-3 text-xs text-muted-foreground">
             <div>
               <p>Starts</p>

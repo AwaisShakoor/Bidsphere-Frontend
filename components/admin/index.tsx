@@ -1,5 +1,5 @@
 export { AdminSidebar } from "./AdminSidebar";
 export { AdminPageHeader } from "./AdminPageHeader";
-export { AdminUsersPage } from "./users";
-export { AdminAuctionsPage } from "./auctions";
-export { AdminOverviewPage } from "./overview";
+export { AdminUsers } from "./users";
+export { AdminAuctions } from "./auctions";
+export { AdminOverview } from "./overview";

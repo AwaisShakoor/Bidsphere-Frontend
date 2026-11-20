@@ -22,7 +22,7 @@ function SectionHeading({ children }: { children: string }) {
   );
 }
 
-export function AdminOverviewPage() {
+export function AdminOverview() {
   const { data, isPending, isError, error } = useAdminOverview();
 
   return (

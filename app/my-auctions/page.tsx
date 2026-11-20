@@ -1,11 +1,11 @@
 import { Suspense } from "react";
-import { AuctionPage } from "@/components/auction";
+import { Auction } from "@/components/auction";
 import { Loader } from "@/components/ui/Loader";
 
 export default function MyAuctionsPage() {
   return (
     <Suspense fallback={<Loader label="Loading my auctions..." />}>
-      <AuctionPage />
+      <Auction />
     </Suspense>
   );
 }

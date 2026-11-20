@@ -7,7 +7,7 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useAdminAuctions } from "@/services/hooks/AdminServicesHook";
 import type { AdminAuction } from "@/services/types/AdminServicesTypes";
 
-export function AdminAuctionsPage() {
+export function AdminAuctions() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const auctionId = searchParams.get("id");

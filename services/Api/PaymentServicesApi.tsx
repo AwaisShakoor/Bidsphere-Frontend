@@ -1,5 +1,5 @@
 import axios from "axios";
-import api from "@/services/api";
+import api from "@/services/apiClient";
 import { getErrorMessage } from "@/services/Api/getErrorMessage";
 import type {
   CreateCheckoutResponse,
@@ -33,6 +33,14 @@ export async function getItemPayment(itemId: string): Promise<Payment | null> {
     }
     throw new Error(getErrorMessage(error) || "Failed to load payment");
   }
+}
+
+/** Sync payment status from Stripe when webhook may have been missed. */
+export async function confirmItemPayment(itemId: string): Promise<Payment> {
+  const { data } = await api.post<ItemPaymentResponse>(
+    `/api/payments/items/${itemId}/confirm`,
+  );
+  return data.payment;
 }
 
 export async function getMyPayments(): Promise<Payment[]> {

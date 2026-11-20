@@ -30,7 +30,7 @@ const roleOptions = [
   },
 ];
 
-export function RegisterPage() {
+export function SignUpForm() {
   const router = useRouter();
   const { mutate, isPending } = useRegister();
   const {

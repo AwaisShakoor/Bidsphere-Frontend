@@ -45,6 +45,11 @@ function ItemCard({ item }: { item: PublicItem }) {
               {bidLabel}
             </p>
           </div>
+          {item.winner ? (
+            <p className="truncate text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+              Winner: {item.winner.firstName} {item.winner.lastName}
+            </p>
+          ) : null}
           <p className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
             <Clock className="size-3 shrink-0 text-primary" aria-hidden />
             Ends {formatDate(item.auction.endTime)}
@@ -76,6 +81,16 @@ export function PublicActiveItems() {
   if (isError)
     return <p className="text-sm text-destructive">{error.message}</p>;
 
+  if (items.length === 0) {
+    return (
+      <EmptyState
+        icon={<Gavel className="size-5" aria-hidden />}
+        title="No live items"
+        description="Live listings will show up here when auctions go live."
+      />
+    );
+  }
+
   return (
     <div className="space-y-4">
       <MarketplaceFilterBar
@@ -87,39 +102,27 @@ export function PublicActiveItems() {
         searchInputId="public-item-search"
       />
 
-      {items.length === 0 ? (
-        <EmptyState
-          icon={<Gavel className="size-5" aria-hidden />}
-          title="No live items"
-          description="Live listings will show up here when auctions go live."
+      <p className="text-sm text-muted-foreground">
+        <span className="font-medium text-foreground">{filtered.length}</span>{" "}
+        live {filtered.length === 1 ? "item" : "items"}
+        {categoryId
+          ? ` in ${categories.find((category) => category.id === categoryId)?.name ?? "category"}`
+          : ""}
+      </p>
+
+      {filtered.length === 0 ? (
+        <FilterEmptyState
+          onClear={() => {
+            setSearch("");
+            setCategoryId("");
+          }}
         />
       ) : (
-        <>
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">
-              {filtered.length}
-            </span>{" "}
-            live {filtered.length === 1 ? "item" : "items"}
-            {categoryId
-              ? ` in ${categories.find((c) => c.id === categoryId)?.name ?? "category"}`
-              : ""}
-          </p>
-
-          {filtered.length === 0 ? (
-            <FilterEmptyState
-              onClear={() => {
-                setSearch("");
-                setCategoryId("");
-              }}
-            />
-          ) : (
-            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-              {filtered.map((item) => (
-                <ItemCard key={item.id} item={item} />
-              ))}
-            </ul>
-          )}
-        </>
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+          {filtered.map((item) => (
+            <ItemCard key={item.id} item={item} />
+          ))}
+        </ul>
       )}
     </div>
   );

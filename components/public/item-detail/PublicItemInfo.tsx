@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { AuctionStatus } from "@/enums/auctionStatus";
 import { BidStatus } from "@/enums/bidStatus";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
@@ -29,6 +30,7 @@ type PublicItemInfoProps = {
   itemId: string;
   userId: string | null;
   isLoggedIn: boolean;
+  canBid: boolean;
   isAuthPending: boolean;
 };
 
@@ -37,6 +39,7 @@ export function PublicItemInfo({
   itemId,
   userId,
   isLoggedIn,
+  canBid,
   isAuthPending,
 }: PublicItemInfoProps) {
   const router = useRouter();
@@ -47,7 +50,7 @@ export function PublicItemInfo({
   const price = item.currentBid ?? item.startingPrice;
   const bidLabel = item.currentBid ? "Current bid" : "Starting bid";
   const startingPrice = Number(item.startingPrice ?? 0);
-  const currentBid = item.currentBid != null ? Number(item.currentBid) : null;
+  const currentBid = item.currentBid !== null ? Number(item.currentBid) : null;
   const leadingBid =
     bids.find((bid) => bid.status === BidStatus.ACTIVE) ?? bids[0];
   const isLeadingBidder = Boolean(userId && leadingBid?.bidder.id === userId);
@@ -82,7 +85,7 @@ export function PublicItemInfo({
       setBidError(`Bid must be at least ${formatMoney(item.startingPrice)}.`);
       return;
     }
-    if (currentBid != null && amount <= currentBid) {
+    if (currentBid !== null && amount <= currentBid) {
       setBidError(`Bid must be higher than ${formatMoney(item.currentBid)}.`);
       return;
     }
@@ -117,21 +120,39 @@ export function PublicItemInfo({
             </span>
           ) : null}
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          {item.title || "Untitled"}
-        </h1>
-        <p className="text-sm text-muted-foreground">
+        <TruncatedText
+          as="span"
+          text={item.title || "Untitled"}
+          limit={60}
+          className="block text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+        />
+        <p className="flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
           <span className="text-[11px] font-semibold tracking-wide text-primary uppercase">
             Auction
           </span>
-          <span className="mx-2 text-border">·</span>
-          <span className="font-medium text-foreground">
-            {item.auction.title || "Untitled auction"}
-          </span>
+          <span className="text-border">·</span>
+          <TruncatedText
+            as="span"
+            text={item.auction.title || "Untitled auction"}
+            limit={40}
+            className="font-medium text-foreground"
+          />
         </p>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {item.description || "No description"}
-        </p>
+        <TruncatedText
+          text={item.description || "No description"}
+          limit={120}
+          lines={2}
+          className="text-sm leading-relaxed text-muted-foreground"
+        />
+        {item.winner ? (
+          <p className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1.5 text-sm font-medium text-emerald-800 dark:text-emerald-300">
+            <Trophy className="size-3.5 shrink-0" aria-hidden />
+            <span className="truncate">
+              Winner: {item.winner.firstName} {item.winner.lastName}
+              {isWinner ? " (you)" : ""}
+            </span>
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/20 bg-primary/10 px-3.5 py-2.5">
@@ -173,7 +194,7 @@ export function PublicItemInfo({
             Est. delivery
           </p>
           <p className="mt-1 text-sm font-semibold text-foreground">
-            {item.shippingEstimatedDays != null
+            {item.shippingEstimatedDays !== null
               ? `${item.shippingEstimatedDays} day${item.shippingEstimatedDays === 1 ? "" : "s"}`
               : "—"}
           </p>
@@ -244,7 +265,7 @@ export function PublicItemInfo({
             Log in to bid
           </Button>
         </div>
-      ) : isLive && isLoggedIn ? (
+      ) : isLive && canBid ? (
         <form
           onSubmit={handlePlaceBid}
           noValidate
@@ -300,7 +321,7 @@ export function PublicItemInfo({
             </p>
           ) : null}
         </form>
-      ) : (
+      ) : isLive && isLoggedIn ? null : (
         <div className="mt-auto rounded-xl border border-border/80 bg-muted/40 p-4">
           <p className="text-sm font-medium text-foreground">
             Bidding is closed

@@ -13,7 +13,7 @@ import { useLogout, useMe } from "@/services/hooks/AuthServicesHook";
 export function SessionResumeGuard() {
   const router = useRouter();
   const { data, isSuccess } = useMe();
-  const logout = useLogout();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const [open, setOpen] = useState(false);
   const loggedIn = isSuccess && Boolean(data?.user);
 
@@ -44,13 +44,13 @@ export function SessionResumeGuard() {
   return (
     <SessionResumeDialog
       open={open}
-      isLoggingOut={logout.isPending}
+      isLoggingOut={isLoggingOut}
       onStayLoggedIn={() => {
         touchSessionActivity();
         setOpen(false);
       }}
       onLogout={() => {
-        logout.mutate(undefined, {
+        logout(undefined, {
           onSuccess: () => {
             clearSessionActivity();
             setOpen(false);
