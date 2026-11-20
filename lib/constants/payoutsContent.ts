@@ -21,8 +21,8 @@ export const PAYOUT_STATUS_ICON = {
 
 export const PAYOUT_STEPS = [
   {
-    title: "Connect Stripe",
-    body: "Link your payout account in a few guided steps.",
+    title: "Set up payouts",
+    body: "Link your bank account in a few guided steps.",
     Icon: CreditCard,
   },
   {
@@ -39,8 +39,8 @@ export const PAYOUT_STEPS = [
 
 export const PAYOUT_TRUST = [
   {
-    title: "Secure with Stripe",
-    body: "Bank-grade checkout rails sellers already trust.",
+    title: "Secure payouts",
+    body: "Bank-grade rails sellers already trust.",
     Icon: ShieldCheck,
   },
   {

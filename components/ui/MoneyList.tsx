@@ -88,6 +88,7 @@ export function MoneyList({
   error,
   empty,
   header,
+  footer,
   emptyTab,
   items,
 }: {
@@ -95,6 +96,7 @@ export function MoneyList({
   error?: string | null;
   empty?: ReactNode;
   header?: ReactNode;
+  footer?: ReactNode;
   emptyTab?: string;
   items: MoneyListItem[];
 }) {
@@ -145,73 +147,76 @@ export function MoneyList({
             {emptyTab}
           </p>
         ) : (
-          <ul className="divide-y divide-border/70">
-            {items.map((item) => (
-              <li key={item.id}>
-                <div
-                  className={cn(
-                    "flex items-center gap-2 rounded-xl px-1.5 py-3.5 transition-colors sm:gap-3 sm:px-2",
-                    TONE_ROW[item.tone],
-                  )}
-                >
-                  <Link
-                    href={item.href}
-                    className="group flex min-w-0 flex-1 items-center gap-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          <>
+            <ul className="divide-y divide-border/70">
+              {items.map((item) => (
+                <li key={item.id}>
+                  <div
+                    className={cn(
+                      "flex items-center gap-2 rounded-xl px-1.5 py-3.5 transition-colors sm:gap-3 sm:px-2",
+                      TONE_ROW[item.tone],
+                    )}
                   >
-                    <span
-                      className={cn(
-                        "inline-flex size-12 shrink-0 items-center justify-center rounded-xl text-sm font-semibold tracking-wide",
-                        TONE_AVATAR[item.tone],
-                      )}
+                    <Link
+                      href={item.href}
+                      className="group flex min-w-0 flex-1 items-center gap-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                     >
-                      {titleInitial(item.title)}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                        <TruncatedText
-                          as="span"
-                          text={item.title}
-                          limit={40}
-                          className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary"
-                        />
-                        <span
-                          className={cn(
-                            "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
-                            item.statusClassName,
-                          )}
-                        >
-                          {item.status}
-                        </span>
-                      </div>
-                      {item.description}
-                    </div>
-                    <div className="flex shrink-0 flex-col items-end gap-0.5">
-                      <p
+                      <span
                         className={cn(
-                          "text-base font-semibold tabular-nums tracking-tight",
-                          item.tone === "emerald"
-                            ? "text-emerald-700 dark:text-emerald-400"
-                            : "text-foreground",
+                          "inline-flex size-12 shrink-0 items-center justify-center rounded-xl text-sm font-semibold tracking-wide",
+                          TONE_AVATAR[item.tone],
                         )}
                       >
-                        {item.amount}
-                      </p>
-                      {item.hint ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                          {item.hint}
-                          <ArrowRight
-                            className="size-3 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
-                            aria-hidden
+                        {titleInitial(item.title)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                          <TruncatedText
+                            as="span"
+                            text={item.title}
+                            limit={40}
+                            className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary"
                           />
-                        </span>
-                      ) : null}
-                    </div>
-                  </Link>
-                  {item.action}
-                </div>
-              </li>
-            ))}
-          </ul>
+                          <span
+                            className={cn(
+                              "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                              item.statusClassName,
+                            )}
+                          >
+                            {item.status}
+                          </span>
+                        </div>
+                        {item.description}
+                      </div>
+                      <div className="flex shrink-0 flex-col items-end gap-0.5">
+                        <p
+                          className={cn(
+                            "text-base font-semibold tabular-nums tracking-tight",
+                            item.tone === "emerald"
+                              ? "text-emerald-700 dark:text-emerald-400"
+                              : "text-foreground",
+                          )}
+                        >
+                          {item.amount}
+                        </p>
+                        {item.hint ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                            {item.hint}
+                            <ArrowRight
+                              className="size-3 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
+                              aria-hidden
+                            />
+                          </span>
+                        ) : null}
+                      </div>
+                    </Link>
+                    {item.action}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {footer}
+          </>
         )}
       </div>
     </section>

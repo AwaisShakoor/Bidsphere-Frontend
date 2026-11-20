@@ -35,9 +35,10 @@ export function useCreateStripeConnect() {
   return useMutation({
     mutationFn: createStripeConnect,
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: [CacheKeys.STRIPE_STATUS] });
+      queryClient.removeQueries({ queryKey: [CacheKeys.STRIPE_STATUS] });
+      queryClient.removeQueries({ queryKey: [CacheKeys.STRIPE_BALANCE] });
       if (!result.url) {
-        toast.error("Stripe did not return an onboarding link");
+        toast.error("Could not start payout setup");
         return;
       }
 

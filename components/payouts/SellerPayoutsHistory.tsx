@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ListPagination } from "@/components/ui/ListPagination";
 import {
   MoneyList,
   MoneyListTabs,
@@ -24,17 +25,20 @@ import {
   PAYOUT_TABS,
   type PayoutTab,
 } from "@/lib/myPayouts";
+import { getPagedItems } from "@/lib/pagination";
 import { useMyPayouts } from "@/services/hooks/PayoutServicesHook";
 
 export function SellerPayoutsHistory() {
   const { data: payouts = [], isPending, isError, error } = useMyPayouts();
   const [tab, setTab] = useState<PayoutTab>("pending");
+  const [page, setPage] = useState(0);
   const awaitingPayment = getPayoutsByTab(payouts, "pending");
   const transferPending = getPayoutsByTab(payouts, "transfer_pending");
   const paid = getPayoutsByTab(payouts, "paid");
   const list = getPayoutsByTab(payouts, tab);
+  const { pageItems, currentPage } = getPagedItems(list, page);
 
-  const items: MoneyListItem[] = list.map((payout) => {
+  const items: MoneyListItem[] = pageItems.map((payout) => {
     const paidOut = isPayoutPaid(payout.status, payout.paidAt);
     const isTransferPending = isPayoutTransferPending(
       payout.status,
@@ -134,7 +138,10 @@ export function SellerPayoutsHistory() {
               transfer_pending: transferPending.length,
               paid: paid.length,
             }}
-            onChange={(value) => setTab(value as PayoutTab)}
+            onChange={(value) => {
+              setTab(value as PayoutTab);
+              setPage(0);
+            }}
           />
           <p className="text-[11px] text-muted-foreground">
             Amounts are after platform fee
@@ -143,6 +150,13 @@ export function SellerPayoutsHistory() {
       }
       emptyTab={getPayoutTabEmptyMessage(tab)}
       items={items}
+      footer={
+        <ListPagination
+          page={currentPage}
+          total={list.length}
+          onPageChange={setPage}
+        />
+      }
     />
   );
 }

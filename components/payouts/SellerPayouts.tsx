@@ -15,7 +15,7 @@ const TABS: {
   label: string;
   Icon: typeof Link2;
 }[] = [
-  { value: "setup", label: "Connect Stripe", Icon: Link2 },
+  { value: "setup", label: "Payout setup", Icon: Link2 },
   { value: "history", label: "Payout history", Icon: History },
 ];
 

@@ -13,16 +13,16 @@ export const PAYOUT_STATUS_COPY: Record<
   }
 > = {
   not_connected: {
-    label: "Not connected",
-    description: "Connect Stripe to receive payouts from won auctions.",
-    buttonLabel: "Connect Stripe",
+    label: "Not set up",
+    description: "Connect a payout account to receive money from won auctions.",
+    buttonLabel: "Set up payouts",
     badgeClassName: "bg-muted text-muted-foreground",
     iconWrapClassName: "bg-muted text-muted-foreground",
   },
   pending: {
-    label: "Pending",
+    label: "Setup in progress",
     description:
-      "Your Stripe account setup is incomplete. Finish setup to enable payouts.",
+      "Your payout account setup is incomplete. Finish setup to enable payouts.",
     buttonLabel: "Finish setup",
     badgeClassName: "bg-amber-100 text-amber-800",
     iconWrapClassName: "bg-amber-100 text-amber-700",
@@ -30,7 +30,7 @@ export const PAYOUT_STATUS_COPY: Record<
   connected: {
     label: "Payouts ready",
     description:
-      "Stripe is connected. You can receive payouts from completed sales.",
+      "Your payout account is connected. You can receive payouts from completed sales.",
     buttonLabel: "Manage payouts",
     badgeClassName: "bg-emerald-100 text-emerald-800",
     iconWrapClassName: "bg-emerald-100 text-emerald-700",
@@ -41,7 +41,7 @@ export const PAYOUT_STATUS_COPY: Record<
 export function mapStripeStatusToPayoutStatus(
   status: StripeConnectionStatus | undefined,
 ): PayoutConnectionStatus {
-  if (!status?.connected) return "not_connected";
-  if (!status.payoutEnabled) return "pending";
+  if (!status?.stripeAccountId) return "not_connected";
+  if (!status.connected || !status.payoutEnabled) return "pending";
   return "connected";
 }

@@ -56,7 +56,7 @@ export function SellerPayoutsHero() {
           <div className="min-w-0 space-y-3.5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold tracking-wide text-primary uppercase">
-                Stripe
+                Payouts
               </span>
               <span
                 className={cn(
@@ -83,14 +83,14 @@ export function SellerPayoutsHero() {
               </h2>
               <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
                 {isReady
-                  ? "Stripe is connected. Keep selling — payouts can flow when sales complete."
-                  : "Connect Stripe once, keep running auctions, and receive payouts when your items sell."}
+                  ? "Payouts are set up. Keep selling — money can flow when sales complete."
+                  : "Connect a payout account once, keep running auctions, and get paid when your items sell."}
               </p>
               {isError ? (
                 <p className="text-sm text-destructive">
                   {error instanceof Error
                     ? error.message
-                    : "Could not load Stripe status."}
+                    : "Could not load payout status."}
                 </p>
               ) : null}
             </div>

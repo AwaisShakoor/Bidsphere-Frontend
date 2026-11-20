@@ -43,19 +43,19 @@ export function SellerPayoutsBanner() {
         </span>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-foreground">
-            {isSetupPending ? "Finish Stripe setup" : "Set up payouts"}
+            {isSetupPending ? "Finish payout setup" : "Set up payouts"}
           </p>
           <p className="text-xs leading-relaxed text-muted-foreground">
             {isSetupPending
-              ? "Your Stripe account still needs a few steps before you can get paid."
-              : "Connect Stripe so you can receive payouts from completed sales."}
+              ? "Your payout account still needs a few steps before you can get paid."
+              : "Connect a payout account so you can receive money from completed sales."}
           </p>
         </div>
       </div>
 
       <Button asChild size="sm" className="w-full shrink-0 sm:w-auto">
         <Link href="/my-payouts">
-          {isSetupPending ? "Finish setup" : "Connect Stripe"}
+          {isSetupPending ? "Finish setup" : "Set up payouts"}
           <ArrowRight data-icon="inline-end" />
         </Link>
       </Button>
