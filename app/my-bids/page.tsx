@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { MyBids } from "@/components/dashboard/MyBids";
+import { MyBids } from "@/components/bids";
 import { Button } from "@/components/ui/button";
 
 export default function MyBidsPage() {

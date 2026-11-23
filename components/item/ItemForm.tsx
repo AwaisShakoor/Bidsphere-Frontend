@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { ItemImageField } from "@/components/item/ItemImageField";
 import type { ItemImageFieldValue } from "@/components/item/ItemImageField";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,10 @@ import {
   useCreateItem,
   useUpdateItem,
 } from "@/services/hooks/ItemServicesHook";
+import type { Category } from "@/services/types/CategoryServicesTypes";
 import type { Item } from "@/services/types/ItemsServicesTypes";
+
+const EMPTY_CATEGORIES: Category[] = [];
 
 const selectClassName =
   "h-11 w-full min-w-0 cursor-pointer rounded-lg border border-input bg-transparent px-3.5 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30";
@@ -40,7 +43,7 @@ export function ItemForm({
   const isEdit = Boolean(item);
   const { data: categoriesData, isPending: isCategoriesPending } =
     useCategories();
-  const categories = categoriesData?.data ?? [];
+  const categories = categoriesData?.data ?? EMPTY_CATEGORIES;
   const { mutate: createItem, isPending: isCreating } = useCreateItem();
   const { mutate: updateItem, isPending: isUpdating } = useUpdateItem();
   const isPending = isCreating || isUpdating;
@@ -58,17 +61,17 @@ export function ItemForm({
 
   const {
     register,
+    control,
     handleSubmit,
     setValue,
     clearErrors,
-    watch,
     formState: { errors, isSubmitted },
   } = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
     defaultValues: item ? getItemFormValues(item) : itemDefaultValues,
   });
 
-  const shippingType = watch("shippingType");
+  const shippingType = useWatch({ control, name: "shippingType" });
 
   useEffect(() => {
     setValue("imageCount", imageField.count);
@@ -88,15 +91,11 @@ export function ItemForm({
       itemCondition: values.itemCondition,
       startingPrice: Number(values.startingPrice),
       shippingType: values.shippingType,
-      ...(values.reservePrice
-        ? { reservePrice: Number(values.reservePrice) }
-        : {}),
-      ...(values.shippingCost
-        ? { shippingCost: Number(values.shippingCost) }
-        : {}),
-      ...(values.shippingEstimatedDays
-        ? { shippingEstimatedDays: Number(values.shippingEstimatedDays) }
-        : {}),
+      reservePrice: values.reservePrice ? Number(values.reservePrice) : null,
+      shippingCost: values.shippingCost ? Number(values.shippingCost) : null,
+      shippingEstimatedDays: values.shippingEstimatedDays
+        ? Number(values.shippingEstimatedDays)
+        : null,
     };
 
     if (isEdit && item) {
@@ -210,6 +209,7 @@ export function ItemForm({
             type="number"
             step="0.01"
             min="0"
+            prefix="$"
             disabled={isFormLocked}
             error={errors.startingPrice}
             {...register("startingPrice")}
@@ -219,6 +219,7 @@ export function ItemForm({
             type="number"
             step="0.01"
             min="0"
+            prefix="$"
             disabled={isFormLocked}
             error={errors.reservePrice}
             {...register("reservePrice")}
@@ -253,6 +254,7 @@ export function ItemForm({
             type="number"
             step="0.01"
             min="0"
+            prefix="$"
             disabled={isFormLocked || shippingType === ShippingType.FREE}
             error={errors.shippingCost}
             {...register("shippingCost")}

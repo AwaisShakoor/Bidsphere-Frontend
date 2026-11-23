@@ -14,11 +14,18 @@ export type ItemImage = {
   uploadedAt: string;
 };
 
+export type ItemWinner = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
 export type Item = {
   id: string;
   sellerId: string;
   auctionId: string;
   winnerId: string | null;
+  winner?: ItemWinner | null;
   startingPrice: string;
   reservePrice: string | null;
   shippingType: ShippingType;
@@ -41,10 +48,10 @@ export type CreateItemRequest = {
   categoryId: string;
   itemCondition: ItemCondition;
   startingPrice: number;
-  reservePrice?: number;
+  reservePrice?: number | null;
   shippingType: ShippingType;
-  shippingCost?: number;
-  shippingEstimatedDays?: number;
+  shippingCost?: number | null;
+  shippingEstimatedDays?: number | null;
   images: File[];
 };
 
@@ -54,10 +61,10 @@ export type UpdateItemRequest = {
   categoryId: string;
   itemCondition: ItemCondition;
   startingPrice: number;
-  reservePrice?: number;
+  reservePrice?: number | null;
   shippingType: ShippingType;
-  shippingCost?: number;
-  shippingEstimatedDays?: number;
+  shippingCost?: number | null;
+  shippingEstimatedDays?: number | null;
   images?: File[];
   removeImageIds?: string[];
 };
@@ -109,6 +116,7 @@ export type PublicItem = {
   reservePrice: string | null;
   currentBid: string | null;
   winnerId: string | null;
+  winner?: ItemWinner | null;
   itemCondition: ItemCondition;
   shippingType: ShippingType;
   shippingCost: string | null;

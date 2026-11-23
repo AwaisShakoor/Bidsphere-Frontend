@@ -1,4 +1,5 @@
 import type { DataTableColumn } from "@/components/ui/DataTable";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { getAuctionStatusClass } from "@/lib/constants/auctionStatus";
 import { formatDate, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -12,9 +13,11 @@ export const adminAuctionsTableColumns: DataTableColumn<AdminAuction>[] = [
     accessorKey: "title",
     header: "Auction",
     cell: (auction) => (
-      <p className="truncate text-sm font-semibold text-foreground">
-        {auction.title || "Untitled"}
-      </p>
+      <TruncatedText
+        text={auction.title || "Untitled"}
+        limit={40}
+        className="text-sm font-semibold text-foreground"
+      />
     ),
   },
   {
@@ -22,12 +25,16 @@ export const adminAuctionsTableColumns: DataTableColumn<AdminAuction>[] = [
     header: "Seller",
     cell: (auction) => (
       <>
-        <p className="truncate text-sm text-foreground">
-          {auction.seller.firstName} {auction.seller.lastName}
-        </p>
-        <p className="truncate text-xs text-muted-foreground">
-          {auction.seller.email}
-        </p>
+        <TruncatedText
+          text={`${auction.seller.firstName} ${auction.seller.lastName}`}
+          limit={32}
+          className="text-sm text-foreground"
+        />
+        <TruncatedText
+          text={auction.seller.email}
+          limit={36}
+          className="text-xs text-muted-foreground"
+        />
       </>
     ),
   },

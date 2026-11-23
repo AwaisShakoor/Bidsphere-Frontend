@@ -11,7 +11,9 @@ import {
   Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDateRangeFilter } from "@/components/ui/DateRangeFilter";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { BidStatus } from "@/enums/bidStatus";
 import {
   getBidAccentClass,
@@ -36,7 +38,11 @@ export function MyBids() {
   const { data: bids = [], isPending, isError, error } = useMyBids();
   const [filter, setFilter] = useState<MyBidFilter>("all");
   const [page, setPage] = useState(0);
-  const { items, filters } = getMyBidsView(bids, filter);
+  const { dateRange, filter: dateRangeFilter } = useDateRangeFilter({
+    onChange: () => setPage(0),
+    "aria-label": "Filter bids by date",
+  });
+  const { items, filters } = getMyBidsView(bids, filter, dateRange);
 
   const totalPages = Math.max(1, Math.ceil(items.length / MY_BIDS_PAGE_SIZE));
   const currentPage = Math.min(page, totalPages - 1);
@@ -143,36 +149,40 @@ export function MyBids() {
               </div>
             ) : null}
 
-            <div
-              role="listbox"
-              aria-label="Filter bids"
-              className="inline-flex max-w-full flex-wrap rounded-xl border border-border/80 bg-muted/40 p-1"
-            >
-              {filters.map(({ value, label, count }) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="option"
-                  aria-selected={filter === value}
-                  onClick={() => handleFilterChange(value)}
-                  className={cn(
-                    "inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all",
-                    filter === value
-                      ? "bg-card text-foreground shadow-sm ring-1 ring-border"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {label}
-                  <span
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+              <div
+                role="listbox"
+                aria-label="Filter bids by status"
+                className="inline-flex max-w-full flex-wrap rounded-xl border border-border/80 bg-muted/40 p-1"
+              >
+                {filters.map(({ value, label, count }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="option"
+                    aria-selected={filter === value}
+                    onClick={() => handleFilterChange(value)}
                     className={cn(
-                      "tabular-nums",
-                      filter === value ? "text-primary" : "opacity-70",
+                      "inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all",
+                      filter === value
+                        ? "bg-card text-foreground shadow-sm ring-1 ring-border"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    {count}
-                  </span>
-                </button>
-              ))}
+                    {label}
+                    <span
+                      className={cn(
+                        "tabular-nums",
+                        filter === value ? "text-primary" : "opacity-70",
+                      )}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {dateRangeFilter}
             </div>
 
             {items.length === 0 ? (
@@ -210,9 +220,12 @@ export function MyBids() {
 
                           <div className="min-w-0 flex-1">
                             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                              <p className="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
-                                {title}
-                              </p>
+                              <TruncatedText
+                                as="span"
+                                text={title}
+                                limit={40}
+                                className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary"
+                              />
                               <span
                                 className={cn(
                                   "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
@@ -222,9 +235,14 @@ export function MyBids() {
                                 {formatSnakeCase(bid.status)}
                               </span>
                             </div>
-                            <p className="mt-1 truncate text-xs text-muted-foreground">
-                              {bid.item.auction.title}
-                              <span className="mx-1.5 text-border">·</span>
+                            <p className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                              <TruncatedText
+                                as="span"
+                                text={bid.item.auction.title}
+                                limit={36}
+                                className="max-w-48"
+                              />
+                              <span className="text-border">·</span>
                               <span className="inline-flex items-center gap-1">
                                 <Clock
                                   className="size-3 shrink-0 text-primary"

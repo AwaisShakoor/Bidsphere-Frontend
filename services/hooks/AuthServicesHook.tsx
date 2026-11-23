@@ -126,6 +126,7 @@ export function useLogout() {
       toast.success(data.message || "Logged out successfully!");
       clearSessionActivity();
       queryClient.removeQueries({ queryKey: [CacheKeys.ME] });
+      queryClient.removeQueries({ queryKey: [CacheKeys.MY_NOTIFICATIONS] });
     },
     onError: (error) => {
       toast.error(error.message);

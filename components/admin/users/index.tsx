@@ -4,7 +4,7 @@ import { AdminUsersTable } from "./AdminUsersTable";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useAdminUsers } from "@/services/hooks/AdminServicesHook";
 
-export function AdminUsersPage() {
+export function AdminUsers() {
   const { data: users = [], isPending, isError, error } = useAdminUsers();
 
   return (

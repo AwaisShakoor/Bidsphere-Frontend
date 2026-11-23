@@ -46,4 +46,4 @@ export function CategoryList() {
 }
 
 export { CategoryItems } from "./CategoryItems";
-export { CategoryPage } from "./CategoryPage";
+export { Category } from "./Category";

@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 type FieldProps = React.ComponentProps<typeof Input> & {
   label: string;
   error?: { message?: string };
+  prefix?: string;
 };
 
 function Field({
@@ -19,6 +20,7 @@ function Field({
   id,
   name,
   type,
+  prefix,
   ...props
 }: FieldProps) {
   const [visible, setVisible] = useState(false);
@@ -29,6 +31,11 @@ function Field({
     <div className="space-y-1.5 text-left">
       <Label htmlFor={fieldId}>{label}</Label>
       <div className="relative">
+        {prefix ? (
+          <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+            {prefix}
+          </span>
+        ) : null}
         <Input
           id={fieldId}
           name={name}
@@ -36,6 +43,7 @@ function Field({
           aria-invalid={!!error}
           className={cn(
             "h-11 px-3.5 text-sm",
+            prefix && "pl-8",
             isPassword && "pr-10",
             className,
           )}

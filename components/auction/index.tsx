@@ -7,6 +7,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { AuctionDetail } from "./AuctionDetail";
 import { AuctionForm } from "./AuctionForm";
 import { AuctionTable } from "./AuctionTable";
+import { SellerPayoutsBanner } from "@/components/payouts";
 import { ItemDetail, ItemForm } from "@/components/item";
 import { Button } from "@/components/ui/button";
 import { canSellerEditAuction } from "@/lib/constants/auctionStatus";
@@ -16,7 +17,7 @@ import type { Item } from "@/services/types/ItemsServicesTypes";
 
 export { AuctionTable } from "./AuctionTable";
 
-export function AuctionPage() {
+export function Auction() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const auctionId = searchParams.get("id");
@@ -245,6 +246,8 @@ export function AuctionPage() {
             Create auction
           </Button>
         </section>
+
+        <SellerPayoutsBanner />
 
         <AuctionTable
           auctions={auctions}

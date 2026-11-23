@@ -1,5 +1,6 @@
 import type { DataTableColumn } from "@/components/ui/DataTable";
 import { ActionsCell } from "@/components/ui/ActionsCell";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import {
   canSellerDeleteAuction,
   canSellerEditAuction,
@@ -29,12 +30,16 @@ export function getAuctionTableColumns({
       header: "Auction",
       cell: (auction) => (
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-foreground">
-            {auction.title || "Untitled"}
-          </p>
-          <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
-            {auction.description || "No description"}
-          </p>
+          <TruncatedText
+            text={auction.title || "Untitled"}
+            limit={40}
+            className="text-sm font-semibold text-foreground"
+          />
+          <TruncatedText
+            text={auction.description || "No description"}
+            limit={56}
+            className="mt-0.5 text-sm text-muted-foreground"
+          />
         </div>
       ),
     },
@@ -57,9 +62,12 @@ export function getAuctionTableColumns({
       header: "Rejection reason",
       cell: (auction) =>
         auction.rejectionReason ? (
-          <p className="line-clamp-2 text-sm text-destructive">
-            {auction.rejectionReason}
-          </p>
+          <TruncatedText
+            text={auction.rejectionReason}
+            limit={48}
+            lines={2}
+            className="text-sm text-destructive"
+          />
         ) : (
           <p className="text-sm text-muted-foreground">—</p>
         ),

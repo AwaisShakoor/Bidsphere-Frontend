@@ -70,9 +70,12 @@ api.interceptors.response.use(
             path.startsWith("/my-bids") ||
             path.startsWith("/checkout") ||
             path.startsWith("/payments") ||
-            path.startsWith("/my-payments");
+            path.startsWith("/my-payments") ||
+            path.startsWith("/my-payouts");
           if (isProtectedArea) {
-            window.location.href = "/login";
+            window.location.assign(
+              new URL("/login", window.location.origin).href,
+            );
           }
         }
         return Promise.reject(refreshError);

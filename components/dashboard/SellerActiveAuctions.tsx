@@ -80,16 +80,20 @@ export function SellerActiveAuctions() {
     );
   });
 
+  const showFilterBar = !isPending && !isError && activeAuctions.length > 0;
+
   return (
     <section className="space-y-4">
-      <MarketplaceFilterBar
-        search={search}
-        onSearchChange={setSearch}
-        categoryId={categoryId}
-        onCategoryChange={setCategoryId}
-        categories={categories}
-        searchInputId="seller-auction-search"
-      />
+      {showFilterBar ? (
+        <MarketplaceFilterBar
+          search={search}
+          onSearchChange={setSearch}
+          categoryId={categoryId}
+          onCategoryChange={setCategoryId}
+          categories={categories}
+          searchInputId="seller-auction-search"
+        />
+      ) : null}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -144,10 +148,7 @@ export function SellerActiveAuctions() {
         />
       ) : null}
 
-      {!isPending &&
-      !isError &&
-      activeAuctions.length > 0 &&
-      filtered.length === 0 ? (
+      {showFilterBar && filtered.length === 0 ? (
         <FilterEmptyState
           onClear={() => {
             setSearch("");
