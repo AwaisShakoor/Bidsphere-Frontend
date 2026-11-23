@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CircleCheck, Clock, CreditCard, Inbox } from "lucide-react";
+import { RefundReason } from "@/components/payments/RefundReason";
+import { RequestRefundButton } from "@/components/payments/RequestRefundButton";
 import { ConfirmDeliveryButton } from "@/components/shipping";
 import { Button } from "@/components/ui/button";
 import { useDateRangeFilter } from "@/components/ui/DateRangeFilter";
@@ -57,6 +59,7 @@ export function MyPayments() {
     const isShipped = deliveryStatus === DeliveryStatus.SHIPPED;
     const isAwaitingShipment =
       deliveryStatus === DeliveryStatus.AWAITING_SHIPMENT;
+    const canRequestRefund = !isUnpaid && payment.refundable === true;
 
     let tone: MoneyListItem["tone"] = "emerald";
     if (isUnpaid) {
@@ -108,18 +111,26 @@ export function MyPayments() {
               </span>
             </p>
           ) : null}
-          {!isUnpaid && isAwaitingShipment ? (
-            <p className="mt-2 inline-flex max-w-full items-start gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-[11px] font-semibold leading-snug text-amber-900 dark:text-amber-200">
+          {!isUnpaid && payment.refundRequestedAt ? (
+            <div className="mt-2 w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-amber-900 dark:text-amber-200">
+              <p className="text-[11px] font-semibold leading-snug">
+                Refund requested — waiting for admin review.
+              </p>
+              {payment.refundRequestReason ? (
+                <RefundReason reason={payment.refundRequestReason} nested />
+              ) : null}
+            </div>
+          ) : !isUnpaid && isShipped ? (
+            <p className="mt-2 w-full rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-2 text-[11px] font-semibold leading-snug text-sky-900 dark:text-sky-200">
+              Item shipped. Confirm delivery when you receive it.
+            </p>
+          ) : !isUnpaid && isAwaitingShipment ? (
+            <p className="mt-2 w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] font-semibold leading-snug text-amber-900 dark:text-amber-200">
               Waiting for the seller to ship your item.
             </p>
           ) : null}
-          {!isUnpaid && isShipped ? (
-            <p className="mt-2 inline-flex max-w-full items-start gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2 py-1.5 text-[11px] font-semibold leading-snug text-sky-900 dark:text-sky-200">
-              Item shipped. Confirm delivery when you receive it.
-            </p>
-          ) : null}
           {!isUnpaid && payment.trackingNote ? (
-            <p className="mt-1 truncate text-[11px] text-muted-foreground">
+            <p className="mt-1.5 truncate text-[11px] text-muted-foreground">
               Note: {payment.trackingNote}
             </p>
           ) : null}
@@ -139,6 +150,12 @@ export function MyPayments() {
         </Button>
       ) : isShipped ? (
         <ConfirmDeliveryButton itemId={payment.itemId} className="h-9" />
+      ) : canRequestRefund ? (
+        <RequestRefundButton
+          itemId={payment.itemId}
+          itemTitle={title}
+          className="h-9"
+        />
       ) : null,
     };
   });

@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle2, Truck } from "lucide-react";
+import { RefundReason } from "@/components/payments/RefundReason";
 import { ConfirmDeliveryButton } from "./ConfirmDeliveryButton";
 import { ShipItemForm } from "./ShipItemForm";
 import { DeliveryStatus } from "@/enums/deliveryStatus";
@@ -15,6 +16,7 @@ import type { Payment } from "@/services/types/PaymentServicesTypes";
 
 type ItemShippingPanelProps = {
   itemId: string;
+  itemTitle?: string;
   payment: Payment | PublicItemPayment;
   variant: "seller" | "buyer";
 };
@@ -30,6 +32,7 @@ export function ItemShippingPanel({
     deliveryStatus === DeliveryStatus.AWAITING_SHIPMENT;
   const isShipped = deliveryStatus === DeliveryStatus.SHIPPED;
   const isDelivered = deliveryStatus === DeliveryStatus.DELIVERED;
+  const hasRefundRequest = Boolean(payment.refundRequestedAt);
 
   if (variant === "seller" && isAwaitingShipment) {
     return <ShipItemForm itemId={itemId} />;
@@ -93,9 +96,25 @@ export function ItemShippingPanel({
           ) : null}
 
           {variant === "buyer" && isAwaitingShipment ? (
-            <p className="text-xs text-muted-foreground">
-              The seller will ship your item soon.
-            </p>
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                The seller will ship your item soon.
+              </p>
+              {hasRefundRequest ? (
+                <div className="space-y-1.5">
+                  <p className="inline-flex max-w-full items-start gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-[11px] font-semibold leading-snug text-amber-900 dark:text-amber-200">
+                    Refund requested
+                    {payment.refundRequestedAt
+                      ? ` on ${formatDate(payment.refundRequestedAt)}`
+                      : ""}
+                    . An admin will review it.
+                  </p>
+                  {payment.refundRequestReason ? (
+                    <RefundReason reason={payment.refundRequestReason} />
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
           ) : null}
 
           {variant === "buyer" && isShipped ? (

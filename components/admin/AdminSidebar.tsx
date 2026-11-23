@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Gavel, LayoutDashboard, Users } from "lucide-react";
+import { CreditCard, Gavel, LayoutDashboard, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Auctions", href: "/admin/auctions", icon: Gavel },
+  { label: "Payments", href: "/admin/payments", icon: CreditCard },
   { label: "Users", href: "/admin/users", icon: Users },
 ] as const;
 

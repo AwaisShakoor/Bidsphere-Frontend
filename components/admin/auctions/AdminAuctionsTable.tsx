@@ -13,6 +13,8 @@ type AdminAuctionsTableProps = {
   isPending?: boolean;
   isError?: boolean;
   error?: Error | null;
+  emptyTitle?: string;
+  emptyDescription?: string;
   onOpenAuction?: (auction: AdminAuction) => void;
 };
 
@@ -21,6 +23,8 @@ export function AdminAuctionsTable({
   isPending = false,
   isError = false,
   error = null,
+  emptyTitle = "No auctions",
+  emptyDescription = "Auctions will appear here.",
   onOpenAuction,
 }: AdminAuctionsTableProps) {
   if (isPending) {
@@ -35,8 +39,8 @@ export function AdminAuctionsTable({
       gridClassName={ADMIN_AUCTIONS_TABLE_GRID}
       isError={isError}
       error={error}
-      emptyTitle="No pending auctions"
-      emptyDescription="When sellers submit auctions for approval, they will appear here for review."
+      emptyTitle={emptyTitle}
+      emptyDescription={emptyDescription}
       filterPlaceholder="Search auctions..."
       pagination
       onRowClick={onOpenAuction}

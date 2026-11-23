@@ -220,6 +220,7 @@ export function PublicItemInfo({
         <div className="mt-auto">
           <ItemShippingPanel
             itemId={itemId}
+            itemTitle={item.title}
             payment={payment}
             variant="seller"
           />
@@ -285,6 +286,7 @@ export function PublicItemInfo({
           {showBuyerDelivery && payment ? (
             <ItemShippingPanel
               itemId={itemId}
+              itemTitle={item.title}
               payment={payment}
               variant="buyer"
             />

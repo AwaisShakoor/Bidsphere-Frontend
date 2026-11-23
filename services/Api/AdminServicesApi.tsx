@@ -5,6 +5,8 @@ import type {
   AdminAuctionResponse,
   AdminAuctionsResponse,
   AdminOverviewResponse,
+  AdminPaymentsResponse,
+  AdminRefundPaymentResponse,
   AdminUsersResponse,
 } from "@/services/types/AdminServicesTypes";
 
@@ -73,5 +75,27 @@ export async function rejectAdminAuction(id: string, rejectionReason: string) {
     return data;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to reject auction");
+  }
+}
+
+export async function getAdminPayments() {
+  try {
+    const { data } = await api.get<AdminPaymentsResponse>(
+      "/api/admin/payments",
+    );
+    return data.data ?? [];
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to load payments");
+  }
+}
+
+export async function refundAdminPayment(itemId: string) {
+  try {
+    const { data } = await api.post<AdminRefundPaymentResponse>(
+      `/api/admin/payments/${itemId}/refund`,
+    );
+    return data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to refund payment");
   }
 }

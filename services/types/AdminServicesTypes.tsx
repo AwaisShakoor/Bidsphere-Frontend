@@ -1,7 +1,10 @@
 import { AuctionStatus } from "@/enums/auctionStatus";
+import type { DeliveryStatus } from "@/enums/deliveryStatus";
 import type { ItemCondition } from "@/enums/itemCondition";
+import type { PaymentStatus } from "@/enums/paymentStatus";
 import type { ShippingType } from "@/enums/shippingType";
 import { UserRole } from "@/enums/userRole";
+import type { Payment } from "@/services/types/PaymentServicesTypes";
 
 export type AdminUser = {
   id: string;
@@ -108,4 +111,43 @@ export type AdminOverviewResponse = {
   success: boolean;
   message: string;
   data: AdminOverview;
+};
+
+export type AdminPayment = Payment & {
+  status: PaymentStatus | string;
+  deliveryStatus?: DeliveryStatus | string | null;
+  refundable?: boolean;
+  refundRequestedAt?: string | null;
+  refundRequestReason?: string | null;
+  item?: {
+    id: string;
+    title: string;
+  };
+  auction?: {
+    id: string;
+    title: string;
+  };
+  buyer?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  seller?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
+export type AdminPaymentsResponse = {
+  success: boolean;
+  message: string;
+  data: AdminPayment[];
+};
+
+export type AdminRefundPaymentResponse = {
+  message: string;
+  data: AdminPayment;
 };

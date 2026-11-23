@@ -16,7 +16,11 @@ export type Payment = {
   status: PaymentStatus | string;
   deliveryStatus?: DeliveryStatus | string | null;
   shippedAt?: string | null;
+  deliveredAt?: string | null;
   trackingNote?: string | null;
+  refundable?: boolean;
+  refundRequestedAt?: string | null;
+  refundRequestReason?: string | null;
   refundAmount: string | null;
   refundReason: string | null;
   refundedAt: string | null;
@@ -37,6 +41,10 @@ export type Payment = {
 
 export type ShipItemRequest = {
   trackingNote?: string;
+};
+
+export type RefundRequestBody = {
+  reason: string;
 };
 
 export type CreateCheckoutResponse = {

@@ -108,6 +108,9 @@ export type PublicItemPayment = {
   deliveryStatus?: string | null;
   shippedAt?: string | null;
   trackingNote?: string | null;
+  refundable?: boolean;
+  refundRequestedAt?: string | null;
+  refundRequestReason?: string | null;
 };
 
 /** Public marketplace list/detail payload */

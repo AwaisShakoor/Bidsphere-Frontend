@@ -9,9 +9,12 @@ import {
   getAdminAuction,
   getAdminAuctions,
   getAdminOverview,
+  getAdminPayments,
   getAdminUsers,
+  refundAdminPayment,
   rejectAdminAuction,
 } from "@/services/Api/AdminServicesApi";
+import type { AdminPayment } from "@/services/types/AdminServicesTypes";
 
 export function useAdminOverview() {
   return useQuery({
@@ -77,6 +80,34 @@ export function useRejectAdminAuction() {
       queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_OVERVIEW] });
     },
     onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useAdminPayments() {
+  return useQuery<AdminPayment[]>({
+    queryKey: [CacheKeys.ADMIN_PAYMENTS],
+    queryFn: getAdminPayments,
+  });
+}
+
+export function useRefundAdminPayment() {
+  return useMutation({
+    mutationFn: (itemId: string) => refundAdminPayment(itemId),
+    onSuccess: (data) => {
+      toast.success(data.message || "Payment refunded successfully");
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_PAYMENTS] });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.ITEM_PAYMENT, data.data.itemId],
+      });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.MY_PAYMENTS] });
+      queryClient.invalidateQueries({ queryKey: [CacheKeys.MY_PAYOUTS] });
+      queryClient.invalidateQueries({
+        queryKey: [CacheKeys.PUBLIC_ITEM, data.data.itemId],
+      });
+    },
+    onError: (error: Error) => {
       toast.error(error.message);
     },
   });
