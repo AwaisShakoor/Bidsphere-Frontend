@@ -105,6 +105,9 @@ export type PublicItemPayment = {
   status: string;
   paidAt: string | null;
   paymentDeadline: string;
+  deliveryStatus?: string | null;
+  shippedAt?: string | null;
+  trackingNote?: string | null;
 };
 
 /** Public marketplace list/detail payload */

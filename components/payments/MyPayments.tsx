@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CircleCheck, Clock, CreditCard, Inbox } from "lucide-react";
+import { ConfirmDeliveryButton } from "@/components/shipping";
 import { Button } from "@/components/ui/button";
 import { useDateRangeFilter } from "@/components/ui/DateRangeFilter";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -12,6 +13,11 @@ import {
   type MoneyListItem,
 } from "@/components/ui/MoneyList";
 import { TruncatedText } from "@/components/ui/TruncatedText";
+import { DeliveryStatus } from "@/enums/deliveryStatus";
+import {
+  getDeliveryStatusClass,
+  getDeliveryStatusLabel,
+} from "@/lib/constants/deliveryStatus";
 import {
   getPaymentDeadlineTone,
   getPaymentStatusClass,
@@ -44,18 +50,29 @@ export function MyPayments() {
     const deadlineTone = isUnpaid
       ? getPaymentDeadlineTone(payment.paymentDeadline)
       : null;
+    const deliveryLabel = !isUnpaid
+      ? getDeliveryStatusLabel(payment.deliveryStatus)
+      : null;
+    const deliveryStatus = payment.deliveryStatus?.toUpperCase() ?? null;
+    const isShipped = deliveryStatus === DeliveryStatus.SHIPPED;
+    const isAwaitingShipment =
+      deliveryStatus === DeliveryStatus.AWAITING_SHIPMENT;
 
     let tone: MoneyListItem["tone"] = "emerald";
     if (isUnpaid) {
       tone = deadlineTone === "overdue" ? "destructive" : "amber";
+    } else if (isAwaitingShipment || isShipped) {
+      tone = "amber";
     }
 
     return {
       id: payment.id,
       href: `/items/${payment.itemId}`,
       title,
-      status: formatSnakeCase(payment.status),
-      statusClassName: getPaymentStatusClass(payment.status),
+      status: deliveryLabel ?? formatSnakeCase(payment.status),
+      statusClassName: deliveryLabel
+        ? getDeliveryStatusClass(payment.deliveryStatus)
+        : getPaymentStatusClass(payment.status),
       amount: formatMoney(payment.amount),
       tone,
       hint: isUnpaid ? undefined : "View item",
@@ -91,6 +108,21 @@ export function MyPayments() {
               </span>
             </p>
           ) : null}
+          {!isUnpaid && isAwaitingShipment ? (
+            <p className="mt-2 inline-flex max-w-full items-start gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-[11px] font-semibold leading-snug text-amber-900 dark:text-amber-200">
+              Waiting for the seller to ship your item.
+            </p>
+          ) : null}
+          {!isUnpaid && isShipped ? (
+            <p className="mt-2 inline-flex max-w-full items-start gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2 py-1.5 text-[11px] font-semibold leading-snug text-sky-900 dark:text-sky-200">
+              Item shipped. Confirm delivery when you receive it.
+            </p>
+          ) : null}
+          {!isUnpaid && payment.trackingNote ? (
+            <p className="mt-1 truncate text-[11px] text-muted-foreground">
+              Note: {payment.trackingNote}
+            </p>
+          ) : null}
         </>
       ),
       action: isUnpaid ? (
@@ -105,6 +137,8 @@ export function MyPayments() {
             Pay now
           </Link>
         </Button>
+      ) : isShipped ? (
+        <ConfirmDeliveryButton itemId={payment.itemId} className="h-9" />
       ) : null,
     };
   });

@@ -18,17 +18,24 @@ import { AuctionStatus } from "@/enums/auctionStatus";
 import { BidStatus } from "@/enums/bidStatus";
 import { getItemConditionBadgeClass } from "@/enums/itemCondition";
 import { PaymentStatus } from "@/enums/paymentStatus";
+import { UserRole } from "@/enums/userRole";
+import {
+  getDeliveryStatusClass,
+  getDeliveryStatusLabel,
+} from "@/lib/constants/deliveryStatus";
 import { formatDate, formatMoney, formatSnakeCase } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useItemBids, usePlaceBid } from "@/services/hooks/BidServicesHook";
 import { useItemPayment } from "@/services/hooks/PaymentServicesHook";
 import type { PublicItem } from "@/services/types/ItemsServicesTypes";
+import { ItemShippingPanel } from "@/components/shipping";
 import { PlaceBidPulse } from "./PublicItemDetailSkeleton";
 
 type PublicItemInfoProps = {
   item: PublicItem;
   itemId: string;
   userId: string | null;
+  userRole: UserRole | null;
   isLoggedIn: boolean;
   canBid: boolean;
   isAuthPending: boolean;
@@ -38,6 +45,7 @@ export function PublicItemInfo({
   item,
   itemId,
   userId,
+  userRole,
   isLoggedIn,
   canBid,
   isAuthPending,
@@ -60,13 +68,18 @@ export function PublicItemInfo({
     auctionStatus === AuctionStatus.ENDED ||
     auctionStatus === AuctionStatus.COMPLETED;
   const isWinner = Boolean(userId && item.winnerId === userId);
+  const isSeller = userRole === UserRole.SELLER;
   const { data: fetchedPayment } = useItemPayment(
     itemId,
-    isWinner && isAuctionOver && !item.payment,
+    (isWinner || isSeller) && isAuctionOver,
   );
-  const payment = item.payment ?? fetchedPayment;
+  const payment = fetchedPayment ?? item.payment ?? null;
   const isPaid = payment?.status?.toUpperCase() === PaymentStatus.COMPLETED;
   const showPayNow = isWinner && isAuctionOver && !isPaid;
+  const deliveryLabel = getDeliveryStatusLabel(payment?.deliveryStatus);
+  const showSellerShipping = isSeller && isAuctionOver && isPaid && payment;
+  const showBuyerDelivery =
+    isWinner && isAuctionOver && isPaid && Boolean(deliveryLabel);
 
   function handleLoginToBid() {
     router.push(`/login?next=${encodeURIComponent(`/items/${itemId}`)}`);
@@ -203,52 +216,79 @@ export function PublicItemInfo({
 
       {isAuthPending ? (
         <PlaceBidPulse />
+      ) : showSellerShipping ? (
+        <div className="mt-auto">
+          <ItemShippingPanel
+            itemId={itemId}
+            payment={payment}
+            variant="seller"
+          />
+        </div>
       ) : isWinner && isAuctionOver ? (
-        <div className="mt-auto overflow-hidden rounded-xl border border-emerald-500/25 bg-linear-to-br from-emerald-500/12 via-card to-card p-4 shadow-sm shadow-emerald-500/5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-700 ring-1 ring-emerald-500/25 dark:text-emerald-300">
-                <Trophy className="size-4" aria-hidden />
-              </span>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
-                  You won this item
-                </p>
-                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
-                  {item.currentBid ? (
-                    <span className="font-semibold tabular-nums text-emerald-800 dark:text-emerald-300">
-                      {formatMoney(item.currentBid)}
-                    </span>
-                  ) : null}
-                  <span>{isPaid ? "Paid" : "Payment due"}</span>
+        <div className="mt-auto flex flex-col gap-3">
+          <div className="overflow-hidden rounded-xl border border-emerald-500/25 bg-linear-to-br from-emerald-500/12 via-card to-card p-4 shadow-sm shadow-emerald-500/5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-700 ring-1 ring-emerald-500/25 dark:text-emerald-300">
+                  <Trophy className="size-4" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                    You won this item
+                  </p>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+                    {item.currentBid ? (
+                      <span className="font-semibold tabular-nums text-emerald-800 dark:text-emerald-300">
+                        {formatMoney(item.currentBid)}
+                      </span>
+                    ) : null}
+                    <span>{isPaid ? "Paid" : "Payment due"}</span>
+                    {isPaid && deliveryLabel ? (
+                      <span
+                        className={cn(
+                          "rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                          getDeliveryStatusClass(payment?.deliveryStatus),
+                        )}
+                      >
+                        {deliveryLabel}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {isPaid ? (
-              <Button
-                type="button"
-                size="sm"
-                className="h-8 w-fit gap-1.5 self-start px-3.5 shadow-sm shadow-primary/25 sm:self-center"
-                asChild
-              >
-                <Link href="/my-payments">
-                  <CheckCircle2 className="size-3.5" />
-                  View payment
-                </Link>
-              </Button>
-            ) : showPayNow ? (
-              <Button
-                type="button"
-                size="sm"
-                className="h-8 w-fit gap-1.5 self-start px-3.5 shadow-sm shadow-primary/25 sm:self-center"
-                onClick={() => router.push(`/checkout/${itemId}`)}
-              >
-                <CreditCard className="size-3.5" />
-                Pay now
-              </Button>
-            ) : null}
+              {isPaid ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-8 w-fit gap-1.5 self-start px-3.5 shadow-sm shadow-primary/25 sm:self-center"
+                  asChild
+                >
+                  <Link href="/my-payments">
+                    <CheckCircle2 className="size-3.5" />
+                    View payment
+                  </Link>
+                </Button>
+              ) : showPayNow ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-8 w-fit gap-1.5 self-start px-3.5 shadow-sm shadow-primary/25 sm:self-center"
+                  onClick={() => router.push(`/checkout/${itemId}`)}
+                >
+                  <CreditCard className="size-3.5" />
+                  Pay now
+                </Button>
+              ) : null}
+            </div>
           </div>
+          {showBuyerDelivery && payment ? (
+            <ItemShippingPanel
+              itemId={itemId}
+              payment={payment}
+              variant="buyer"
+            />
+          ) : null}
         </div>
       ) : isLive && !isLoggedIn ? (
         <div className="mt-auto flex flex-col gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">

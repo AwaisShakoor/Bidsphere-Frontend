@@ -55,6 +55,7 @@ export function PublicItemDetail({ itemId }: { itemId: string }) {
                   item={item}
                   itemId={itemId}
                   userId={user?.id ?? null}
+                  userRole={user?.role ?? null}
                   isLoggedIn={Boolean(user)}
                   canBid={canBid}
                   isAuthPending={isMePending}

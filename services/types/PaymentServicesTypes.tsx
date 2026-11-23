@@ -1,3 +1,4 @@
+import type { DeliveryStatus } from "@/enums/deliveryStatus";
 import type { PaymentStatus } from "@/enums/paymentStatus";
 
 export type Payment = {
@@ -13,6 +14,9 @@ export type Payment = {
   stripePaymentIntentId: string;
   stripeTransferId: string | null;
   status: PaymentStatus | string;
+  deliveryStatus?: DeliveryStatus | string | null;
+  shippedAt?: string | null;
+  trackingNote?: string | null;
   refundAmount: string | null;
   refundReason: string | null;
   refundedAt: string | null;
@@ -29,6 +33,10 @@ export type Payment = {
     id: string;
     title: string;
   };
+};
+
+export type ShipItemRequest = {
+  trackingNote?: string;
 };
 
 export type CreateCheckoutResponse = {
