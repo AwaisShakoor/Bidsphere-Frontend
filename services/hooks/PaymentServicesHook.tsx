@@ -1,17 +1,22 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { queryClient } from "@/components/providers/queryProvider/queryClient";
 import { CacheKeys } from "@/enums/cacheKeys";
 import { getErrorMessage } from "@/services/Api/getErrorMessage";
 import {
   confirmItemPayment,
+  deliverItem,
   getItemPayment,
   getMyPayments,
+  shipItem,
 } from "@/services/Api/PaymentServicesApi";
-import type { Payment } from "@/services/types/PaymentServicesTypes";
+import type {
+  Payment,
+  ShipItemRequest,
+} from "@/services/types/PaymentServicesTypes";
 
 export function useItemPayment(itemId: string | null, enabled = true) {
   return useQuery<Payment | null>({
@@ -77,4 +82,34 @@ export function usePaymentSuccess(
       }
     })();
   }, [enabled, itemId, sessionId]);
+}
+
+export function useShipItem() {
+  return useMutation({
+    mutationFn: ({
+      itemId,
+      trackingNote,
+    }: ShipItemRequest & { itemId: string }) =>
+      shipItem(itemId, { trackingNote }),
+    onSuccess: (payment) => {
+      toast.success("Item marked as shipped");
+      invalidatePaymentQueries(payment.itemId);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useDeliverItem() {
+  return useMutation({
+    mutationFn: (itemId: string) => deliverItem(itemId),
+    onSuccess: (payment) => {
+      toast.success("Delivery confirmed — seller payout released");
+      invalidatePaymentQueries(payment.itemId);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 }

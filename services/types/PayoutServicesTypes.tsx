@@ -6,6 +6,9 @@ export type SellerPayout = {
   currency: string;
   status: string;
   stripeTransferId: string | null;
+  deliveryStatus?: string | null;
+  shippedAt?: string | null;
+  trackingNote?: string | null;
   paidAt: string | null;
   createdAt: string;
   item: {

@@ -6,6 +6,7 @@ import type {
   ItemPaymentResponse,
   MyPaymentsResponse,
   Payment,
+  ShipItemRequest,
 } from "@/services/types/PaymentServicesTypes";
 
 export async function createCheckout(
@@ -53,5 +54,34 @@ export async function getMyPayments(): Promise<Payment[]> {
     return data.payments ?? [];
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to load payments");
+  }
+}
+
+export async function shipItem(
+  itemId: string,
+  body: ShipItemRequest = {},
+): Promise<Payment> {
+  try {
+    const payload = body.trackingNote?.trim()
+      ? { trackingNote: body.trackingNote.trim() }
+      : {};
+    const { data } = await api.post<ItemPaymentResponse>(
+      `/api/payments/items/${itemId}/ship`,
+      payload,
+    );
+    return data.payment;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to mark item as shipped");
+  }
+}
+
+export async function deliverItem(itemId: string): Promise<Payment> {
+  try {
+    const { data } = await api.post<ItemPaymentResponse>(
+      `/api/payments/items/${itemId}/deliver`,
+    );
+    return data.payment;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to confirm delivery");
   }
 }

@@ -30,6 +30,7 @@ export type MoneyListItem = {
   description?: ReactNode;
   hint?: string;
   action?: ReactNode;
+  below?: ReactNode;
 };
 
 export function MoneyListTabs({
@@ -150,10 +151,10 @@ export function MoneyList({
           <>
             <ul className="divide-y divide-border/70">
               {items.map((item) => (
-                <li key={item.id}>
+                <li key={item.id} className="space-y-2 py-1">
                   <div
                     className={cn(
-                      "flex items-center gap-2 rounded-xl px-1.5 py-3.5 transition-colors sm:gap-3 sm:px-2",
+                      "flex items-center gap-2 rounded-xl px-1.5 py-2.5 transition-colors sm:gap-3 sm:px-2",
                       TONE_ROW[item.tone],
                     )}
                   >
@@ -212,6 +213,9 @@ export function MoneyList({
                     </Link>
                     {item.action}
                   </div>
+                  {item.below ? (
+                    <div className="px-1.5 pb-2 sm:px-2">{item.below}</div>
+                  ) : null}
                 </li>
               ))}
             </ul>
