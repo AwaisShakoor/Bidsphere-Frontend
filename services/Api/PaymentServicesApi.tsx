@@ -36,9 +36,13 @@ export async function getItemPayment(itemId: string): Promise<Payment | null> {
 }
 
 /** Sync payment status from Stripe when webhook may have been missed. */
-export async function confirmItemPayment(itemId: string): Promise<Payment> {
+export async function confirmItemPayment(
+  itemId: string,
+  sessionId: string,
+): Promise<Payment> {
   const { data } = await api.post<ItemPaymentResponse>(
     `/api/payments/items/${itemId}/confirm`,
+    { sessionId },
   );
   return data.payment;
 }

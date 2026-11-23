@@ -44,15 +44,19 @@ function invalidatePaymentQueries(itemId?: string | null) {
 }
 
 /** On success page: confirm with Stripe (webhook fallback), then refresh payment state. */
-export function usePaymentSuccess(itemId: string | null, enabled: boolean) {
+export function usePaymentSuccess(
+  itemId: string | null,
+  sessionId: string | null,
+  enabled: boolean,
+) {
   const ranForItem = useRef<string | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
 
-    if (!itemId) {
+    if (!itemId || !sessionId) {
       toast.success("Payment successful", { id: "payment-success" });
-      invalidatePaymentQueries();
+      invalidatePaymentQueries(itemId);
       return;
     }
 
@@ -61,7 +65,7 @@ export function usePaymentSuccess(itemId: string | null, enabled: boolean) {
 
     void (async () => {
       try {
-        await confirmItemPayment(itemId);
+        await confirmItemPayment(itemId, sessionId);
         toast.success("Payment successful", { id: "payment-success" });
       } catch (error) {
         const message = getErrorMessage(error);
@@ -72,5 +76,5 @@ export function usePaymentSuccess(itemId: string | null, enabled: boolean) {
         invalidatePaymentQueries(itemId);
       }
     })();
-  }, [enabled, itemId]);
+  }, [enabled, itemId, sessionId]);
 }

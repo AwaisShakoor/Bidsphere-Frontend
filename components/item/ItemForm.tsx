@@ -91,15 +91,11 @@ export function ItemForm({
       itemCondition: values.itemCondition,
       startingPrice: Number(values.startingPrice),
       shippingType: values.shippingType,
-      ...(values.reservePrice
-        ? { reservePrice: Number(values.reservePrice) }
-        : {}),
-      ...(values.shippingCost
-        ? { shippingCost: Number(values.shippingCost) }
-        : {}),
-      ...(values.shippingEstimatedDays
-        ? { shippingEstimatedDays: Number(values.shippingEstimatedDays) }
-        : {}),
+      reservePrice: values.reservePrice ? Number(values.reservePrice) : null,
+      shippingCost: values.shippingCost ? Number(values.shippingCost) : null,
+      shippingEstimatedDays: values.shippingEstimatedDays
+        ? Number(values.shippingEstimatedDays)
+        : null,
     };
 
     if (isEdit && item) {

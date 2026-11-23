@@ -77,16 +77,19 @@ function appendItemFields(
   formData.append("startingPrice", String(body.startingPrice));
   formData.append("shippingType", body.shippingType);
 
-  if (body.reservePrice !== null && body.reservePrice !== undefined) {
+  if (body.reservePrice === null) {
+    formData.append("reservePrice", "");
+  } else if (body.reservePrice !== undefined) {
     formData.append("reservePrice", String(body.reservePrice));
   }
-  if (body.shippingCost !== null && body.shippingCost !== undefined) {
+  if (body.shippingCost === null) {
+    formData.append("shippingCost", "");
+  } else if (body.shippingCost !== undefined) {
     formData.append("shippingCost", String(body.shippingCost));
   }
-  if (
-    body.shippingEstimatedDays !== null &&
-    body.shippingEstimatedDays !== undefined
-  ) {
+  if (body.shippingEstimatedDays === null) {
+    formData.append("shippingEstimatedDays", "");
+  } else if (body.shippingEstimatedDays !== undefined) {
     formData.append(
       "shippingEstimatedDays",
       String(body.shippingEstimatedDays),

@@ -14,8 +14,9 @@ type PaymentResultProps = {
 export function PaymentResult({ variant }: PaymentResultProps) {
   const searchParams = useSearchParams();
   const itemId = searchParams.get("itemId");
+  const sessionId = searchParams.get("session_id");
   const isSuccess = variant === "success";
-  usePaymentSuccess(itemId, isSuccess);
+  usePaymentSuccess(itemId, sessionId, isSuccess);
   const { data: item } = usePublicItem(itemId);
 
   return (

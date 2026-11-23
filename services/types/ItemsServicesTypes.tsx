@@ -48,10 +48,10 @@ export type CreateItemRequest = {
   categoryId: string;
   itemCondition: ItemCondition;
   startingPrice: number;
-  reservePrice?: number;
+  reservePrice?: number | null;
   shippingType: ShippingType;
-  shippingCost?: number;
-  shippingEstimatedDays?: number;
+  shippingCost?: number | null;
+  shippingEstimatedDays?: number | null;
   images: File[];
 };
 
@@ -61,10 +61,10 @@ export type UpdateItemRequest = {
   categoryId: string;
   itemCondition: ItemCondition;
   startingPrice: number;
-  reservePrice?: number;
+  reservePrice?: number | null;
   shippingType: ShippingType;
-  shippingCost?: number;
-  shippingEstimatedDays?: number;
+  shippingCost?: number | null;
+  shippingEstimatedDays?: number | null;
   images?: File[];
   removeImageIds?: string[];
 };
