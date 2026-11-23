@@ -11,10 +11,12 @@ import {
   deliverItem,
   getItemPayment,
   getMyPayments,
+  requestItemRefund,
   shipItem,
 } from "@/services/Api/PaymentServicesApi";
 import type {
   Payment,
+  RefundRequestBody,
   ShipItemRequest,
 } from "@/services/types/PaymentServicesTypes";
 
@@ -38,6 +40,7 @@ function invalidatePaymentQueries(itemId?: string | null) {
   queryClient.invalidateQueries({ queryKey: [CacheKeys.MY_PAYMENTS] });
   queryClient.invalidateQueries({ queryKey: [CacheKeys.MY_BIDS] });
   queryClient.invalidateQueries({ queryKey: [CacheKeys.MY_PAYOUTS] });
+  queryClient.invalidateQueries({ queryKey: [CacheKeys.ADMIN_PAYMENTS] });
   if (itemId) {
     queryClient.invalidateQueries({
       queryKey: [CacheKeys.ITEM_PAYMENT, itemId],
@@ -106,6 +109,20 @@ export function useDeliverItem() {
     mutationFn: (itemId: string) => deliverItem(itemId),
     onSuccess: (payment) => {
       toast.success("Delivery confirmed — seller payout released");
+      invalidatePaymentQueries(payment.itemId);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+}
+
+export function useRequestItemRefund() {
+  return useMutation({
+    mutationFn: ({ itemId, reason }: RefundRequestBody & { itemId: string }) =>
+      requestItemRefund(itemId, { reason }),
+    onSuccess: (payment) => {
+      toast.success("Refund requested — an admin will review it");
       invalidatePaymentQueries(payment.itemId);
     },
     onError: (error: Error) => {

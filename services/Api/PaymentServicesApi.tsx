@@ -6,6 +6,7 @@ import type {
   ItemPaymentResponse,
   MyPaymentsResponse,
   Payment,
+  RefundRequestBody,
   ShipItemRequest,
 } from "@/services/types/PaymentServicesTypes";
 
@@ -83,5 +84,27 @@ export async function deliverItem(itemId: string): Promise<Payment> {
     return data.payment;
   } catch (error) {
     throw new Error(getErrorMessage(error) || "Failed to confirm delivery");
+  }
+}
+
+export async function requestItemRefund(
+  itemId: string,
+  body: RefundRequestBody,
+): Promise<Payment> {
+  try {
+    const { data } = await api.post<{
+      message?: string;
+      payment?: Payment;
+      data?: Payment;
+    }>(`/api/payments/items/${itemId}/refund-request`, {
+      reason: body.reason.trim(),
+    });
+    const payment = data.payment ?? data.data;
+    if (!payment) {
+      throw new Error("Refund request succeeded but no payment was returned");
+    }
+    return payment;
+  } catch (error) {
+    throw new Error(getErrorMessage(error) || "Failed to request refund");
   }
 }

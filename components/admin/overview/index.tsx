@@ -61,6 +61,7 @@ export function AdminOverview() {
                 label="Active"
                 value={data.auctions.activeAuctions}
                 hint="Live on the marketplace"
+                href="/admin/auctions?tab=active"
               />
               <AdminOverviewStatCard
                 tone="rose"
@@ -68,6 +69,7 @@ export function AdminOverview() {
                 label="Rejected"
                 value={data.auctions.rejectedAuctions}
                 hint="Not approved"
+                href="/admin/auctions?tab=rejected"
               />
               <AdminOverviewStatCard
                 tone="muted"
@@ -75,6 +77,7 @@ export function AdminOverview() {
                 label="Completed"
                 value={data.auctions.completedAuctions}
                 hint="Finished auctions"
+                href="/admin/auctions?tab=completed"
               />
             </div>
           </section>
